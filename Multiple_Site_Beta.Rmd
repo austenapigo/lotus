@@ -1,0 +1,69 @@
+---
+title: "R Notebook"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+# Multiple-assemblage overlap measures
+
+# This function is useful if you are interested in quantifying beta-diversity when samples (in this case, plants) are grouped by multiple assemblages or sites (quadrats, transects, etc.)
+
+library(tidyverse)
+# Read in data 
+dat <- read.csv("example_dat.csv", row.names = 1, header = TRUE)
+# This toy dataset has host plants as rows labeled by their sampling origin (quadrat, transect, etc.; .1 = quadrat 1) and fungal symbionts as columns.
+
+# Set parameters (pick one)
+# q = 1 # (Sørensen index; presence-absence)
+# q = 2 # (Horn index; abundance-weighted with more weight towards rare spp.)
+q = 3 # (Morisita-Horn Index; abundance-weighted with less weight towards rare spp.)
+
+# Make holding vector 
+output.vector <- rep()
+  # For every ASV
+  for (j in 1:ncol(dat)) {
+    # Subset each column
+    col <- dat[j]
+    colnames(col)[1] <- "Symbiont.Abundance"
+    # Make a new row of metadata from the sample names
+    col$Sample <- row.names(col)
+    # Separate the sample names
+    col.sep <- col %>% separate(Sample, c("Host.Species", "Quadrat"))
+    # Aggregate by quadrat
+    col.agg <- aggregate(col.sep[, 1] ~ Quadrat, col.sep, sum)
+    colnames(col.agg)[2] <- "Quadrat.Abundance"
+    # Aggregate by species
+    col.agg.gen <- aggregate(col.sep[, 1] ~ Host.Species, col.sep, sum) 
+    # Remove species with zero
+    col.agg.gen <- subset(col.agg.gen, col.agg.gen[2] > 0) 
+    # Filter by hosts that are present
+    col.sep <- col.sep[col.sep$Host.Species %in% col.agg.gen$Host.Species, ]
+    # Merge separated and aggregated by quadrat
+    col.merge <- merge(col.sep, col.agg, by = "Quadrat")
+    # Calculate relative abundance per species per quadrat
+    col.merge$Rel.Abund <- ifelse(is.na(col.merge[, 2] / col.merge[, 4]), 0, col.merge[, 2] / col.merge[, 4])
+    # Set species as factor
+    col.merge$Species <- as.factor(col.merge$Host.Species)
+    # Calculate T = the number of sites (quadrats)
+    T <- as.numeric(length(unique(col.merge[["Quadrat"]])))
+    # Set holding vector
+    prod <- rep()
+    sos <- rep()
+      # For every symbiont
+      for(k in 1:length(levels(col.merge$Species))) {
+        # Subset merged data frame by species
+        sp.k <- subset(col.merge, Species == levels(col.merge$Species)[k])
+        # Calculate numerator
+        prod[k] <- ( ( sum(sp.k$Rel.Abund) )^q) - ( sum(sp.k$Rel.Abund^q) )
+        # Calculate sum of squares
+        sos[k] <- sum(sp.k$Rel.Abund^q)
+      }
+      # Calculate similarity index
+      output.vector[j] <- (1 / (T^q - T)) * (sum ( prod )) / ( (1/T) * (sum(sos)) )
+  }
+output.vector
+```
+
+
