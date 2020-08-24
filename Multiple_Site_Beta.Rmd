@@ -9,26 +9,24 @@ editor_options:
 # Multiple-assemblage overlap measures 
 ## Described in Chao et al. 2008 and Jost et al. 
 
-# This function is useful if you are interested in quantifying beta-diversity when samples are grouped by multiple assemblages or sites (quadrats, transects, etc.). In this case species (fungi) reside within samples (host plants) and a grouped by sampling units (quadrats). 
-
-
+# This function is useful if you are interested in quantifying beta-diversity when samples are grouped by multiple assemblages or sites (quadrats, transects, etc.). In this case, species (fungi) reside within samples (host plants) and a grouped by sampling units (quadrats). 
 
 library(tidyverse)
 # Read in data 
 dat <- read.csv("example_dat.csv", row.names = 1, header = TRUE)
 # This toy dataset has host plants as rows labeled by their sampling origin (quadrat, transect, etc.; .1 = quadrat 1) and fungal symbionts as columns.
-
-# dOeS tHiS wOrK?????? 
-test <- multi.site.rel(dat, index = "morisita.horn")
-test
-multi.site.rel(dat, index = "horn")
+# 1 indicates high overlap 
+# 0 indicates no overlap 
 
 multi.site.rel <- function(x, index = "morisita.horn") {
+
+# Make holding vectors 
 output.vec <- rep()
-# For every ASV
+
+# For every column (species)
 for (j in 1:ncol(x)) {
-    # Set q value 
-    ifelse(index == "morisita.horn", q <- 3, ifelse(index == "horn", q <- 2, q <- NA))
+    
+    ifelse(index == "sorensen", q <- 0.000000001, ifelse(index == "horn", q <- 0.99999, ifelse(index == "morisita.horn", q <- 2, stop("invalid distance method") )))
     # Subset each column
     col <- x[j]
     colnames(col)[1] <- "Symbiont.Abundance"
@@ -43,78 +41,69 @@ for (j in 1:ncol(x)) {
     col.merge <- merge(col.sep, col.agg, by = "Quadrat")
     # Calculate relative abundance per species per quadrat
     col.merge$Rel.Abund <- ifelse(is.na(col.merge[, 2] / col.merge[, 4]), 0, col.merge[, 2] / col.merge[, 4])
-    # Set species as factor
+    # Set host species as factor
     col.merge$Host.Species <- as.factor(col.merge$Host.Species)
     # Calculate T = the number of sites (quadrats)
     T <- as.numeric(length(unique(col.merge[["Quadrat"]])))
+    
+    #############################
+    # Morisita-Horn Calculation #
+    #############################
     # Set holding vector
     prod <- rep()
     sos <- rep()
-        # For every symbiont
-        for(k in 1:length(levels(col.merge$Host.Species))) {
-            # Subset merged data frame by species
-            sp.k <- subset(col.merge, Host.Species == levels(col.merge$Host.Species)[k])
-            # Calculate numerator
-            prod[k] <- ( ( sum(sp.k$Rel.Abund) )^q) - ( sum(sp.k$Rel.Abund^q) )
-            # Calculate sum of squares
-            sos[k] <- sum(sp.k$Rel.Abund^q)
-        }
-      # Calculate similarity index
-      output.vec[j] <- ( (1 / (T^q - T)) * (sum ( prod )) / ( (1/T) * (sum(sos)) ) )
-    }
-output.vec
-}
-
-
-# Set parameters (pick one)
-# q = 2 # (Horn index; abundance-weighted with more weight towards rare spp.)
- q = 3 # (Morisita-Horn Index; abundance-weighted with less weight towards rare spp.)
-
-# Make holding vector 
-output.vector <- rep()
-  # For every ASV
-  for (j in 1:ncol(dat)) {
-    # Subset each column
-    col <- dat[j]
-    colnames(col)[1] <- "Symbiont.Abundance"
-    # Make a new row of metadata from the sample names
-    col$Sample <- row.names(col)
-    # Separate the sample names
-    col.sep <- col %>% separate(Sample, c("Host.Species", "Quadrat"))
-    # Aggregate by quadrat
-    col.agg <- aggregate(col.sep[, 1] ~ Quadrat, col.sep, sum)
-    colnames(col.agg)[2] <- "Quadrat.Abundance"
-    # Aggregate by species
-    #col.agg.gen <- aggregate(col.sep[, 1] ~ Host.Species, col.sep, sum) 
-    # Remove species with zero
-    #col.agg.gen <- subset(col.agg.gen, col.agg.gen[2] > 0) 
-    # Filter by hosts that are present
-    #col.sep <- col.sep[col.sep$Host.Species %in% col.agg.gen$Host.Species, ]
-    # Merge separated and aggregated by quadrat
-    col.merge <- merge(col.sep, col.agg, by = "Quadrat")
-    # Calculate relative abundance per species per quadrat
-    col.merge$Rel.Abund <- ifelse(is.na(col.merge[, 2] / col.merge[, 4]), 0, col.merge[, 2] / col.merge[, 4])
-    # Set species as factor
-    col.merge$Host.Species <- as.factor(col.merge$Host.Species)
-    # Calculate T = the number of sites (quadrats)
-    T <- as.numeric(length(unique(col.merge[["Quadrat"]])))
-    # Set holding vector
-    prod <- rep()
-    sos <- rep()
-      # For every symbiont
-      for(k in 1:length(levels(col.merge$Host.Species))) {
+    # For every symbiont
+    for(k in 1:length(levels(col.merge$Host.Species))) {
         # Subset merged data frame by species
         sp.k <- subset(col.merge, Host.Species == levels(col.merge$Host.Species)[k])
         # Calculate numerator
-        prod[k] <- ( ( sum(sp.k$Rel.Abund) )^q) - ( sum(sp.k$Rel.Abund^q) )
+        prod[k] <- ( sum(sp.k$Rel.Abund)^q) - ( sum(sp.k$Rel.Abund^q) )
         # Calculate sum of squares
         sos[k] <- sum(sp.k$Rel.Abund^q)
       }
-      # Calculate similarity index
-      output.vector[j] <- (1 / (T^q - T)) * (sum ( prod )) / ( (1/T) * (sum(sos)) )
-  }
-# Multiple Site Similarity Index per symbiont 
-output.vector
+    # Calculate index
+    output.vec[j] <- ( (1 / (T^q - T)) * (sum ( prod )) / ( (1/T) * (sum(sos)) ) )
+    
+}
+
+#ifelse(index == "sorensen", out <- output.vec.sorensen, ifelse(index == "horn", out <- output.vec.horn, ifelse(index == "morisita.horn", out <- output.vec.morisita.horn, stop("invalid distance method") )))
+
+#return(list(paste("Multiple-Site Similarity Index:", index),
+            #data.frame(Symbiont = colnames(x), Similarity.Index = out)))
+output.vec
+}
+
+# dOeS tHiS wOrK?????? 
+test <- multi.site.rel(dat, index = "sorensen")
+test
+test <- multi.site.rel(dat, index = "morisita.horn")
+test
+test <- multi.site.rel(dat, index = "horn")
+test
+
+# Check of symbiont.6 Sorensen
+(3/2) * (1-(3/7))
+
+# Check of symbiont.6 Horn
+(1 / log(3)) * 
+  ( 
+    ( (0.08333333/3) * (log(1 + ((0.50000000/0.08333333) + (0.50000000/0.08333333)) )) ) +
+    ( (0.08333333/3) * (log(1 + ((0.50000000/0.08333333) + (0.50000000/0.08333333)) )) ) +
+    ( (0.8333333/3) * (log(1 + ((0.0000000/0.8333333) + (0.0000000/0.8333333)) )) ) 
+    ) 
+
+# Check of symbiont.6 Morisita.Horn
+(1/(3^2 - 3)) * ( (((0.08333333 + 0.5 + 0.5)^2) - (0.08333333^2 + 0.5^2 + 0.5^2)) + 
+                  (((0.08333333 + 0.5 + 0.5)^2) - (0.08333333^2 + 0.5^2 + 0.5^2)) + 
+                  (((0.8333333)^2) - (0.8333333^2)) )
+# [1] 0.2222222
+
+(1/3) * ((0.08333333^2 + 0.5^2 + 0.5^2) + (0.08333333^2 + 0.5^2 + 0.5^2) + (0.8333333^2))
+# [1] 0.5694444
+
+0.2222222/ 0.5694444
+# [1] 0.3902439
+
 ```
 
 
