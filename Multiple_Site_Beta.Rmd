@@ -14,6 +14,7 @@ editor_options:
 library(tidyverse)
 # Read in data 
 dat <- read.csv("example_dat.csv", row.names = 1, header = TRUE)
+quad.rarefied <- read.csv("quad_rarefied.csv", row.names = 1, header = TRUE)
 # This toy dataset has host plants as rows labeled by their sampling origin (quadrat, transect, etc.; .1 = quadrat 1) and fungal symbionts as columns.
 # 1 indicates high overlap 
 # 0 indicates no overlap 
@@ -37,6 +38,12 @@ for (j in 1:ncol(x)) {
     # Aggregate by quadrat
     col.agg <- aggregate(col.sep[, 1] ~ Quadrat, col.sep, sum)
     colnames(col.agg)[2] <- "Quadrat.Abundance"
+    # Aggregate by Genera
+    col.agg.sep <- aggregate(col.sep[, 1] ~ Host.Species, col.sep, sum)
+    # Remove Host.Species with zero
+    col.agg.sep <- subset(col.agg.sep, col.agg.sep[2] > 0)
+    # Filter by hosts that are present
+    col.sep <- col.sep[col.sep$Host.Species %in% col.agg.sep$Host.Species, ]
     # Merge separated and aggregated by quadrat
     col.merge <- merge(col.sep, col.agg, by = "Quadrat")
     # Calculate relative abundance per species per quadrat
@@ -46,9 +53,9 @@ for (j in 1:ncol(x)) {
     # Calculate T = the number of sites (quadrats)
     T <- as.numeric(length(unique(col.merge[["Quadrat"]])))
     
-    #############################
-    # Morisita-Horn Calculation #
-    #############################
+    #################
+    # Calculate CqN #
+    #################
     # Set holding vector
     prod <- rep()
     sos <- rep()
@@ -66,44 +73,137 @@ for (j in 1:ncol(x)) {
     
 }
 
-#ifelse(index == "sorensen", out <- output.vec.sorensen, ifelse(index == "horn", out <- output.vec.horn, ifelse(index == "morisita.horn", out <- output.vec.morisita.horn, stop("invalid distance method") )))
+return(data.frame(Symbiont = colnames(x), Similarity.Index = output.vec))
+#output.vec
 
-#return(list(paste("Multiple-Site Similarity Index:", index),
-            #data.frame(Symbiont = colnames(x), Similarity.Index = out)))
-output.vec
 }
 
-# dOeS tHiS wOrK?????? 
 test <- multi.site.rel(dat, index = "sorensen")
-test
-test <- multi.site.rel(dat, index = "morisita.horn")
 test
 test <- multi.site.rel(dat, index = "horn")
 test
+test <- multi.site.rel(dat, index = "morisita.horn")
+test <- multi.site.rel(quad.rarefied, index = "morisita.horn")
+test
 
-# Check of symbiont.6 Sorensen
-(3/2) * (1-(3/7))
+################################
+# Check of symbiont.6 Sorensen #
+################################
+N = T # sites
+S = 3 # species
+S.bar = (3+2+2)/3 # average number of species per assemblage
+(N - (S/S.bar)) / (N - 1)
+## or 
+N = T # sites
+S.T = 3 # species
+S.t = 7 # hosts
+(N / (N - 1)) * (1- (S.T / S.t))
+# 0.8571429dat
 
-# Check of symbiont.6 Horn
-(1 / log(3)) * 
-  ( 
-    ( (0.08333333/3) * (log(1 + ((0.50000000/0.08333333) + (0.50000000/0.08333333)) )) ) +
-    ( (0.08333333/3) * (log(1 + ((0.50000000/0.08333333) + (0.50000000/0.08333333)) )) ) +
-    ( (0.8333333/3) * (log(1 + ((0.0000000/0.8333333) + (0.0000000/0.8333333)) )) ) 
-    ) 
+((1/(N^0.000000001 - N)) * ( (((p11 + p12 + p13)^0.000000001) - (p11^0.000000001 + p12^0.000000001 + p13^0.000000001)) + 
+                  (((p21 + p22 + p23)^0.000000001) - (p21^0.000000001 + p22^0.000000001 + p23^0.000000001)) + 
+                  (((p31 + p32 + p33)^0.000000001) - (p31^0.000000001 + p32^0.000000001 + p33^0.000000001)) )) / 
+((1/N) * ((p11^0.000000001 + p12^0.000000001 + p13^0.000000001) + (p21^0.000000001 + p22^0.000000001 + p23^0.000000001) + (p31^0.000000001 + p32^0.000000001 + p33^0.000000001)))
+# 0.8571429
 
-# Check of symbiont.6 Morisita.Horn
-(1/(3^2 - 3)) * ( (((0.08333333 + 0.5 + 0.5)^2) - (0.08333333^2 + 0.5^2 + 0.5^2)) + 
-                  (((0.08333333 + 0.5 + 0.5)^2) - (0.08333333^2 + 0.5^2 + 0.5^2)) + 
-                  (((0.8333333)^2) - (0.8333333^2)) )
-# [1] 0.2222222
+############################ 
+# Check of symbiont.6 Horn #
+############################
+N = T
+p11 = 0.08333333
+p12 = 0.50000000
+p13 = 0.50000000
+p21 = 0.08333333
+p22 = 0.50000000
+p23 = 0.50000000
+p31 = 0.8333333
+p32 = 0
+p33 = 0
 
-(1/3) * ((0.08333333^2 + 0.5^2 + 0.5^2) + (0.08333333^2 + 0.5^2 + 0.5^2) + (0.8333333^2))
-# [1] 0.5694444
+(1 / log(N)) *
+( 
+( (p11 / N) * log(1 + ( (p12 / p11) + (p13 / p11)) ) ) +
+( (p21 / N) * log(1 + ( (p22 / p21) + (p23 / p21)) ) ) +
+( (p31 / N) * log(1 + ( (p32 / p31) + (p33 / p31) ) ) ) 
+)
+# 0.1297065
 
-0.2222222/ 0.5694444
+((1/(N^0.99999 - N)) * ( (((p11 + p12 + p13)^0.99999) - (p11^0.99999 + p12^0.99999 + p13^0.99999)) + 
+                  (((p21 + p22 + p23)^0.99999) - (p21^0.99999 + p22^0.99999 + p23^0.99999)) + 
+                  (((p31 + p32 + p33)^0.99999) - (p31^0.99999 + p32^0.99999 + p33^0.99999)) )) / 
+((1/N) * ((p11^0.99999 + p12^0.99999 + p13^0.99999) + (p21^0.99999 + p22^0.99999 + p23^0.99999) + (p31^0.99999 + p32^0.99999 + p33^0.99999)))
+# 0.5989008
+
+#####################################
+# Check of symbiont.6 Morisita.Horn #
+#####################################
+(2 * 
+  ((p11 * p12) + (p11 * p13) + (p12 * p13)) + 
+  ((p21 * p22) + (p21 * p23) + (p22 * p23)) +
+  ((p31 * p32) + (p31 * p33) + (p32 * p33)) ) /
+( (N - 1) * 
+  ( (p11^2 + p12^2 + p13^2) + 
+  (p21^2 + p22^2 + p23^2) +
+  (p31^2 + p32^2 + p33^2) ) )
+# 0.2926829
+
+((1/(N^2 - N)) * ( (((p11 + p12 + p13)^2) - (p11^2 + p12^2 + p13^2)) + 
+                   (((p21 + p22 + p23)^2) - (p21^2 + p22^2 + p23^2)) + 
+                   (((p31 + p32 + p33)^2) - (p31^2 + p32^2 + p33^2)) )) / 
+((1/N) * ( (p11^2 + p12^2 + p13^2) + 
+           (p21^2 + p22^2 + p23^2) + 
+           (p31^2 + p32^2 + p33^2) ))
 # [1] 0.3902439
 
 ```
 
+```{r}
+null.beta <- function(x, iterations = 100, index = "morisita.horn") {
+
+    # Set seed
+    set.seed(123)
+    # Make 100 randomized communities
+    null.mssm <- bipartite::nullmodel(x, N = 100, method = "shuffle.web")
+    # Make holding list
+    null.dats <- list(rep(NA, length(null.mssm)))
+    # Make holding vectors for ASV identifer, read abundance and MSSM metric
+    ASV <- rep(NA, dim(null.mssm[[1]])[2])
+    Abundance <- rep(NA, dim(null.mssm[[1]])[2])
+    MSSM <- rep(NA, dim(null.mssm[[1]])[2])
+    # Calculate beta-specificity for null models
+    for (i in 1:length(null.mssm)) {
+      # Call a randomized community
+      null <- null.mssm[[i]]
+      # Add row and column names
+      rownames(null) <- rownames(quad.rarefied.pa)
+      colnames(null) <- colnames(quad.rarefied.pa)
+      # Make as a data frame
+      null <- as.data.frame(null)
+        # Calculate MSSM per ASV
+        for (j in 1:ncol(null)) {
+          # Pull ASV name
+          ASV[j] <- colnames(null)[j]
+          # Calculate total read abundance per ASV
+          Abundance[j] <- sum(null[,j])
+        }
+      # Calculate beta-specificity
+      MSSM <- multi.site.rel(null, index = "sorensen")
+      null.temp <- data.frame(ASV, Abundance, MSSM)
+      null.dats[[i]] <- null.temp
+      print(i)
+    }
+    # Total simulation data
+    null.dats.mssm <- as.data.frame(do.call("rbind", null.dats))
+    null.dats.mssm$Simulation <- as.factor(rep(1:100, ncol(quad.rarefied.pa)))
+    null.dats.mssm.pa <- subset(null.dats.mssm, null.dats.mssm$MSSM > 0)
+    
+
+
+return(data.frame(Symbiont = colnames(x), Similarity.Index = output.vec))
+
+
+}
+
+
+```
 
