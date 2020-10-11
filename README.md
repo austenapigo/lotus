@@ -1,5 +1,7 @@
 # Lotus Package {R}
 
+Note: The name for this package is inspired by the first Black woman nominee for Vice President on a major party ticket, Kamala (meaning 'lotus' in Sanskrit) Devi Harris.
+
 High-throughput sequencing has accelerated the rate at which we can characterize host-associated microbial communities and sequencing-based datasets are ever accumulating. However, often times we have little to no information about the ecological or evolutionary context for many of these pairwise interactions. How should we try to make sense of these datasets rich with information about composition and interaction frequency, but (usually) without much else? 
 
 In our most recent pre-print (Apigo and Oono 202X; _____), we quantified host specificity with a novel class of metrics to test hypotheses that integrate information about the endophyte lifestyle and features of the plant community that seek to understand general mechanisms that produce host-specific relationships. 
