@@ -7,8 +7,16 @@ We propose that host specificity can help fill this gap. Host specificity, or th
 In our most recent pre-print (Apigo and Oono 202X; _____), we quantified host specificity with an alternative class of metrics (along with commonly-used multivariate techniques; e.g., ordination) to test hypotheses that integrate information about the endophyte lifestyle and features of the plant community that seek to understand general mechanisms that produce host-specific relationships. 
 
 1. Structural Specificity
+ + structural.specificity
+ + null.structural
+ + deviance.structural
+ + plot.structural 
 
 2. Phylogenetic Specificity
+ + phylogenetic.specificity
+ + null.phylogenetic
+ + deviance.phylogenetic
+ + plot.phylogenetic 
 
 3. Beta-Specificity
  + beta.specificity
