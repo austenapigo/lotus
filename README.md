@@ -41,6 +41,10 @@ Host Specificity Metrics
  + deviance.beta
  + plot.beta 
 
+ Multiple-assemblage overlap measures 
+Described in Chao et al. 2008 and Jost et al. 
+
+this function is useful if you are interested in quantifying beta-diversity when samples are grouped by multiple assemblages or sites (quadrats, transects, etc.). In this case, species (fungi) reside within samples (host plants) and a grouped by sampling units (quadrats). 
 
 
  
