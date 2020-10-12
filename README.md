@@ -1,6 +1,6 @@
 # lotus package {R}
 
-#### This packaged is named `lotus` in honor and recognition of the first Black woman nominee for Vice President on a major party ticket, <b> Kamala Devi Harris</b>. Kamala means 'lotus' in Sanskrit. 
+#### This packaged is named `lotus` in honor and recognition of the first Black woman nominee for Vice President of the United States on a major party ticket, Kamala (meaning 'lotus') Devi Harris</b>. 
 
 High-throughput sequencing has accelerated the rate at which we can characterize host-associated microbial communities and sequencing-based datasets are ever accumulating. However, often times we have little to no information about the ecological or evolutionary context for many of these pairwise interactions. How should we try to make sense of these datasets rich with information about composition and interaction frequency, but (usually) without much else? 
 
