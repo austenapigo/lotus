@@ -1,6 +1,6 @@
 # Lotus Package {R}
 
-Note: The name for this package is inspired by the first Black woman nominee for Vice President on a major party ticket, Kamala (meaning 'lotus' in Sanskrit) Devi Harris.
+<i> This packaged is named `lotus` in honor and recognition of the first Black woman nominee for Vice President on a major party ticket, Kamala (meaning 'lotus' in Sanskrit) Devi Harris.
 
 High-throughput sequencing has accelerated the rate at which we can characterize host-associated microbial communities and sequencing-based datasets are ever accumulating. However, often times we have little to no information about the ecological or evolutionary context for many of these pairwise interactions. How should we try to make sense of these datasets rich with information about composition and interaction frequency, but (usually) without much else? 
 
@@ -49,6 +49,6 @@ Described in Chao et al. 2008 and Jost et al.
 this function is useful if you are interested in quantifying beta-diversity when samples are grouped by multiple assemblages or sites (quadrats, transects, etc.). In this case, species (fungi) reside within samples (host plants) and a grouped by sampling units (quadrats). 
 
 
- 
+per symbiont per sample
  
 
