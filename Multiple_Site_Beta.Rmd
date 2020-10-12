@@ -7,6 +7,7 @@ editor_options:
 
 Read in pacakges and data
 ```{r}
+
 library(tidyverse)
 library(ggpmisc)
 library(picante)
