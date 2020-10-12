@@ -1,6 +1,6 @@
 # lotus package {R}
 
->This packaged is named `lotus` in recognition of the first Black woman nominee for Vice President of the United States on a major party ticket, Kamala (meaning 'lotus') Devi Harris. 
+>This packaged is named `lotus` in recognition of the first Black and Asian woman to be nominated for Vice President of the United States on a major party ticket, Kamala (meaning 'lotus') Devi Harris. 
 
 ### Introduction 
 
@@ -11,6 +11,7 @@ We propose that host specificity, or the degree to which microbial symbionts are
 **The purpose of this package is to provide functions that:**
 1. **Quantify host specificity metrics per symbiont**
 2. **Relavitize these metrics to null host specificity models to account for variation in symbiont read abundance**
+4. **Quantify the deviance in observed to null expectations in host specificity**
 3. **Visualize null models to observed host specificities**
 
 We've modified a framework proposed from Poulin 2011 to quantify host specificity that consider how host specificity can vary in a number of different ways: 
@@ -21,8 +22,8 @@ We've modified a framework proposed from Poulin 2011 to quantify host specificit
 
 ***For each of these metrics, a narrower symbiont niche indicates higher host specificity.*** 
 
-![GitHub Logo](/images/logo.png)
-Format: ![Alt Text](url)
+![Image of Yaktocat](https://github.com/austenapigo/lotus/blob/master/specificity.png)
+
 
 Host specificity analyses could be particularly vulnerable to biased ecological inferences by not accounting for relationships between host specificity and endophyte abundance. For example, rarer symbionts will always have a lower theoretical maximum of the number of plants they could occupy and are frequently categorized as more host-specific relative to more abundant symbionts. The relationship between an symbionts’s host specificity and its abundance is an extension of abundance-occupancy relationships, the widely documented biogeographic pattern in macroecology that predicts a positive relationship between a species abundance and its occurrence across sites (Gaston et al. 2000, Shade et al. 2018). If more abundant symbionts tend to occupy more hosts, there is expected to be a negative relationship between an symbiont’s abundance and its host specificity, or occupancy across plants.
 
