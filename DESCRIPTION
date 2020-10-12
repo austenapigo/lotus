@@ -1,0 +1,14 @@
+Package: calecopal
+Type: Package
+Title: A California-inspired Package of Color Palettes
+Maintainer: An Bui <a.thanh.bui@gmail.com>
+Description: Color palettes inspired by California
+Date: 2020-09
+Version: 0.1.0
+Authors@R: c(person("An", "Bui", role = c("aut", "cre"), email = "a.thanh.bui@gmail.com"),
+             person("Heili", "Lowman", role = c("aut")),
+             person("Ana Sofia", "Guerra", role = c("aut")),
+             person("Ana", "Miller-ter Kuile", role = c("aut")))
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
