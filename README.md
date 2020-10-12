@@ -15,7 +15,6 @@ We propose that host specificity, or the degree to which microbial symbionts are
 **The purpose of this package is to provide functions that:**
 1. **Quantify host specificity metrics per symbiont**
 2. **Relavitize these metrics to null host specificity models to account for variation in symbiont read abundance**
-4. **Quantify the deviance in observed to null expectations in host specificity**
 3. **Visualize null expectations to observed host specificities within occupancy-abundance models**
 
 We've modified a framework proposed from Poulin 2011 to quantify host specificity that consider how host specificity can vary in a number of different ways: 
