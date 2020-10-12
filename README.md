@@ -47,54 +47,65 @@ In our study, we found evidence of negative host specificity and symbiont abunda
 
 <sub><sup>(B-D) Host specificity relativized by null models with empirical data. In this study, instead of a theoretical 1:1 null expectation, we calculated null models from randomized communities. We quantified how host specificity of endophytes within randomized communities varied as a function of read abundance. We then relavitized observed endophyte host specificity to null models by taking the difference between an observed endophyte’s host specificity to null expectations. The black line represents a null expectation generated from 100 community randomizations with an inset equation describing its relationship between uncorrected host specificity and endophyte abundance. Red points refer to individual endophytes that occur within a given plant sample, Galium angustifolium. The host specificity of its endophytes was calculated as Shannon’s H (structural specificity) across the entire plant community, plotted as a function of log-transformed absolute endophyte read abundance and relativized by the null model. For phylogenetic specificity, differences between observed and null host specificities were divided by the standard deviation of the null model to account for decreasing variance relationships (see Methods).</sup></sub>
 
+### How to use `lotus`
 ```
 # Install lotus
 devtools::install_github("austenapigo/lotus")
 ```
 
 #### Important notes:
--The community matrix is organized with hosts populating the rows, while symbionts populate the columns.
-- The example dataset used here is the same as in our pre-print. Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., host_species_name.1). If you do not have a spatially-explicit sampling desing, you could simply label host conspecifics with similar identifiers (.1, .2, .3, etc.) to calculate beta-specificity. Please make sure taxonomic labels before the periods match. These labels can vary depending on your questions and taxonomic-level of interest. For example, you might be interested in the beta-specificity of symbionts to a taxonomic family of hosts (see discussion in our pre-print that addresses this) and might want to label hosts as Pinaceae.1, Pinaceae.2, Pinaceae.3, etc. 
-3. These functions have a 'trim' parameter within them to remove symbionts that are either singletons (a symbiont with a read abundance of one) or appear in only one host sample. This is a logical statement where TRUE removes these symbionts from analysis. We think they should be removed because it's unclear how one could relativize either of those scenarios to a null model. A symbiont with a read abundance of one or that appears in only one sample will always have the highest host specificity value.  
-4. More positive values always indicate higher host specificity and a narrower symbiont niche. We've negated (multipled by -1) structural and phylogenetic specificity to do this. 
-6. Metrics are calculated per symbiont. In the case of 'deviance'-related functions, these per symbiont metrics are averaged per host sample. 
-7. Host specificity is calculated for a symbiont across the entire community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
+1. The community matrix for analysis should be organized with hosts populating the rows, while symbionts populate the columns.
+2. The example dataset used here is the same as in our pre-print. Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., host_species_name.1). If you do not have a spatially-explicit sampling desing, you could simply label host conspecifics with similar identifiers (.1, .2, .3, etc.) to calculate beta-specificity. Please make sure taxonomic labels before the periods match. These labels can vary depending on your questions and taxonomic-level of interest. For example, you might be interested in the beta-specificity of symbionts to a taxonomic family of hosts (see discussion in our pre-print that addresses this) and might want to label hosts as Pinaceae.1, Pinaceae.2, Pinaceae.3, etc. 
+3. Host specificity is calculated for a symbiont across the entire community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
+4. More positive values always indicate a narrower symbiont niche and thus higher host specificity. We've negated (multipled by -1) structural and phylogenetic specificity to do this. In the case of 'deviance'-related functions, these per symbiont metrics are averaged per host sample and report standard error of the mean in host specificity. 
+5. `null`- and `deviance`-related functions are calculated with log base 2 transformed read abundance. 
+6. `null`-related functions accept `randomization.methods` from the bipartite::nullmodel() function. If you wish to use other randomization functions, like vegan::permatswap(), just make sure your output is saved a list and you can supply that output to any `deviance`-related function. 
+7. `deviance`- and `plot`- related function use a second-order polynomial null boundary generated from the host specifities of randomized communities to calculate deviance. 
+5. `lotus` functions have a 'trim' parameter within them to remove symbionts that are either singletons (a symbiont with a read abundance of one) or appear in only one host sample. This is a logical statement where TRUE removes these symbionts from analysis. We think they should be removed because it's unclear how one could relativize either of those scenarios to a null model. A symbiont with a read abundance of one or that appears in only one sample will always have the highest host specificity value. 
+6. `lotus` functions have a 'notify' parameter within them to tell you which iteration the for() loop is on. 
 
 ### R Functions
 + Structural Specificity
-    + `structural.specificity`: calculates 
-    + `null.structural`
-    + `deviance.structural`
-    + `plot.structural` 
+    + `structural.specificity`: calculates host richness (the number of hosts a symbionts occupies) or Shannon’s H diversity index (Shannon and Weaver 1948) to quantify symbiont presence and evenness among hosts with the ‘diversity’ function in the vegan package (Oksanen et al. 2019).
+    + `null.structural`: generates a null model by randomizing the community matrix and calculating structural specificity per symbiont within each randomized community.
+    + `deviance.structural`: calculates the deviance in observed structural specificity from the null expectation per symbiont per sample.
+    + `plot.structural`: plots null and observed structural specificities per symbiont as a function of symbiont read abundance.
 
++ Network Specificity
+    + `network.specificity`: calculates the Resource Range Index or Paired Difference Index to quantify the 'strength' of host-symbiont interactions by accounting for all potential hosts a symbiont could occupy in a host community. 
+    + `null.network`: generates a null model by randomizing the community matrix and calculating network specificity per symbiont within each randomized community
+    + `deviance.network`: calculates the deviance in observed network specificity from the null expectation per symbiont per sample
+    + `plot.network`: plots null and observed network specificities per symbiont as a function of symbiont read abundance.
+    
 + Phylogenetic Specificity
-    + `phylogenetic.specificity`
-    + `null.phylogenetic`
-    + `deviance.phylogenetic`
-    + `plot.phylogenetic`
+    + `phylogenetic.specificity`: calculates as the Mean Pairwise Phylogenetic Distance (Webb 2000) to quantify symbiont presence and evenness as a function of plant phylogenetic breadth with the ‘mpd’ function in the picante package (Kembel et al. 2010). You must supply a phylogenetic distance matrix (see `cophenetic` in the `stats` package). 
+    + `null.phylogenetic`: generates a null model by randomizing the community matrix and calculating phylogenetic specificity per symbiont within each randomized community
+    + `deviance.phylogenetic`: calculates the deviance in observed phylogenetic specificity from the null expectation per symbiont per sample
+    + `plot.phylogenetic`: plots null and observed phylogenetic specificities per symbiont as a function of symbiont read abundance.
 
 + Beta-Specificity
-    + beta.specificity
-    + null.beta
-    + deviance.beta
-    + plot.beta 
+    + `beta.specificity`: calculates the Sørensen (Diserud and Odegaard 2007) or Morisita-Horn (Chao et al. 2008) Multiple-Assemblage Overlap Measure to quantify endophyte interaction consistency to a given host group (species, genus, family, etc.) across space or time
+    + `null.beta`: generates a null model by randomizing the community matrix and calculating beta-specificity per symbiont within each randomized community
+    + `deviance.beta`: calculates the deviance in observed beta-specificity from the null expectation per symbiont per sample
+    + `plot.beta`: plots null and observed beta-specificities per symbiont as a function of symbiont read abundance.
     
-We think the metrics we propose can be leveraged in many different systems and have advantages over commonly-used multivariate techniques (e.g., ordination). We hope you find them useful! An alternative approach to multivariate methods that quantify host specificity per endophyte community are univariate metrics that quantify host specificity per endophyte species or molecular taxonomic unit (Apigo and Oono 2018). Multivariate methods may unintentionally neglect different types of host specificity that have long been recognized to exist on a continuum of phylogenetic, spatial and temporal scales (Poulin and Mouillot 2003, Krasnov et al. 2011, Poulin et al. 2011). For example, an individual endophyte could be restricted in the number of plants they associate with whereas others could be restricted in the phylogenetic or geographic breadth of available plants (Supplementary Figure 3). 
-
-#### Have Questions or Suggestions? 
-Please create an issue or feel free to email me directly (aapigo@ucsb.edu). 
+ ### Basic Workflow
+ ```
+ # Calculate uncorrected host specificity 
+ 
+ # Conduct exploratory analysis to better understand attributes of your data
+ 
+ # Randomize your community matrix to generate a null model boundary (null or observed host specificity as a function of log-symbiont read abundance)
+ 
+ # Calculate the deviance of observed host specificity from the null boundary and get averages per host sample 
+ 
+ ```
+   
+***We think the metrics we propose can be leveraged in many different systems and we hope you find them useful! We'd be appreciate of constructive feedback before we push this R package to the CRAN. Please create an issue or feel free to email me directly (aapigo@ucsb.edu) if you have questions or suggestions.***
 
 #### References 
- Multiple-assemblage overlap measures 
-Described in Chao et al. 2008 and Jost et al. 
-
- Structural specificity was calculated as host richness (the number of plants an endophyte occupies) or Shannon’s H diversity index (Shannon and Weaver 1948) to account for endophyte presence and evenness with the ‘diversity’ function in the vegan package (Oksanen et al. 2019). Phylogenetic specificity was calculated as the Mean Pairwise Phylogenetic Distance (Webb 2000) to quantify endophyte presence and evenness as a function of plant phylogenetic breadth with the ‘mpd’ function in the picante package (Kembel et al. 2010). An ultrametric phylogenetic tree was pruned from a backbone phylogeny of 74 533 vascular plant species representing all extant vascular plant families in North America with the ‘phylo.maker’ function in the V.PhyloMaker package (Qian and Jin 2016; Supplementary Figure 4). Beta-specificity was calculated as the Sørensen (Diserud and Odegaard 2007) or Morisita-Horn (Chao et al. 2008) Multiple-Assemblage Overlap Measure to quantify endophyte interaction consistency across five sampling quadrats with an R script that the authors wrote (see Data Accessibility section). Structural and phylogenetic specificity were negated (i.e., multiplied by negative one) such that a narrower endophyte niche among plants yielded a more positive host specificity value. 
-
-We quantified structural and beta-specificity to test whether abundant plant species harbored more host-specific endophytes that either occupied fewer plants (structural specificity) or were more consistent in their interactions and occupied the same plant species across the landscape (beta-specificity). We quantified phylogenetic specificity to understand how endophytes varied in the evolutionary breadth of plants they occupied and performed analyses at varying plant phylogenetic scales (plant species, plant family, plant clade). 
 
 
- 
-Rare endophytes have been shown to display unique ecological signatures distinct from abundant taxa (Oono et al. 2017, Zhang et al. 2018b). To account for this, studies typically separate rare and abundant taxa at a variety of relative abundance thresholds (e.g., 0.1% - 1%; Logares et al. 2014, Zhang et al. 2018a, Xue et al. 2018) to analyze these groups separately. Instead of relative abundance cut-offs to partition endophyte communities, 
 
 First, we regressed observed endophyte structural, phylogenetic and beta-specificity as a function of log-transformed endophyte read abundance and calculated Pearson r correlation coefficients (Supplementary Figure 5) to assess whether observed endophyte communities displayed negative endophyte abundance-host specificity relationships (i.e., analogous to positive abundance-occupancy relationships). Second, we randomized communities and calculated each host specificity metric per endophyte ASV within each community randomization. Host specificities per endophyte ASV were regressed as a function of log-transformed endophyte abundance to define a null model expectation to compare observed host specificities with. Lastly, we relativized host specificity values per endophyte ASV by calculating the difference between an endophyte’s observed host specificity to the null model expectation for an endophyte of that given read abundance within an endophyte abundance-host specificity model (further description in Figure 1). We also tested whether the averaged host specificity value of the observed community was statistically different from the mean host specificity of randomized communities with a one-sample t-test (Supplementary Figure 6) to confirm that the observed community deviated from random structure and host-specific patterns did not occur due to random chance. In addition to endophyte singletons, we excluded any endophyte that only appeared in one sample from our analyses, regardless of read abundance, because host specificity from an observation of one will always result in the highest host specificity value and cannot be relevatized in a meaningful way to a null expectation. 
 
