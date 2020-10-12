@@ -2,6 +2,8 @@
 
 #### This packaged is named `lotus` in recognition of the first Black woman nominee for Vice President of the United States on a major party ticket, Kamala (meaning 'lotus') Devi Harris</b>. 
 
+### Introduction 
+
 High-throughput sequencing has accelerated the rate at which we can characterize host-associated microbial communities and sequencing-based datasets are ever accumulating. However, often times we have little to no information about the ecological or evolutionary context for many of these pairwise interactions. How should we try to make sense of these datasets rich with information about composition and interaction frequency, but (usually) without much else? 
 
 In our most recent pre-print (Apigo and Oono 202X; _____), we quantified host specificity with a novel class of metrics to test hypotheses that integrate information about the endophyte lifestyle and features of the plant community that seek to understand general mechanisms that produce host-specific relationships. 
@@ -17,27 +19,27 @@ For each of these metrics, a narrower host breadth indicates higher host specifi
 
 Host specificity analyses may be particularly vulnerable to biased inferences because read abundant is often 
 
-Important notes:
+#### Important notes:
 1. hosts are rows; symbionts are columns
 2. This dataset has host plants as rows labeled by their sampling origin (quadrat, transect, etc.; .1 = quadrat 1) and fungal symbionts as columns. If you do have a spatially-explicit sampling desing, you could simply label host conspecifics (or another taxonomic level) with different identifiers (.1, .2, .3, etc.). 
 3. singletons removed
 4. symbionts that only appeared once in a sample were removed (noise parameter) 
 5. For all metrics, more positive values = higher host specificity. 
 
-Host Specificity Metrics 
-1. Structural Specificity
+### Host Specificity Metrics 
++ Structural Specificity
  + structural.specificity
  + null.structural
  + deviance.structural
  + plot.structural 
 
-2. Phylogenetic Specificity
++ Phylogenetic Specificity
  + phylogenetic.specificity
  + null.phylogenetic
  + deviance.phylogenetic
  + plot.phylogenetic 
 
-3. Beta-Specificity
++ Beta-Specificity
  + beta.specificity
  + null.beta
  + deviance.beta
