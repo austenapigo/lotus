@@ -4,9 +4,9 @@
 
 ### Introduction 
 
-High-throughput sequencing has accelerated the rate at which we can characterize host-associated microbiomes and sequencing-based datasets are ever-accumulating. However, often times we have little to no information about the ecological or evolutionary context for many of these pairwise interactions. How should we try to make sense of these datasets rich with information about composition (i.e., taxonomy) and interaction frequency (i.e., read counts between species), but (usually) without much else? 
+High-throughput sequencing has accelerated the rate at which we can characterize host-associated microbiomes and sequencing-based datasets are ever-accumulating. However, often times we have little to no information about the ecological or evolutionary context for many of these pairwise interactions. How should we try to make sense of these datasets rich with information about composition (i.e., taxonomy) and interaction frequency (i.e., read counts) but (usually) not much else? 
 
-We propose that host specificity, or the degree to which microbial symbionts are restricted within a host community, provides a reasonable first step to generate ecological and evolutionary information about the symbiont niche. In our most recent pre-print (Apigo and Oono 202X; _____), we explore how host specificity can provide insight to the relationships between plants and their cryptic fungal symbionts and use these metrics to test hypotheses that seek to identify general mechanisms that can predict host-specific interactions. We think the metrics we use can be leveraged across many systems and have advantages over commonly-used multivariate techniques (e.g., ordination). 
+We propose that host specificity, or the degree to which microbial symbionts are restricted within a host community, provides a reasonable first step to generate ecological and evolutionary information about the symbiont niche. In our most recent pre-print [Apigo and Oono 202X](_____), we explore how host specificity can provide insight to the relationships between plants and their cryptic fungal symbionts and use these metrics to test hypotheses that seek to identify general mechanisms that can predict host-specific interactions. We think the metrics we use can be leveraged across many systems and have advantages over commonly-used multivariate techniques (e.g., ordination). 
 
 **The purpose of this package is to provide functions that:**
 1. **Quantify host specificity metrics per symbiont**
@@ -14,14 +14,18 @@ We propose that host specificity, or the degree to which microbial symbionts are
 3. **Visualize null models to observed host specificities**
 
 We've modified a framework proposed from Poulin 2011 to quantify host specificity that consider how host specificity can vary in a number of different ways: 
-- ***Structural specificity*** quantifies the most fundamental ‘dimension’ of host speci- ficity, the sum and evenness of abundance among hosts. This metric asks: how many hosts does a given symbiont occupy? 
-- ***Network specificity*** quantifies the 'strength' of host-symbiont interactions by accounting for all potential hosts a symbiont could occupy in a host community. This metric asks: how host-specific is a given symbiont when weighted by all potential interactions that could occur? 
-- ***Phylogenetic specificity (evolutionary relationships)
-- ***Beta-specificity*** quantifies host specificity relative spatial or temporal turnover, quantifying this asks: How consistent is a given symbiont to a host over that host's geographical range (e.g., across quadrats or transects) or through time (e.g., sampling periods)? More generally, beta-specificity can also be used to quantify how host-specific a symbiont is to a given species. 
-  
-For each of these metrics, a narrower host breadth indicates higher host specificity. Structural specificity quantifies the most fundamental ‘dimension’ of host specificity, the sum and evenness of abundance among hosts (Poulin et al. 2011). Network specificity quantifies the strength of plant-FFE interactions by accounting for all potential hosts a FFE could occupy in a plant community. Phylogenetic specificity quantifies host specificity relative to the phylogenetic scale of the plant hosts in a community, or the mean phylogenetic distance among occupied hosts (Webb et al. 2008). Structural, network and phylogenetic specificity quantify the degree of host specificity within a single locality, termed alpha-specificity (Fig. 1; Poulin et al. 2011). Analogous to alpha diversity (Whittaker 1972), these three host specificity metrics do not account for spatiotemporal variation of the interaction. Beta-specificity, however, quantifies the degree to which a given FFE displays consistent host specificity across a range of contexts. Each specificity metric has a presence-absence and abundance-weighted variant with higher values indicating higher host specificity. 
+- ***Structural specificity*** quantifies the most fundamental ‘dimension’ of host speci- ficity, the sum and evenness of abundance among hosts. This metric asks how many hosts does a given symbiont occupy? 
+- ***Network specificity*** quantifies the 'strength' of host-symbiont interactions by accounting for all potential hosts a symbiont could occupy in a host community. This metric asks how host-specific is a given symbiont when weighted by all potential interactions that could occur? 
+- ***Phylogenetic specificity*** quantifies host specificity relative to the phylogenetic scale of the hosts in a community. This metric asks what is the phylogenetic breadth of the hosts that a given symbiont occupies? 
+- ***Beta-specificity*** quantifies host specificity relative to host spatial or temporal scales. This metric asks: How consistent is a given symbiont to a host over that host's geographical range (e.g., across quadrats or transects) or through time (e.g., sampling periods)? More generally, beta-specificity cquantifies how host-specific a symbiont is to a given host species.   
+*For each of these metrics, a narrower host breadth indicates higher host specificity.*
 
 Host specificity analyses may be particularly vulnerable to biased inferences because read abundant is often 
+
+```
+# Install lotus
+devtools::install_github("austenapigo/lotus")
+```
 
 #### Important notes:
 1. hosts are rows; symbionts are columns
@@ -33,8 +37,8 @@ Host specificity analyses may be particularly vulnerable to biased inferences be
 
 ### Host Specificity Metrics 
 + Structural Specificity
-    + structural.specificity
-    + null.structural
+    + `structural.specificity`: calculates 
+    + `null.structural`
     + deviance.structural
     + plot.structural 
 
