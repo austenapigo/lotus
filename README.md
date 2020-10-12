@@ -2,7 +2,9 @@
 
 >This packaged is named `lotus` in recognition of the first Black and Asian woman to be nominated for Vice President of the United States on a major party ticket, Kamala (meaning 'lotus') Devi Harris. 
 
-![Lotus Figure](https://github.com/austenapigo/lotus/blob/master/lotus.png)
+<p align="center">
+  <img width="500" height="500" src="https://github.com/austenapigo/lotus/blob/master/lotus.png">
+</p>
 
 ### Introduction 
 
