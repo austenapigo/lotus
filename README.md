@@ -1,14 +1,14 @@
-# lotus package {R}
+# lotus package
 
 >This packaged is named `lotus` in recognition of the first Black and Asian woman to be nominated for Vice President of the United States on a major party ticket, Kamala (meaning 'lotus') Devi Harris. 
+
+![Lotus Figure](https://github.com/austenapigo/lotus/blob/master/lotus.tiff)
 
 ### Introduction 
 
 High-throughput sequencing has accelerated the rate at which we can characterize host-associated microbiomes and sequencing-based datasets are ever-accumulating. Yet often times we have little to no information about the ecological or evolutionary context for many of these pairwise interactions. How should we try to make sense of these datasets rich with information about composition (taxonomy) and interaction frequency (read counts) but usually not much else? 
 
 We propose that host specificity, or the degree to which microbial symbionts are restricted within a host community, provides a reasonable first step to generate ecological and evolutionary information about the symbiont niche. In our most recent pre-print [Apigo and Oono 202X](_____), (1) we explored how host specificity can provide insight to the cryptic elationships between plants and foliar fungal endophytes and (2) used these metrics to test hypotheses that sought to identify general mechanisms that explained host-specific interactions. 
-
-We think the metrics we propose can be leveraged across many different systems and have advantages over commonly-used multivariate techniques (e.g., ordination). We hope you find them useful! 
 
 **The purpose of this package is to provide functions that:**
 1. **Quantify host specificity metrics per symbiont**
@@ -17,22 +17,24 @@ We think the metrics we propose can be leveraged across many different systems a
 3. **Visualize null expectations to observed host specificities within occupancy-abundance models**
 
 We've modified a framework proposed from Poulin 2011 to quantify host specificity that consider how host specificity can vary in a number of different ways: 
-- ***Structural specificity*** quantifies the most fundamental ‘dimension’ of host speci- ficity, the sum and evenness of abundance among hosts. This metric asks how many hosts does a given symbiont occupy? 
-- ***Network specificity*** quantifies the 'strength' of host-symbiont interactions by accounting for all potential hosts a symbiont could occupy in a host community. This metric asks how host-specific is a given symbiont when weighted by all potential interactions that could occur? 
-- ***Phylogenetic specificity*** quantifies host specificity relative to the phylogenetic scale of the hosts in a community. This metric asks what is the phylogenetic breadth of the hosts that a given symbiont occupies? 
-- ***Beta-specificity*** quantifies host specificity relative to host spatial or temporal scales. This metric asks: How consistent is a given symbiont to a host over that host's geographical range (e.g., across quadrats or transects) or through time (e.g., sampling periods)? More generally, beta-specificity cquantifies how host-specific a symbiont is to a given host species.  
+- **Structural specificity** quantifies the most fundamental ‘dimension’ of host speci- ficity, the sum and evenness of abundance among hosts. This metric asks how many hosts does a given symbiont occupy? 
+- **Network specificity** quantifies the 'strength' of host-symbiont interactions by accounting for all potential hosts a symbiont could occupy in a host community. This metric asks how host-specific is a given symbiont when weighted by all potential interactions that could occur? 
+- **Phylogenetic specificity** quantifies host specificity relative to the phylogenetic scale of the hosts in a community. This metric asks what is the phylogenetic breadth of the hosts that a given symbiont occupies? 
+- **Beta-specificity** quantifies host specificity relative to host spatial or temporal scales. This metric asks: How consistent is a given symbiont to a host over that host's geographical range (e.g., across quadrats or transects) or through time (e.g., sampling periods)? More generally, beta-specificity cquantifies how host-specific a symbiont is to a given host species.  
 
-***For each of these metrics, a narrower symbiont niche indicates higher host specificity.*** 
+**For each of these metrics, a narrower symbiont niche indicates higher host specificity.**
 
 ![Host Specificity Figure](https://github.com/austenapigo/lotus/blob/master/specificity.png)
 
 <sub><sup> Host Specificity Figure. Conceptual diagram of host specificity metrics represented by relationships between plants and endophytes. Structural, phylogenetic and beta-specificity diagram depicting two endophytes (blue and grey shaded areas) occupying varying plant species (bryophyte, monilophyte, gymnosperm and angiosperm) across two sites (Sites A and B). Structural specificity (blue and grey shaded areas within solid lines) quantifies how endophytes vary in presence and evenness on hosts, the most fundamental feature of host-specific interactions. For example, Endophyte 1 (blue shade) occupies fewer plant species in Sites A and B (two plant species per site) relative to Endophyte 2 (four plant species in Site A and five hosts in Site B) and has higher structural specificity. Phylogenetic specificity (cladogram) quantifies host specificity in the context of plant evolutionary relatedness. Endophyte 1 occupies a phylogenetically narrower breadth of plant species in Sites A and B (gymnosperms only) relative to Endophyte 2 (angiosperm, bryophyte, gymnosperm and monilophyte) and has higher phylogenetic specificity. In contrast to structural and phylogenetic specificity, beta-specificity (arrow between Sites A and B) quantifies how endophytes vary in the consistency of their specificity to plant species by geography (Krasnov et al. 2011) or time (not depicted). Endophyte 1 occupies the same set of hosts in Sites A and B and has higher beta-specificity, whereas Endophyte 2 occupies a more variable set of plant species across Sites A and B.</sup></sub>
 
+### Null Models of Host Specificity 
 Host specificity analyses could be particularly vulnerable to biased ecological inferences by not accounting for relationships between host specificity and endophyte abundance. For example, rarer symbionts will always have a lower theoretical maximum of the number of plants they could occupy and are frequently categorized as more host-specific relative to more abundant symbionts. The relationship between an symbionts’s host specificity and its abundance is an extension of abundance-occupancy relationships, the widely documented biogeographic pattern in macroecology that predicts a positive relationship between a species abundance and its occurrence across sites (Gaston et al. 2000, Shade et al. 2018). If more abundant symbionts tend to occupy more hosts, there is expected to be a negative relationship between an symbiont’s abundance and its host specificity, or occupancy across plants.
 
 In our study, we found evidence for negative host specificity and symbiont abundance relationships. We compared empirical and null endophyte host specificities to account for bias that occurs between endophyte read abundance and observed host specificity (see Supplementary Figure 5 in our pre-print). Null models are often used in community ecology to test the null hypothesis that observed ecological structure is no different from a randomized structure (Gotelli and Graves 1996, Gotelli 2001, Ulrich et al. 2012). Here, the aim of null models is to shuffle endophyte read abundances among host samples to produce randomized distributions of host specificity. Observed host specificities were then relativized by the null expectation for an endophyte of that given read abundance to account for the propensity of rarer endophytes to occupy fewer plants (see Figure 1 and methods in our pre-print for more detailed explanations). 
 
 ![Null Model Figure](https://github.com/austenapigo/lotus/blob/master/null_model.png)
+
 Figure 1. Conceptual diagram of host specificity metrics relativized by null models. (A-B) Each shape represents an individual endophyte. Shapes vertically positioned above each other have equal read abundance. Shapes positioned horizontal to each other occupy the same number of plants or have equal uncorrected host specificity values. The null expectation of the relationship between host specificity and read abundance is represented by a theoretical 1:1 relationship based on occupancy-abundance relationships (abundant endophytes likely occupy more plants). Asterisks represent the deviance in observed host specificity from a null model and are equal for all shapes. We describe three scenarios that highlight how null models can account for read abundance variation in host specificity analysis. 
 
 Scenario 1: Endophytes with different read abundances occupy the same number of plants and thus have the same uncorrected host specificities (green triangle vs. blue circle). The green triangle endophyte occurs in more plants than expected for a rarer endophyte, while the blue triangle occurs in fewer plants than expected for a more abundant endophyte. After relativizing their host specificities to the null model, the green triangle endophyte has lower host specificity and the blue circle has higher host specificity. 
@@ -49,14 +51,14 @@ devtools::install_github("austenapigo/lotus")
 ```
 
 #### Important notes:
-1. The community matrix is organized with hosts populating the rows, while symbionts populate the columns.
-2. The example dataset used here is the same as in our pre-print. Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., host_species_name.1). If you do have a spatially-explicit sampling desing, you could simply label host conspecifics with these identifiers (.1, .2, .3, etc.) to calculate beta-specificity. Please make sure taxonomic labels before the periods match. These labels can vary depending on your questions and taxonomic-level of interest. For example, you might be interested in the beta-specificity of symbionts to a taxonomic family of hosts (see discussion in our pre-print that addresses this). 
+-The community matrix is organized with hosts populating the rows, while symbionts populate the columns.
+- The example dataset used here is the same as in our pre-print. Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., host_species_name.1). If you do not have a spatially-explicit sampling desing, you could simply label host conspecifics with similar identifiers (.1, .2, .3, etc.) to calculate beta-specificity. Please make sure taxonomic labels before the periods match. These labels can vary depending on your questions and taxonomic-level of interest. For example, you might be interested in the beta-specificity of symbionts to a taxonomic family of hosts (see discussion in our pre-print that addresses this) and might want to label hosts as Pinaceae.1, Pinaceae.2, Pinaceae.3, etc. 
 3. These functions have a 'trim' parameter within them to remove symbionts that are either singletons (a symbiont with a read abundance of one) or appear in only one host sample. This is a logical statement where TRUE removes these symbionts from analysis. We think they should be removed because it's unclear how one could relativize either of those scenarios to a null model. A symbiont with a read abundance of one or that appears in only one sample will always have the highest host specificity value.  
 4. More positive values always indicate higher host specificity and a narrower symbiont niche. We've negated (multipled by -1) structural and phylogenetic specificity to do this. 
 6. Metrics are calculated per symbiont. In the case of 'deviance'-related functions, these per symbiont metrics are averaged per host sample. 
 7. Host specificity is calculated for a symbiont across the entire community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
 
-### Host Specificity Metrics 
+### R Functions
 + Structural Specificity
     + `structural.specificity`: calculates 
     + `null.structural`
@@ -75,10 +77,10 @@ devtools::install_github("austenapigo/lotus")
     + deviance.beta
     + plot.beta 
     
-. An alternative approach to multivariate methods that quantify host specificity per endophyte community are univariate metrics that quantify host specificity per endophyte species or molecular taxonomic unit (Apigo and Oono 2018). Multivariate methods may unintentionally neglect different types of host specificity that have long been recognized to exist on a continuum of phylogenetic, spatial and temporal scales (Poulin and Mouillot 2003, Krasnov et al. 2011, Poulin et al. 2011). For example, an individual endophyte could be restricted in the number of plants they associate with whereas others could be restricted in the phylogenetic or geographic breadth of available plants (Supplementary Figure 3). 
+We think the metrics we propose can be leveraged in many different systems and have advantages over commonly-used multivariate techniques (e.g., ordination). We hope you find them useful! An alternative approach to multivariate methods that quantify host specificity per endophyte community are univariate metrics that quantify host specificity per endophyte species or molecular taxonomic unit (Apigo and Oono 2018). Multivariate methods may unintentionally neglect different types of host specificity that have long been recognized to exist on a continuum of phylogenetic, spatial and temporal scales (Poulin and Mouillot 2003, Krasnov et al. 2011, Poulin et al. 2011). For example, an individual endophyte could be restricted in the number of plants they associate with whereas others could be restricted in the phylogenetic or geographic breadth of available plants (Supplementary Figure 3). 
 
-#### Have Questions, Comments or Suggestions? 
-Please create an issue or feel free to email me directly (aapigo@ucsb.edu). I would like this package to be useful to others, so please let me know what worked well for you or what didn't. 
+#### Have Questions or Suggestions? 
+Please create an issue or feel free to email me directly (aapigo@ucsb.edu). 
 
 #### References 
  Multiple-assemblage overlap measures 
