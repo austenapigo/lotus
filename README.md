@@ -1,4 +1,4 @@
-# Lotus Package {R}
+# lotus package {R}
 
 <i> This packaged is named `lotus` in honor and recognition of the first Black woman nominee for Vice President on a major party ticket, Kamala (meaning 'lotus' in Sanskrit) Devi Harris. </i> 
 
