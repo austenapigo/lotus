@@ -2,23 +2,21 @@
 
 >This packaged is named `lotus` in recognition of Kamala (meaning 'lotus') Devi Harris, a longtime champion of LBGTQ+ rights and the first Black and Asian female nominee for Vice President of the United States on a major party ticket. 
 
-<p align="center">
-  <img width="500" height="500" src="https://github.com/austenapigo/lotus/blob/master/lotus.png">
-</p>
+<img align="right" width="300" height="300" src="https://github.com/austenapigo/lotus/blob/master/lotus.png">
 
-### Introduction 
+### Why use `lotus`? 
 
 High-throughput sequencing has accelerated the rate at which we can characterize host-associated microbiomes and sequencing-based datasets are ever-accumulating. Yet often times we have little to no information about the ecological or evolutionary context for many of these pairwise interactions. How should we try to make sense of these datasets rich with information about composition (taxonomy) and interaction frequency (read counts) but usually not much else? 
 
 We propose that host specificity, or the degree to which microbial symbionts are restricted within a host community, provides a reasonable first step to generate ecological and evolutionary information about the symbiont niche. In our most recent pre-print [Apigo and Oono 202X](_____), (1) we explored how host specificity can provide insight to the cryptic elationships between plants and foliar fungal endophytes and (2) used these metrics to test hypotheses that sought to identify general mechanisms that explained host-specific interactions. 
 
-**The purpose of this package is to provide functions that:**
+**We think these metrics can be leveraged in many different systems andt he purpose of `lotus` is to provide functions that:**
 1. **Quantify host specificity metrics per symbiont**
 2. **Relavitize these metrics to null host specificity models to account for variation in symbiont read abundance**
 3. **Visualize null expectations to observed host specificities within occupancy-abundance models**
 
 We've modified a framework proposed from Poulin 2011 to quantify host specificity that consider how host specificity can vary in a number of different ways: 
-- **Structural specificity** quantifies the most fundamental ‘dimension’ of host speci- ficity, the sum and evenness of abundance among hosts. This metric asks how many hosts does a given symbiont occupy? 
+- **Structural specificity** quantifies the most fundamental perspective of host specificity, a symbiont's presence and evenness of abundance among hosts. For example, this metric asks how many hosts does a given symbiont occupy? 
 - **Network specificity** quantifies the 'strength' of host-symbiont interactions by accounting for all potential hosts a symbiont could occupy in a host community. This metric asks how host-specific is a given symbiont when weighted by all potential interactions that could occur? 
 - **Phylogenetic specificity** quantifies host specificity relative to the phylogenetic scale of the hosts in a community. This metric asks what is the phylogenetic breadth of the hosts that a given symbiont occupies? 
 - **Beta-specificity** quantifies host specificity relative to host spatial or temporal scales. This metric asks: How consistent is a given symbiont to a host over that host's geographical range (e.g., across quadrats or transects) or through time (e.g., sampling periods)? More generally, beta-specificity cquantifies how host-specific a symbiont is to a given host species.  
@@ -93,6 +91,9 @@ devtools::install_github("austenapigo/lotus")
  # Calculate uncorrected host specificity 
  hs.object <- structural.specificity(data = x, abundance.weighted = TRUE, trim = TRUE) 
  
+ # Explore data and identify whether negative or variance-decreasing relationships exist between host specificity and symbiont read abundance
+ 
+ 
  # Randomize your community matrix to generate a null model boundary
  null.structural.object <- null.structural(x, iterations = 10, abundance.weighted = TRUE, randomization.method = "shuffle.web", notify = TRUE)
  
@@ -102,7 +103,9 @@ deviance.structural(data = x, randomized = null.structural.object, abundance.wei
  # Plot null or observed host specificity as a function of log-symbiont read abundance
  plot.structural(data = x, randomized = null.structural.object, abundance.weighted = TRUE, trim = FALSE, notify = TRUE) 
  ```
-   
-**We think these metrics can be leveraged in many different systems and hope you find them useful! We'd be appreciative of constructive feedback before we push this R package to CRAN. Please create an issue or feel free to email me directly (aapigo@ucsb.edu) if you have questions or suggestions.**
+
+### Why not use multivariate techniques to answer this question? 
+
+We'd be appreciative of constructive feedback before we push this R package to CRAN. Please create an issue or feel free to email me directly (aapigo@ucsb.edu) if you have questions or suggestions.
 
 #### References 
