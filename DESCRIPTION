@@ -1,11 +1,20 @@
 Package: lotus
-Type: Package
-Title: host specificity script
-Maintainer: Austen Apigo <aapigo@ucsb.edu>
-Description: host specificity
+Title: Host Specificity Metrics
+Description: Host specificity metrics 
 Date: 2020-10
-Version: 0.1.0
-Authors@R: person("Austen", "Apigo", role = c("aut", "cre"), email = "a.thanh.bui@gmail.com")
-License: What license is it under?
-Encoding: UTF-8
+Version: 0.9.0
+Authors@R: c(person("Austen", "Apigo", role = c("aut", "cre"),
+    email = "aapigo@ucsb.edu", comment = c(ORCID = "0000-0002-2525-0394")),
+    person("Ryoko", "Oono", role = "aut",
+    email = "ryoko.oono@lifesci.ucsb.edu"))
+Depends:
+    R (>= 3.0)
+License: MIT + file LICENSE
 LazyData: true
+Suggests:
+    vegan
+    bipartite
+    picante
+    ggplot2
+URL: https://github.com/austenapigo/lotus
+BugReports: https://github.com/austenapigo/lotus/issues
