@@ -30,8 +30,6 @@ structural.specificity <- function(data = x, abundance.weighted = TRUE, trim = T
 }
 
 structural.specificity(data = x, abundance.weighted = TRUE)
-
-roxygen2::roxygenise()
 ```
 
 `null.structural`: calculate null models for beta-specificity 
