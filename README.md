@@ -1,6 +1,6 @@
 # lotus package
 
->This packaged is named `lotus` in recognition of Kamala (meaning 'lotus') Devi Harris, a longtime champion of LBGTQ+ rights and the first Black and Asian female nominee for Vice President of the United States on a major party ticket.
+>This package is named `lotus` in recognition of Kamala (meaning 'lotus') Devi Harris, a longtime champion of LBGTQ+ rights and the first Black and Asian female nominee for Vice President of the United States on a major party ticket.
 
 <img align="right" width="350" height="350" src="https://github.com/austenapigo/lotus/blob/master/lotus.png">
 
