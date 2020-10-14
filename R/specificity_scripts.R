@@ -1,16 +1,16 @@
 #############################
 # Read in pacakges and data #
 #############################
-library(tidyverse)
-library(ggpmisc)
-library(picante)
-library(vegan)
-library(bipartite)
-
-# Read in data 
-dat <- read.csv("example_dat.csv", row.names = 1, header = TRUE)
-quad.rarefied <- read.csv("quad_rarefied.csv", row.names = 1, header = TRUE)
-utree <- read.tree("utree.txt")
+# library(tidyverse)
+# library(ggpmisc)
+# library(picante)
+# library(vegan)
+# library(bipartite)
+# 
+# # Read in data 
+# dat <- read.csv("example_dat.csv", row.names = 1, header = TRUE)
+# quad.rarefied <- read.csv("quad_rarefied.csv", row.names = 1, header = TRUE)
+# utree <- read.tree("utree.txt")
 
 #############################################################
 # structural.specificity`: calculate structural specificity #
@@ -33,10 +33,10 @@ structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
   return(structural.dat)
 }
 
-structural.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
-structural.object
-mean(structural.object$Structural.Specificity)
-# -0.7925232 matches source code
+# structural.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+# structural.object
+# mean(structural.object$Structural.Specificity)
+# # -0.7925232 matches source code
 
 #######################################################################
 # `null.structural`: calculate null models for structural specificity #
@@ -93,11 +93,11 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
   return(data.frame(null.dats))
 }
 
-# Generate randomized communities for null model analysis 
-null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
-null.structural.object
-mean(null.structural.object$Structural.Specificity)
-# I find that I get slightly different answers: -0.6402127 vs. -0.6407677 when run in original project even with set.seed... 
+# # Generate randomized communities for null model analysis 
+# null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+# null.structural.object
+# mean(null.structural.object$Structural.Specificity)
+# # I find that I get slightly different answers: -0.6402127 vs. -0.6407677 when run in original project even with set.seed... 
 
 ###########################################################################
 # `deviance.structural`: calculate the deviance in structural specificity #
@@ -189,13 +189,13 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
     return(structural.plots)
 }
 
-structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, trim = TRUE, notify = TRUE)
-structural.dev
-structural.dev[[1]]
-structural.dev[[2]]
-structural.dev[[81]]
-mean(structural.dev[[1]]$Mean.Deviance)
-# -0.9141502 vs. -0.9135079
+# structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, trim = TRUE, notify = TRUE)
+# structural.dev
+# structural.dev[[1]]
+# structural.dev[[2]]
+# structural.dev[[81]]
+# mean(structural.dev[[1]]$Mean.Deviance)
+# # -0.9141502 vs. -0.9135079
 
 ##################################################
 # `beta.specificity`: calculate beta-specificity #
@@ -258,9 +258,9 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
   return(beta.dat)
 }
 
-beta.object <- beta.specificity(dat, index = "sorensen")
-beta.object
-mean(beta.object$Similarity.Index)
+# beta.object <- beta.specificity(dat, index = "sorensen")
+# beta.object
+# mean(beta.object$Similarity.Index)
 
 ###########################################################
 # `null.beta`: calculate null models for beta-specificity #
@@ -311,9 +311,10 @@ null.beta <- function(x, iterations = 100, index = "morisita.horn", randomizatio
   # Read out data frame 
   return(data.frame(null.dats))
 }
-# Generate randomized communities for null model analysis 
-null.beta.object <- null.beta(dat, iterations = 10, randomization.method = "shuffle.web", index = "morisita.horn", notify = TRUE)
-null.beta.object
+
+# # Generate randomized communities for null model analysis 
+# null.beta.object <- null.beta(dat, iterations = 10, randomization.method = "shuffle.web", index = "morisita.horn", notify = TRUE)
+# null.beta.object
 
 ###############################################################
 # `deviance.beta`: calculate the deviance in beta-specificity #
@@ -398,10 +399,11 @@ deviance.beta <- function(data = x, randomized = null.object, index = "sorensen"
   return(beta.plots)
 }
 
-beta.dev <- deviance.beta(data = dat, randomized = null.beta.object, index = "sorensen", trim = TRUE, notify = TRUE)
-beta.dev
-beta.dev[[1]]
-beta.dev[[2]]
-beta.dev[[81]]
-mean(structural.dev[[1]]$Mean.Deviance)
-```
+# beta.dev <- deviance.beta(data = dat, randomized = null.beta.object, index = "sorensen", trim = TRUE, notify = TRUE)
+# beta.dev
+# beta.dev[[1]]
+# beta.dev[[2]]
+# beta.dev[[81]]
+# mean(structural.dev[[1]]$Mean.Deviance)
+# 
+# install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
