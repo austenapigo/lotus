@@ -49,6 +49,14 @@ structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #######################################################################
 # `null.structural`: calculate null models for structural specificity #
 #######################################################################
+#' calculate null models for structural specificity
+#'
+#' @param abundance.weighted
+#'
+#' @return A data frame. 
+#' @export
+#'
+#' @examples
 null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE) {
   # Set seed
   set.seed(123)
@@ -110,6 +118,14 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
 ###########################################################################
 # `deviance.structural`: calculate the deviance in structural specificity #
 ###########################################################################
+#'  calculate the deviance in structural specificity
+#'
+#' @param abundance.weighted
+#'
+#' @return A data frame. 
+#' @export
+#'
+#' @examples
 deviance.structural <- function(x, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE) {
   # Make holding vectors 
   structural.plots <- list()
@@ -208,6 +224,14 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
 ##################################################
 # `beta.specificity`: calculate beta-specificity #
 ##################################################
+#' calculate beta-specificity
+#'
+#' @param abundance.weighted
+#'
+#' @return A data frame. 
+#' @export
+#'
+#' @examples
 beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), trim = TRUE, notify = TRUE) {
   # Make holding vectors 
   output.vec <- rep()
@@ -273,6 +297,14 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
 ###########################################################
 # `null.beta`: calculate null models for beta-specificity #
 ###########################################################
+#' calculate null models for beta-specificity
+#'
+#' @param abundance.weighted
+#'
+#' @return A data frame. 
+#' @export
+#'
+#' @examples
 null.beta <- function(x, iterations = 100, index = "morisita.horn", randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), notify = TRUE) {
   # Set seed
   set.seed(123)
@@ -414,4 +446,4 @@ deviance.beta <- function(data = x, randomized = null.object, index = "sorensen"
 # beta.dev[[81]]
 # mean(structural.dev[[1]]$Mean.Deviance)
 # 
-# install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61", dependencies = TRUE)
+# install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
