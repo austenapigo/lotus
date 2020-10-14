@@ -10,7 +10,7 @@ Author: Austen Apigo [aut, cre],
   Pat Developer [aut],
   A. User [ctb]
 Maintainer: Austen Apigo <aapigo@ucsb.edu>
-Depends: R (>= 3.1.0), vegan, bipartite, picante, ggplot2
+Depends: vegan, bipartite, picante, ggplot2
 Suggests: MASS
 Description: Host Specificity Scripts
 License: GPL (>= 2)
