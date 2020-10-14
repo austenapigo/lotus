@@ -11,9 +11,6 @@ Depends:
     R (>= 3.0)
 License: file LICENSE
 LazyData: true
-<<<<<<< HEAD
-RoxygenNote: 7.1.1
-=======
 Suggests:
     vegan
     bipartite
@@ -21,4 +18,4 @@ Suggests:
     ggplot2
 URL: https://github.com/austenapigo/lotus
 BugReports: https://github.com/austenapigo/lotus/issues
->>>>>>> c2f1ea2ba5757977c4f37f725285c4b577b89c4e
+
