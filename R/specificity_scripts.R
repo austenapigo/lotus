@@ -15,6 +15,14 @@
 #############################################################
 # structural.specificity`: calculate structural specificity #
 #############################################################
+#' Calculate Structural Specificity
+#'
+#' @param abundance.weighted
+#'
+#' @return A data frame. 
+#' @export
+#'
+#' @examples
 structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
   # Calculate host richness or Shannon's H
   ifelse(abundance.weighted == TRUE, structural <- -1 * diversity(as.data.frame(t(x))), structural <- -1 * specnumber(as.data.frame(t(x))))
@@ -406,4 +414,4 @@ deviance.beta <- function(data = x, randomized = null.object, index = "sorensen"
 # beta.dev[[81]]
 # mean(structural.dev[[1]]$Mean.Deviance)
 # 
-# install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
+# install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61", dependencies = TRUE)
