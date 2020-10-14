@@ -13,7 +13,7 @@ quad.rarefied <- read.csv("quad_rarefied.csv", row.names = 1, header = TRUE)
 utree <- read.tree("utree.txt")
 
 #############################################################
-# structural.specificity`: Calculate Structural Specificity #
+# structural.specificity`: calculate structural specificity #
 #############################################################
 structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
   # Calculate host richness or Shannon's H
@@ -41,7 +41,7 @@ mean(structural.object$Structural.Specificity)
 #######################################################################
 # `null.structural`: calculate null models for structural specificity #
 #######################################################################
-null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", notify = TRUE) {
+null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE) {
   # Set seed
   set.seed(123)
   # Make 100 randomized communities
@@ -80,24 +80,27 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
   null.dats <- as.data.frame(do.call("rbind", null.dats))
   null.dats$Randomization <- as.factor(rep(1:iterations, each = ncol(x)))
   rownames(null.dats) <- NULL
-  # if calculating Shannon's H
-  ifelse(abundance.weighted == TRUE, 
-         # only consider symbionts with a Shannon's H greater than 0
-         null.data.frame <- subset(null.dats, null.dats$Structural.Specificity < 0), 
-         # otherwise, only consider symbionts with a host richness greater than 1 
-         null.data.frame <- subset(null.dats, null.dats$Structural.Specificity < -1))
+  # Trim noise
+  ifelse(trim == TRUE, 
+         # if calculating Shannon's H, 
+         ifelse(abundance.weighted == TRUE, 
+                # only consider symbionts with a Shannon's H greater than 0
+                null.dats <- subset(null.dats, null.dats$Structural.Specificity < 0), 
+                # otherwise, only consider symbionts with a host richness greater than 1 
+                null.dats <- subset(null.dats, null.dats$Structural.Specificity <-1)), 
+         null.dats <- null.dats) 
   # Read out data frame 
-  return(data.frame(null.data.frame))
+  return(data.frame(null.dats))
 }
 
 # Generate randomized communities for null model analysis 
-null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, notify = TRUE)
+null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
 null.structural.object
 mean(null.structural.object$Structural.Specificity)
 # I find that I get slightly different answers: -0.6402127 vs. -0.6407677 when run in original project even with set.seed... 
 
 ###########################################################################
-# `deviance.structural`: calculate the deviance in structural-specificity #
+# `deviance.structural`: calculate the deviance in structural specificity #
 ###########################################################################
 deviance.structural <- function(x, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE) {
   # Make holding vectors 
@@ -190,4 +193,215 @@ structural.dev <- deviance.structural(quad.rarefied, randomized = null.structura
 structural.dev
 structural.dev[[1]]
 structural.dev[[2]]
+structural.dev[[81]]
 mean(structural.dev[[1]]$Mean.Deviance)
+# -0.9141502 vs. -0.9135079
+
+##################################################
+# `beta.specificity`: calculate beta-specificity #
+##################################################
+beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), trim = TRUE, notify = TRUE) {
+  # Make holding vectors 
+  output.vec <- rep()
+  # For every column (symbionts)
+  for (j in 1:ncol(x)) {
+    # Match index to CqN value
+    #index = match.arg(index)
+    ifelse(index == "sorensen", q <- 0.000000001, ifelse(index == "horn", q <- 0.99999, ifelse(index == "morisita.horn", q <- 2, stop("invalid distance method") )))
+    # Subset each column
+    col <- x[j]
+    colnames(col)[1] <- "Symbiont.Abundance"
+    # Make a new row of metadata from the sample names
+    col$Sample <- row.names(col)
+    # Separate the sample names
+    col.sep <- col %>% separate(Sample, c("Host.Group", "Identifier"))
+    # Aggregate by Identifier
+    col.agg <- aggregate(col.sep[, 1] ~ Identifier, col.sep, sum)
+    colnames(col.agg)[2] <- "Identifier.Abundance"
+    # Aggregate by identifier
+    col.agg.sep <- aggregate(col.sep[, 1] ~ Host.Group, col.sep, sum)
+    # Remove Host.Group with zero
+    col.agg.sep <- subset(col.agg.sep, col.agg.sep[2] > 0)
+    # Filter by hosts that are present
+    col.sep <- col.sep[col.sep$Host.Group %in% col.agg.sep$Host.Group, ]
+    # Merge separated and aggregated by Identifier
+    col.merge <- merge(col.sep, col.agg, by = "Identifier")
+    # Calculate relative abundance per species per Identifier
+    col.merge$Rel.Abund <- ifelse(is.na(col.merge[, 2] / col.merge[, 4]), 0, col.merge[, 2] / col.merge[, 4])
+    # Set host species as factor
+    col.merge$Host.Group <- as.factor(col.merge$Host.Group)
+    # Calculate T = the number of sites (Identifiers)
+    T <- as.numeric(length(unique(col.merge[["Identifier"]])))
+    # Calculate CqN 
+    # Set holding vector
+    prod <- rep()
+    sos <- rep()
+      # For every symbiont
+      for(k in 1:length(levels(col.merge$Host.Group))) {
+        # Subset merged data frame by host group
+        sp.k <- subset(col.merge, Host.Group == levels(col.merge$Host.Group)[k])
+        # Calculate numerator
+        prod[k] <- ( sum(sp.k$Rel.Abund)^q) - ( sum(sp.k$Rel.Abund^q) )
+        # Calculate sum of squares
+        sos[k] <- sum(sp.k$Rel.Abund^q)
+      }
+    # Calculate index
+    output.vec[j] <- ( (1 / (T^q - T)) * (sum ( prod )) / ( (1/T) * (sum(sos)) ) )
+    ifelse(notify == TRUE, print(j), NaN)
+  }
+  # Make data frame
+  beta.dat <- data.frame(Symbiont = colnames(x), Similarity.Index = output.vec)
+  # Trim noise
+  ifelse(trim == TRUE, 
+         beta.dat <- subset(beta.dat, Similarity.Index > 0), 
+         beta.dat <- beta.dat)
+  return(beta.dat)
+}
+
+beta.object <- beta.specificity(dat, index = "sorensen")
+beta.object
+mean(beta.object$Similarity.Index)
+
+###########################################################
+# `null.beta`: calculate null models for beta-specificity #
+###########################################################
+null.beta <- function(x, iterations = 100, index = "morisita.horn", randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), notify = TRUE) {
+  # Set seed
+  set.seed(123)
+  # Make 100 randomized communities
+  randomization.method <- match.arg(randomization.method)
+  null.beta.specificity <- bipartite::nullmodel(x, N = iterations, method = randomization.method)
+  # Make holding list
+  null.dats <- list()
+  # Make holding vectors for Symbiont identifer, read abundance and beta.specificity metric
+  Symbiont <- rep()
+  Abundance <- rep()
+  beta.specificity <- rep()
+  # Calculate beta-specificity for null models
+  for (i in 1:length(null.beta.specificity)) {
+    # Call a randomized community
+    null <- null.beta.specificity[[i]]
+    # Add row and column names
+    rownames(null) <- rownames(x)
+    colnames(null) <- colnames(x)
+    # Make as a data frame
+    null <- as.data.frame(null)
+    # Calculate beta.specificity per Symbiont
+    for (j in 1:ncol(null)) {
+      # Pull Symbiont name
+      Symbiont[j] <- colnames(null)[j]
+      # Calculate total read abundance per Symbiont
+      Abundance[j] <- sum(null[,j])
+    }
+    # Calculate beta-specificity
+    Beta.Specificity <- beta.specificity(null, index = index, trim = FALSE, notify = FALSE)
+    null.temp <- data.frame(Symbiont, Abundance, Beta.Specificity)
+    null.dats[[i]] <- null.temp
+    ifelse(notify == TRUE, print(i), NaN)
+  }
+  # Total simulation data
+  null.dats.beta.specificity <- as.data.frame(do.call("rbind", null.dats))
+  null.dats.beta.specificity$Randomization <- as.factor(rep(1:iterations, each = ncol(x)))
+  rownames(null.dats.beta.specificity) <- NULL
+  # Trim noise
+  ifelse(trim == TRUE,
+         # only consider symbionts with a multiple-site overlap greater than 0
+         null.dats <- subset(null.dats.beta.specificity, null.dats.beta.specificity$Beta.Specificity > 0),
+         null.dats <- null.dats.beta.specificity)
+  # Read out data frame 
+  return(data.frame(null.dats))
+}
+# Generate randomized communities for null model analysis 
+null.beta.object <- null.beta(dat, iterations = 10, randomization.method = "shuffle.web", index = "morisita.horn", notify = TRUE)
+null.beta.object
+
+###############################################################
+# `deviance.beta`: calculate the deviance in beta-specificity #
+###############################################################
+deviance.beta <- function(data = x, randomized = null.object, index = "sorensen", trim = TRUE, notify = TRUE) {
+  # Make holding vectors 
+  beta.plots <- list()
+  mean.beta <- rep()
+  se.beta <- rep()
+  # For every host sample
+  for (i in 1:nrow(x)) {
+    # Subset a host
+    x.sub <- x[i, 1:dim(x)[2]]
+    # Remove Symbionts with abundance of zero
+    x.sub <- x.sub[ , colSums(x.sub) > 0]
+    # Save column names 
+    x.names <- colnames(x.sub)
+    # Filter entire community
+    x.input <- x[, colnames(x) %in% x.names]
+    # Remove rows and columns that sum to zero
+    x.input <- as.data.frame(x.input[rowSums(x.input) > 0, colSums(x.input) > 0])
+    # Calculate beta-specificity
+    Beta.Specificity <- beta.specificity(x.input, index = index, trim = FALSE, notify = FALSE)
+    # Make holding vectors
+    Symbiont <- rep()
+    Abundance <- rep()
+    # For every symbiont
+    for (j in 1:ncol(x.input)) {
+      # Pull Symbiont name
+      Symbiont[j] <- colnames(x.input)[j]
+      # Calculate total read abundance per Symbiont
+      Abundance[j] <- sum(x.input[,j])
+    }
+    # Make data frame
+    beta.specificity.dat <- data.frame(Symbiont, Abundance, Beta.Specificity)
+    # Remove noise
+    ifelse(trim == TRUE, 
+           beta.specificity.dat <- subset(beta.specificity.dat, Similarity.Index > 0), 
+           beta.specificity.dat <- beta.specificity.dat) 
+    # Plot null vs. empirical per sample
+    beta.plots[[i+1]] <- 
+      ggplot(beta.specificity.dat, aes(y = Similarity.Index, x = log(Abundance))) +
+      geom_point(data = randomized, aes(y = Similarity.Index, x = log(Abundance)), color = "blue", alpha = 0.1, show.legend = TRUE, size = 3) +
+      geom_point(aes(y = Similarity.Index, x = log(Abundance)), color = "red", alpha = 1, show.legend = TRUE, size = 3) +
+      geom_smooth(aes(y = Similarity.Index, x = log(Abundance)), color = "red", method = "lm", se = FALSE, lwd = 1, lty = "solid", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
+      geom_smooth(data = randomized, aes(y = Similarity.Index, x = log(Abundance)), color = "blue", method = "lm", se = FALSE, lwd = 1, lty = "solid", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
+      stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula=  y ~ x + I(x^2), label.x = "left", label.y = "top", color = "black", size = 5) + 
+      theme_bw() +
+      theme(
+        axis.text.x = element_text(size = 15, color = "black"), 
+        axis.text.y = element_text(size = 15, color = "black"),
+        axis.title.x = element_text(size = 15, margin = margin(t = 5, r = 0, b = 0, l = 0)), 
+        axis.title.y = element_text(size = 15, margin = margin(t = 0, r = 5, b = 0, l = 0), vjust = 0.5),
+        legend.title = element_text(size = 15), 
+        legend.text = element_text(size = 15),  
+        legend.position = "bottom",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line.x = element_blank(),
+        axis.line.y = element_blank(),
+        panel.border = element_rect(linetype = "solid", size = 1),
+        plot.title = element_text(hjust = 0.5, size = 12, face = "bold.italic"),
+        text = element_text(),
+        aspect.ratio = 0.85
+      ) + 
+      ggtitle(rownames(x)[i]) + 
+      labs(y = "Uncorrected Host Specificity", x = "Log Absolute Endophyte Read Abundance")
+    # Get model coefficients for null model
+    null.eqn <- summary(lm(Similarity.Index ~ log(Abundance) + I(log(Abundance)^2), data = randomized))
+    null.eqn$coefficients[1, 1]
+    null.eqn$coefficients[2, 1]
+    null.eqn$coefficients[3, 1]
+    # Calculate mean deviance
+    mean.beta[i] <- mean(beta.specificity.dat$Similarity.Index - (null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(beta.specificity.dat$Abundance) + null.eqn$coefficients[3, 1]*log(beta.specificity.dat$Abundance)^2))
+    # Calculate standard error of mean deviance
+    se.beta[i] <- sd(beta.specificity.dat$Similarity.Index - (null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(beta.specificity.dat$Abundance) + null.eqn$coefficients[3, 1]*log(beta.specificity.dat$Abundance)^2)) / sqrt(length(beta.specificity.dat$Similarity.Index - (null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(beta.specificity.dat$Abundance) + null.eqn$coefficients[3, 1]*log(beta.specificity.dat$Abundance)^2)))
+    # Check current iteration
+    ifelse(notify == TRUE, print(i), NaN)
+    beta.plots[[1]] <- data.frame(Mean.Deviance = mean.beta, Mean.Deviance.SE = se.beta)
+  }
+  return(beta.plots)
+}
+
+beta.dev <- deviance.beta(data = dat, randomized = null.beta.object, index = "sorensen", trim = TRUE, notify = TRUE)
+beta.dev
+beta.dev[[1]]
+beta.dev[[2]]
+beta.dev[[81]]
+mean(structural.dev[[1]]$Mean.Deviance)
+```
