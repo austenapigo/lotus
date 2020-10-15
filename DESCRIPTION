@@ -16,3 +16,4 @@ LazyData: true
 URL: https://github.com/austenapigo/lotus
 BugReports: https://github.com/austenapigo/lotus/issues
 RoxygenNote: 7.1.1
+Encoding: UTF-8

@@ -426,7 +426,7 @@ deviance.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
 #'
 #' @param x Data frame of hosts populating rows and symbionts populating columns. 
 #' 
-#' @param index Character. Method for calculation with the Morisita-Horn, Horn or Sørensen Indices. 
+#' @param index Character. Method for calculation with the Morisita-Horn, Horn or Sorensen Indices. 
 #' 
 #' @param trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. 
 #'
@@ -507,7 +507,7 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
 #'
 #' @param x Data frame of hosts populating rows and symbionts populating columns. 
 #' 
-#' @param index Character. Method for calculation with the Morisita-Horn, Horn or Sørensen Indices. 
+#' @param index Character. Method for calculation with the Morisita-Horn, Horn or Sorensen Indices. 
 #' 
 #' @param iterations Integer. Indicate the number of randomized communities to generate. 
 #' 
@@ -593,7 +593,7 @@ null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomi
 #' 
 #' @param randomized Data frame. Output from null.beta function. 
 #' 
-#' @param index Character. Method for calculation with the Morisita-Horn, Horn or Sørensen Indices. 
+#' @param index Character. Method for calculation with the Morisita-Horn, Horn or Sorensen Indices. 
 #' 
 #' @param trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. 
 #' 
