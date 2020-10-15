@@ -10,6 +10,8 @@
 # # Read in data 
 # dat <- read.csv("example_dat.csv", row.names = 1, header = TRUE)
 # quad.rarefied <- read.csv("quad_rarefied.csv", row.names = 1, header = TRUE)
+# quad.rarefied <- read.csv("/Users/austenapigo/Desktop/github/lotus/data/quad_rarefied.csv", row.names = 1, header = TRUE)
+# save(quad.rarefied, file = "quad_rarefied.rda")
 # utree <- read.tree("utree.txt")
 
 ##############################################################
