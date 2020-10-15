@@ -28,9 +28,9 @@
 #' @return A data frame with symbiont identifiers and structural specificity values. 
 #' @export
 #' # Calculate Shannon's H per symbiont
-#' # structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+#' structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
 #' # Calculate host richness per symbiont
-#' # structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+#' structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
 #' @examples
 structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
   # Calculate host richness or Shannon's H
@@ -258,9 +258,9 @@ phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim =
   return(phylogenetic.dat)
 }
 
-phylogenetic.object <- phylogenetic.specificity(quad.rarefied, utree, abundance.weighted = TRUE, trim = TRUE)
-phylogenetic.object
-mean(phylogenetic.object$Phylogenetic.Specificity)
+# phylogenetic.object <- phylogenetic.specificity(quad.rarefied, utree, abundance.weighted = TRUE, trim = TRUE)
+# phylogenetic.object
+# mean(phylogenetic.object$Phylogenetic.Specificity)
 # -144.7806 vs. 144.7806
 
 ###############################################################################
@@ -329,7 +329,6 @@ deviance.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
 # phylogenetic.dev
 # mean(phylogenetic.dev$Mean.Deviance)
 # # -0.9141502 vs. -0.9135079
-
 
 ##################################################
 # `beta.specificity`: calculate beta-specificity #
