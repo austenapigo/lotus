@@ -12,6 +12,7 @@ Author: Austen Apigo [aut, cre],
 Maintainer: Austen Apigo <aapigo@ucsb.edu>
 Description: Host Specificity Scripts
 License: GPL (>= 2)
+LazyData: true
 URL: https://github.com/austenapigo/lotus
 BugReports: https://github.com/austenapigo/lotus/issues
 RoxygenNote: 7.1.1
