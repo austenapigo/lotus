@@ -29,11 +29,11 @@
 #'
 #' @return A data frame with symbiont identifiers and structural specificity values. 
 #' @export
-#' # Calculate Shannon's H per symbiont
-#' structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
-#' # Calculate host richness per symbiont
-#' structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
 #' @examples
+#' #' # Calculate Shannon's H per symbiont
+#' structural.specificity(quad_rarefied, abundance.weighted = TRUE, trim = TRUE)
+#' # Calculate host richness per symbiont
+#' structural.specificity(quad_rarefied, abundance.weighted = TRUE, trim = TRUE)
 structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
   # Calculate host richness or Shannon's H
   ifelse(abundance.weighted == TRUE, structural <- -1 * diversity(as.data.frame(t(x))), structural <- -1 * specnumber(as.data.frame(t(x))))
