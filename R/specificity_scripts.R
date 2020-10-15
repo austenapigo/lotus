@@ -13,7 +13,7 @@
 # utree <- read.tree("utree.txt")
 
 #############################################################
-# structural.specificity`: calculate structural specificity #
+# `structural.specificity`: calculate structural specificity #
 #############################################################
 #' Calculate Structural Specificity
 #'
@@ -129,8 +129,8 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
 deviance.structural <- function(x, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE) {
   # Make holding vectors 
   structural.plots <- list()
-  mean.beta <- rep()
-  se.beta <- rep()
+  mean.structural <- rep()
+  se.structural <- rep()
   # For every host sample
   for (i in 1:nrow(x)) {
     # Subset a host
@@ -166,7 +166,7 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
                   # only consider symbionts with a Shannon's H greater than 0
                   structural.dat <- subset(structural.dat, structural.dat$Structural.Specificity < 0), 
                   # otherwise, only consider symbionts with a host richness greater than 1 
-                  structural.dat <- subset(structural.dat, structural.dat$Structural.Specificity <-1)), 
+                  structural.dat <- subset(structural.dat, structural.dat$Structural.Specificity < -1)), 
            structural.dat <- structural.dat) 
     # Plot null vs. empirical per sample
     structural.plots[[i+1]] <- 
@@ -203,12 +203,12 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
     null.eqn$coefficients[2, 1]
     null.eqn$coefficients[3, 1]
     # Calculate mean deviance
-    mean.beta[i] <- mean(structural.dat$Structural.Specificity - (null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(structural.dat$Abundance) + null.eqn$coefficients[3, 1]*log(structural.dat$Abundance)^2))
+    mean.structural[i] <- mean(structural.dat$Structural.Specificity - (null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(structural.dat$Abundance) + null.eqn$coefficients[3, 1]*log(structural.dat$Abundance)^2))
     # Calculate standard error of mean deviance
-    se.beta[i] <- sd(structural.dat$Structural.Specificity - (null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(structural.dat$Abundance) + null.eqn$coefficients[3, 1]*log(structural.dat$Abundance)^2)) / sqrt(length(structural.dat$Structural.Specificity - (null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(structural.dat$Abundance) + null.eqn$coefficients[3, 1]*log(structural.dat$Abundance)^2)))
+    se.structural[i] <- sd(structural.dat$Structural.Specificity - (null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(structural.dat$Abundance) + null.eqn$coefficients[3, 1]*log(structural.dat$Abundance)^2)) / sqrt(length(structural.dat$Structural.Specificity - (null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(structural.dat$Abundance) + null.eqn$coefficients[3, 1]*log(structural.dat$Abundance)^2)))
     # Check current iteration
     ifelse(notify == TRUE, print(i), NaN)
-    structural.plots[[1]] <- data.frame(Mean.Deviance = mean.beta, Mean.Deviance.SE = se.beta)
+    structural.plots[[1]] <- data.frame(Mean.Deviance = mean.structural, Mean.Deviance.SE = se.structural)
   }
     return(structural.plots)
 }
@@ -220,6 +220,107 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
 # structural.dev[[81]]
 # mean(structural.dev[[1]]$Mean.Deviance)
 # # -0.9141502 vs. -0.9135079
+
+
+##################################################################
+# `phylogenetic.specificity`: calculate phylogenetic specificity #
+##################################################################
+#' Calculate phylogenetic Specificity
+#'
+#' @param abundance.weighted
+#'
+#' @return A data frame. 
+#' @export
+#'
+#' @examples
+phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim = TRUE) {
+  # Calculate host richness or Shannon's H
+  ifelse(abundance.weighted == TRUE, 
+         phylogenetic <- -1 * mpd(t(x), dis = cophenetic(utree), abundance.weighted = TRUE), 
+         phylogenetic <- -1 * mpd(t(x), dis = cophenetic(utree), abundance.weighted = FALSE))
+  # Make data frame
+  phylogenetic.dat <- data.frame(Phylogenetic.Specificity = phylogenetic)
+  # Trim noise
+  ifelse(trim == TRUE, 
+    # only consider symbionts with a mpd less than 0
+    phylogenetic.dat <- subset(phylogenetic.dat, Phylogenetic.Specificity < 0), 
+    phylogenetic.dat <- phylogenetic.dat) 
+  # Return object
+  return(phylogenetic.dat)
+}
+
+phylogenetic.object <- phylogenetic.specificity(quad.rarefied, utree, abundance.weighted = TRUE, trim = TRUE)
+phylogenetic.object
+mean(phylogenetic.object$Phylogenetic.Specificity)
+# -144.7806 vs. 144.7806
+
+###############################################################################
+# `deviance.phylogenetic`: calculate the deviance in phylogenetic specificity #
+###############################################################################
+#'  calculate the deviance in phylogenetic specificity
+#'
+#' @param abundance.weighted
+#'
+#' @return A data frame. 
+#' @export
+#'
+#' @examples
+deviance.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richness", "frequency", "sample.pool", "phylogeny.pool", "independentswap", "trialswap"), abundance.weighted = TRUE, trim = TRUE, notify = TRUE) {
+  # Make holding vectors 
+  phylogenetic.plots <- list()
+  mean.phylogenetic <- rep()
+  se.phylogenetic <- rep()
+  # For every host sample
+  for (i in 1:nrow(x)) {
+    # Subset a host
+    x.sub <- x[i, 1:dim(x)[2]]
+    # Remove ASVs with abundance of zero
+    x.sub <- x.sub[ , colSums(x.sub) > 0]
+    # Save column names 
+    x.names <- colnames(x.sub)
+    # Filter entire community
+    x.input <- x[, colnames(x) %in% x.names]
+    # Remove rows and columns that sum to zero
+    x.input <- as.data.frame(x.input[rowSums(x.input) > 0, colSums(x.input) > 0])
+    # Calculate phylogenetic specificity
+    null.model <- "taxa.labels" #match.arg(null.model)
+    set.seed(123)
+    ifelse(abundance.weighted == TRUE, 
+           Phylogenetic.Specificity <- ses.mpd(t(x.input), dis = cophenetic(utree), null.model = null.model, abundance.weighted = TRUE, runs = 999), 
+           Phylogenetic.Specificity <- ses.mpd(t(x.input), dis = cophenetic(utree), null.model = null.model, abundance.weighted = FALSE, runs = 999))
+    # Make holding vectors
+    Symbiont <- rep()
+    Abundance <- rep()
+    # For every symbiont
+    for (j in 1:ncol(x.input)) {
+      # Pull symbiont name
+      Symbiont[j] <- colnames(x.input)[j]
+      # Calculate total read abundance per ASV
+      Abundance[j] <- sum(x.input[,j])
+    }
+    # Make data frame
+    phylogenetic.dat <- data.frame(Symbiont, Abundance, Richness = Phylogenetic.Specificity$ntaxa, Phylogenetic.Specificity = Phylogenetic.Specificity$mpd.obs.z)
+    phylogenetic.dat[is.na(phylogenetic.dat)] <- 0
+    # Trim noise
+    ifelse(trim == TRUE, 
+           # otherwise, only consider symbionts with a host richness greater than 1 
+           phylogenetic.dat <- subset(phylogenetic.dat, phylogenetic.dat$Richness > 1), 
+           phylogenetic.dat <- phylogenetic.dat) 
+    # Calculate mean deviance
+    mean.phylogenetic[i] <- mean(phylogenetic.dat$Phylogenetic.Specificity)
+    # Calculate the standard error of the mean
+    se.phylogenetic[i] <- sd(phylogenetic.dat$Phylogenetic.Specificity) / sqrt(length(phylogenetic.dat$Phylogenetic.Specificity))
+    # Check current iteration
+    ifelse(notify == TRUE, print(i), NaN)
+  }
+  return(data.frame(Mean.Deviance = mean.phylogenetic, Mean.Deviance.SE = se.phylogenetic))
+}
+
+# phylogenetic.dev <- deviance.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+# phylogenetic.dev
+# mean(phylogenetic.dev$Mean.Deviance)
+# # -0.9141502 vs. -0.9135079
+
 
 ##################################################
 # `beta.specificity`: calculate beta-specificity #
@@ -238,7 +339,7 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
   # For every column (symbionts)
   for (j in 1:ncol(x)) {
     # Match index to CqN value
-    #index = match.arg(index)
+    index = match.arg(index)
     ifelse(index == "sorensen", q <- 0.000000001, ifelse(index == "horn", q <- 0.99999, ifelse(index == "morisita.horn", q <- 2, stop("invalid distance method") )))
     # Subset each column
     col <- x[j]
@@ -305,7 +406,7 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
 #' @export
 #'
 #' @examples
-null.beta <- function(x, iterations = 100, index = "morisita.horn", randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), notify = TRUE) {
+null.beta <- function(x, iterations = 100, index = c("morisita.horn", "horn", "sorensen"), randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), notify = TRUE) {
   # Set seed
   set.seed(123)
   # Make 100 randomized communities
@@ -334,6 +435,7 @@ null.beta <- function(x, iterations = 100, index = "morisita.horn", randomizatio
       Abundance[j] <- sum(null[,j])
     }
     # Calculate beta-specificity
+    index = match.arg(index)
     Beta.Specificity <- beta.specificity(null, index = index, trim = FALSE, notify = FALSE)
     null.temp <- data.frame(Symbiont, Abundance, Beta.Specificity)
     null.dats[[i]] <- null.temp
@@ -359,7 +461,15 @@ null.beta <- function(x, iterations = 100, index = "morisita.horn", randomizatio
 ###############################################################
 # `deviance.beta`: calculate the deviance in beta-specificity #
 ###############################################################
-deviance.beta <- function(data = x, randomized = null.object, index = "sorensen", trim = TRUE, notify = TRUE) {
+#' calculate the deviance in beta-specificity
+#'
+#' @param abundance.weighted
+#'
+#' @return A data frame. 
+#' @export
+#'
+#' @examples
+deviance.beta <- function(data = x, randomized = null.object, index = c("morisita.horn", "horn", "sorensen"), trim = TRUE, notify = TRUE) {
   # Make holding vectors 
   beta.plots <- list()
   mean.beta <- rep()
@@ -377,6 +487,7 @@ deviance.beta <- function(data = x, randomized = null.object, index = "sorensen"
     # Remove rows and columns that sum to zero
     x.input <- as.data.frame(x.input[rowSums(x.input) > 0, colSums(x.input) > 0])
     # Calculate beta-specificity
+    index = match.arg(index)
     Beta.Specificity <- beta.specificity(x.input, index = index, trim = FALSE, notify = FALSE)
     # Make holding vectors
     Symbiont <- rep()
@@ -447,3 +558,4 @@ deviance.beta <- function(data = x, randomized = null.object, index = "sorensen"
 # mean(structural.dev[[1]]$Mean.Deviance)
 # 
 # install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
+# detach("package:lotus", unload=TRUE)
