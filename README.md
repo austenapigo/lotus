@@ -2,7 +2,7 @@
 
 >This package is named `lotus` in recognition of Kamala (meaning 'lotus') Devi Harris, a longtime champion of LBGTQ+ rights and the first Black and Asian female nominee for Vice President of the United States on a major party ticket.
 
-<img align="right" width="350" height="350" src="https://github.com/austenapigo/lotus/blob/master/lotus.png">
+<img align="right" width="350" height="350" src="https://github.com/austenapigo/lotus/blob/master/figures/lotus.png">
 
 ### Why use `lotus`? 
 
@@ -23,7 +23,7 @@ We've modified a framework proposed from Poulin 2011 to quantify host specificit
 
 **For each of these metrics, a narrower symbiont niche indicates higher host specificity.**
 
-![Host Specificity Figure](https://github.com/austenapigo/lotus/blob/master/specificity.png)
+![Host Specificity Figure](https://github.com/austenapigo/lotus/blob/master/figures/specificity.png)
 
 <sup>**Conceptual diagram of host specificity metrics represented by relationships between plants and endophytes.** Structural, phylogenetic and beta-specificity diagram depicting two endophytes (blue and grey shaded areas) occupying varying plant species (bryophyte, monilophyte, gymnosperm and angiosperm) across two sites (Sites A and B). Structural specificity (blue and grey shaded areas within solid lines) quantifies how endophytes vary in presence and evenness on hosts, the most fundamental feature of host-specific interactions. For example, Endophyte 1 (blue shade) occupies fewer plant species in Sites A and B (two plant species per site) relative to Endophyte 2 (four plant species in Site A and five hosts in Site B) and has higher structural specificity. Phylogenetic specificity (cladogram) quantifies host specificity in the context of plant evolutionary relatedness. Endophyte 1 occupies a phylogenetically narrower breadth of plant species in Sites A and B (gymnosperms only) relative to Endophyte 2 (angiosperm, bryophyte, gymnosperm and monilophyte) and has higher phylogenetic specificity. In contrast to structural and phylogenetic specificity, beta-specificity (arrow between Sites A and B) quantifies how endophytes vary in the consistency of their specificity to plant species by geography (Krasnov et al. 2011) or time (not depicted). Endophyte 1 occupies the same set of hosts in Sites A and B and has higher beta-specificity, whereas Endophyte 2 occupies a more variable set of plant species across Sites A and B.</sup>
 
@@ -32,7 +32,7 @@ Host specificity analyses could be particularly vulnerable to biased ecological 
 
 In our study, we found evidence of negative host specificity and symbiont abundance relationships. To account for bias that occurred between endophyte read abundance and observed host specificity, we relativized observed host specifities to null expectations (see Methods and Supplementary Figure 5 in our pre-print). **Doing so asked, how does a given symbiont's host specificity compare to the expected value for a symbiont of that read abundance under random community assembly?** Null models are often used in community ecology to test the null hypothesis that observed ecological structure is no different from a randomized structure (Gotelli and Graves 1996, Gotelli 2001, Ulrich et al. 2012). Here, the aim of null models is to shuffle symbiont read abundances among host samples to produce randomized distributions of host specificity. Observed host specificities are then relativized by the null expectation for a symbiont of that given read abundance to account for the propensity of rarer symbiont to occupy fewer hosts. There's a slight variation in this method for phylogenetic specificity. Basically, there can be convergence in this metric as the number of hosts a symbiont occupies approaches the total number of hosts in the community. We account for it using a slightly different model already implemented in the `picante` package (more details in the paper). 
 
-![Null Model Figure](https://github.com/austenapigo/lotus/blob/master/null_model.png)
+![Null Model Figure](https://github.com/austenapigo/lotus/blob/master/figures/null_model.png)
 
 <sup>**Conceptual diagram of host specificity metrics relativized by null models from Apigo and Oono 2020 represented by relationships between plants and endophytes.** (A-B) Each shape represents an individual endophyte. Shapes vertically positioned above each other have equal read abundance. Shapes positioned horizontal to each other occupy the same number of plants or have equal uncorrected host specificity values. The null expectation of the relationship between host specificity and read abundance is represented by a theoretical 1:1 relationship based on occupancy-abundance relationships (abundant endophytes likely occupy more plants). Asterisks represent the deviance in observed host specificity from a null model and are equal for all shapes. We describe three scenarios that highlight how null models can account for read abundance variation in host specificity analysis.</sup>
 
