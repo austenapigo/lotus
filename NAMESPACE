@@ -1,6 +1,8 @@
 export(structural.specificity)
 export(null.structural)
 export(deviance.structural)
+export(phylogenetic.specificity)
+export(deviance.phylogenetic)
 export(beta.specificity)
 export(null.beta)
 export(deviance.beta)
