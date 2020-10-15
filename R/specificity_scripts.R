@@ -568,9 +568,4 @@ deviance.beta <- function(data = x, randomized = null.object, index = c("morisit
 # mean(structural.dev[[1]]$Mean.Deviance)
 # 
 # install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
-# detach("package:lotus", unload=TRUE)
-
-#' quad_rarefied
-#'
-#' A data example
-"quad_rarefied"
+# remove.packages("lotus")
