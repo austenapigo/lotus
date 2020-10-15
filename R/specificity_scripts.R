@@ -12,16 +12,25 @@
 # quad.rarefied <- read.csv("quad_rarefied.csv", row.names = 1, header = TRUE)
 # utree <- read.tree("utree.txt")
 
-#############################################################
+##############################################################
 # `structural.specificity`: calculate structural specificity #
-#############################################################
-#' Calculate Structural Specificity
+##############################################################
+#' Structural Specificity
+#' 
+#' Calculate structural specificity not corrected by null mdoels
 #'
-#' @param abundance.weighted
+#' @param x Community matrix with hosts populating rows and symbionts populating columns
+#' 
+#' @param abundance.weighted Logical. TRUE calculates Shannon's H per symbiont. FALSE calculates host richness per symbiont. 
+#' 
+#' @param trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. 
 #'
-#' @return A data frame. 
+#' @return A data frame with symbiont identifiers and structural specificity values. 
 #' @export
-#'
+#' # Calculate Shannon's H per symbiont
+#' structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+#' # Calculate host richness per symbiont
+#' structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
 #' @examples
 structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
   # Calculate host richness or Shannon's H
