@@ -36,7 +36,7 @@ Host specificity analyses could be particularly vulnerable to biased ecological 
 
 If one didn't account for variation in symbiont read abundance, rare symbionts could be systematically biased to be more host-specific than more abundant endophytes simply because rarer symbionts have a lower probablity of occurring in more hosts. The relationship between a symbiont’s host specificity and its abundance is an extension of abundance-occupancy relationships, the widely documented biogeographic pattern in macroecology that predicts a positive relationship between a species abundance and its occurrence across sites. By extending this relationships to host-symbiont interactions, if more abundant symbionts tend to occupy more hosts, there is expected to be a negative relationship between an symbiont’s abundance and its host specificity, or occupancy across plants.
 
-In our study, we found evidence of negative relationships between host specificity and symbiont abundance. To account for bias that occurred between endophyte read abundance and observed host specificity, we relativized observed host specifities to null expectations (see Methods and Supplementary Figure 5 in our pre-print). **Normalizing host specificity to null models allowed us to ask, how does a symbiont's host specificity from the observed community compare to the expected value for a symbiont with equal abundance under random community assembly?** We propose that this allowed us to compare the host specifities of endophytes that varied widely in read abundance within and across plant samples instead of splitting rare vs. abundant endophyte communities at an arbitrary relative abundance threshold or not accounting for read abundance at all. There's a slight modification of this null framework for phylogenetic specificity because for this one exception, relationships between host specificity and read abundance are usually decreasing-variance (rather than negative) and you can read more about the specifics in our paper. 
+In our study, we found evidence of negative relationships between host specificity and symbiont abundance. To account for bias that occurred between endophyte read abundance and observed host specificity, we relativized observed host specifities to null expectations (see Methods and Supplementary Figure 5 in our pre-print). **Normalizing host specificity to null models allowed us to ask, how does a symbiont's host specificity in the observed community compare to the expected value for a symbiont with equal abundance under random community assembly?** We propose that this allowed us to compare the host specifities of endophytes that varied widely in read abundance within and across plant samples instead of splitting rare vs. abundant endophyte communities at an arbitrary relative abundance threshold or not accounting for read abundance at all. There's a slight modification of this null framework for phylogenetic specificity because relationships between phylogenetic specificity and read abundance are usually decreasing-variance (rather than negative) and you can read more about the specifics in our paper. 
 
 ![Null Model Figure](https://github.com/austenapigo/lotus/blob/master/figures/null_model.png)
 
@@ -85,18 +85,22 @@ devtools::install_github("austenapigo/lotus")
  help("structural.specificity")
  
  # Calculate uncorrected host specificity 
- hs.object <- structural.specificity(data = x, abundance.weighted = TRUE, trim = TRUE) 
+ hs.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
  
  # Explore data and identify whether negative or variance-decreasing relationships exist between host specificity and symbiont read abundance
  # plot histogram
  pearson.cor <- cor.test(hs.object, colSums(quad.rarefied)) # correlation test
  # visualize host specificity - read abundance relationships 
+ ggplot(data = NULL, aes(y = hs.object$Structural.Specificity, x = log(colSums(quad.rarefied)) + geom_point() + geom_smooth()
  
- # Randomize your community matrix to generate a null model boundary
- null.structural.object <- null.structural(x, iterations = 10, abundance.weighted = TRUE, randomization.method = "shuffle.web", notify = TRUE)
+ # Randomize community matrix to generate a null model for deviance calculations
+ null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
  
  # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample 
-deviance.structural(data = x, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+structural.dev[[1]] # View data frame of output 
+structural.dev[[2]] # View occupancy-abundance model for the first sample
+structural.dev[[81]] # View occupancy-abundance model for the last sample
  ```
 #### Expected Output:
 
@@ -112,12 +116,6 @@ deviance.structural(data = x, randomized = null.structural.object, abundance.wei
 
 + For beta-specificity, labels can vary depending on your questions and taxonomic-level of interest. For example, you might be interested in the beta-specificity of symbionts to a taxonomic family of hosts, rather than host species (see the Discussion in our pre-print that addresses this), and could label hosts as Pinaceae.1, Pinaceae.2, Pinaceae.3, etc., for example. 
 
-+ `null`- and `deviance`-related functions are calculated with log-transformed read abundance (base 2). 
-
-+ `null`-related functions accept `randomization.methods` from the bipartite::nullmodel() function (Dormann et al. 2009; Dormann 2011). If you wish to use other randomization functions, like vegan::permatswap(), save your output as a list and you can supply that it to any `deviance`-related function to the `randomized` argument. 
-
-+ `deviance`-related functions use a second-order polynomial null boundary generated from the host specifities of randomized communities to calculate deviance. 
-
 + `lotus` functions have a 'trim' parameter within them to remove symbionts that are either singletons (a symbiont with a read abundance of one) or appear in only one host sample. This is a logical statement where TRUE removes these symbionts from analysis. We think they should be removed because host specificity from an observation of one will always result in the highest host specificity value and cannot be relevatized in a meaningful way to a null expectation. 
 
 + `lotus` functions have a 'notify' parameter within them to tell you which iteration the for() loop is on. 
@@ -132,9 +130,9 @@ We still think multivariate methods are extremely useful tools to identify host 
 
 ### Contact 
 
-We'd be appreciative of constructive feedback before we push this R package to CRAN. Please create an issue on GitHub or feel free to email me directly (aapigo@ucsb.edu) if you have questions or suggestions.
+We'd be appreciative of constructive feedback before we push this R package to CRAN. Please create an issue on GitHub or email me (aapigo@ucsb.edu) if you have questions or suggestions.
 
-#### References 
+### References 
 + Dormann CF (2011) How to be a specialist? Quantifying specialisation in pollination networks. Netw Biol 1:1–20
 + Dormann CF, Gruber B, Fruend J (2008) Introducing the bipartite package: analysing ecological networks. R News 8:8–11
 + Dormann CF, Fründ J, Blüthgen N, Gruber B (2009) Indices, graphs and null models: analyzing bipartite ecological networks. Open Ecol J 2:7–24
