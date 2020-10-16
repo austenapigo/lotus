@@ -11,6 +11,8 @@ Author: Austen Apigo [aut, cre],
   A. User [ctb]
 Maintainer: Austen Apigo <aapigo@ucsb.edu>
 Description: Host Specificity Scripts
+Depends:
+    R (>= 3.5.0)
 Imports:
     ggplot2,
     vegan,
