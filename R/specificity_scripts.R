@@ -715,7 +715,7 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # remove.packages("lotus")
 # install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
 
-# 
+
 # remove.packages("lotus")
 # 
 # devtools::install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
