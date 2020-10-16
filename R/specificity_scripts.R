@@ -231,7 +231,7 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
            structural.dat <- structural.dat) 
     # Plot null vs. empirical per sample
     structural.plots[[i+1]] <- 
-      ggplot(structural.dat, aes(y = Structural.Specificity, x = log(Abundance))) +
+      ggplot2::ggplot(structural.dat, aes(y = Structural.Specificity, x = log(Abundance))) +
       geom_point(aes(y = Structural.Specificity, x = log(Abundance)), color = "red", alpha = 1, show.legend = TRUE, size = 3) +
       geom_smooth(aes(y = Structural.Specificity, x = log(Abundance)), color = "red", method = "lm", se = FALSE, lwd = 1, lty = "solid", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
       geom_point(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "blue", alpha = 0.1, show.legend = TRUE, size = 3) +
@@ -712,5 +712,37 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # beta.dev[[81]]
 # mean(beta.dev[[1]]$Mean.Deviance)
 # 
-# install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
 # remove.packages("lotus")
+# install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
+
+
+
+# devtools::install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
+# 
+# library(lotus)
+# 
+# # You can read more about each lotus function with the help function
+# help("structural.specificity")
+# 
+# # Calculate uncorrected host specificity 
+# hs.object <- structural.specificity(phylocom$sample, abundance.weighted = TRUE, trim = TRUE)
+# hs.object
+# 
+# # Explore data and identify whether negative or variance-decreasing relationships exist between host specificity and symbiont read abundance
+# ## plot histogram
+# plot(density(hs.object$Structural.Specificity))
+# ## visualize host specificity - read abundance relationships 
+# read.abund <- as.data.frame(colSums(phylocom$sample)) # get read abundances per symbiont
+# read.abund.trim <- read.abund[rownames(read.abund) %in% rownames(hs.object), ] # trim relative to hs.object
+# cor.test(hs.object$Structural.Specificity, read.abund.trim) # correlation test
+# plot(y = hs.object$Structural.Specificity, x = log(read.abund.trim), ylab = "Uncorrected Structural Specificity (HostRichness)", xlab = "Log Symbiont Read Abundance") 
+#   abline(lm(hs.object$Structural.Specificity~log(read.abund.trim)), col = "red")
+#                         
+# # Randomize community matrix to generate a null model for deviance calculations
+# null.structural.object <- null.structural(phylocom$sample, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+#                         
+# # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample 
+# structural.dev <- deviance.structural(as.data.frame(phylocom$sample), randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+# structural.dev[[1]] # View data frame of output 
+# structural.dev[[2]] # View occupancy-abundance model for the first sample
+# structural.dev[[81]] # View occupancy-abundance model for the last sample 
