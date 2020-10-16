@@ -232,8 +232,8 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
     # Plot null vs. empirical per sample
     structural.plots[[i+1]] <- 
       ggplot2::ggplot(structural.dat, aes(y = Structural.Specificity, x = log(Abundance))) +
-      geom_point(aes(y = Structural.Specificity, x = log(Abundance)), color = "red", alpha = 1, show.legend = TRUE, size = 3) +
-      geom_smooth(aes(y = Structural.Specificity, x = log(Abundance)), color = "red", method = "lm", se = FALSE, lwd = 1, lty = "solid", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
+      geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
+      geom_smooth(color = "red", method = "lm", se = FALSE, lwd = 1, lty = "solid", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
       geom_point(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "blue", alpha = 0.1, show.legend = TRUE, size = 3) +
       geom_smooth(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "blue", method = "lm", se = FALSE, lwd = 1, lty = "solid", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
       stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = y ~ x + I(x^2), label.x = "left", label.y = "top", color = "black", size = 5) + 
@@ -715,7 +715,7 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # remove.packages("lotus")
 # install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
 
-
+# 
 # remove.packages("lotus")
 # 
 # devtools::install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
