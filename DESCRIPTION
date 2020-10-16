@@ -17,7 +17,7 @@ Imports:
     bipartite,
     picante,
     ggpmisc
-License: file LICENSE
+License: GPL
 LazyData: true
 URL: https://github.com/austenapigo/lotus
 BugReports: https://github.com/austenapigo/lotus/issues
