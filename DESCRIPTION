@@ -11,7 +11,13 @@ Author: Austen Apigo [aut, cre],
   A. User [ctb]
 Maintainer: Austen Apigo <aapigo@ucsb.edu>
 Description: Host Specificity Scripts
-License: GPL (>= 2)
+Imports:
+    ggplot2,
+    vegan,
+    bipartite,
+    picante,
+    ggpmisc
+License: file LICENSE
 LazyData: true
 URL: https://github.com/austenapigo/lotus
 BugReports: https://github.com/austenapigo/lotus/issues
