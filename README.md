@@ -57,26 +57,22 @@ devtools::install_github("austenapigo/lotus")
 + Structural Specificity
     + `structural.specificity`: calculates host richness (the number of hosts a symbionts occupies) or Shannon’s H diversity index (Shannon and Weaver 1948) to quantify symbiont presence and evenness among hosts uncorrected by symbiont read abundance.
     + `null.structural`: generates a null model by randomizing the community matrix and calculating structural specificity per symbiont within each randomized community.
-    + `deviance.structural`: calculates the deviance in observed structural specificity from the null expectation per symbiont per sample.
-    + `plot.structural`: plots null and observed structural specificities per symbiont as a function of symbiont read abundance.
+    + `deviance.structural`: calculates and plots the deviance in observed structural specificity from the null expectation per symbiont per sample.
 
 + Network Specificity
     + `network.specificity`: calculates the Resource Range Index or Paired Difference Index to quantify the 'strength' of host-symbiont interactions by accounting for all potential hosts a symbiont could occupy in a host community uncorrected by symbiont read abundance. 
     + `null.network`: generates a null model by randomizing the community matrix and calculating network specificity per symbiont within each randomized community
-    + `deviance.network`: calculates the deviance in observed network specificity from the null expectation per symbiont per sample
-    + `plot.network`: plots null and observed network specificities per symbiont as a function of symbiont read abundance.
+    + `deviance.network`: calculates and plots the deviance in observed network specificity from the null expectation per symbiont per sample
     
 + Phylogenetic Specificity
     + `phylogenetic.specificity`: calculates as the Mean Pairwise Phylogenetic Distance (Webb 2000) to quantify symbiont presence and evenness as a function of host phylogenetic breadth uncorrected by symbiont read abundance. You must supply a phylogenetic distance matrix (see `cophenetic` in the `stats` package). 
     + `null.phylogenetic`: generates a null model by randomizing the community matrix and calculating phylogenetic specificity per symbiont within each randomized community
     + `deviance.phylogenetic`: calculates the deviance in observed phylogenetic specificity from the null expectation per symbiont per sample
-    + `plot.phylogenetic`: plots null and observed phylogenetic specificities per symbiont as a function of symbiont read abundance.
 
 + Beta-Specificity
     + `beta.specificity`: calculates the Sørensen (Diserud and Odegaard 2007) or Morisita-Horn (Chao et al. 2008) Multiple-Assemblage Overlap Measure to quantify endophyte interaction consistency to a given host group (species, genus, family, etc.) across space or time uncorrected by symbiont read abundance.
     + `null.beta`: generates a null model by randomizing the community matrix and calculating beta-specificity per symbiont within each randomized community
-    + `deviance.beta`: calculates the deviance in observed beta-specificity from the null expectation per symbiont per sample
-    + `plot.beta`: plots null and observed beta-specificities per symbiont as a function of symbiont read abundance.
+    + `deviance.beta`: calculates and plots the deviance in observed beta-specificity from the null expectation per symbiont per sample
     
  ### Basic Workflow
  ```
@@ -93,12 +89,9 @@ devtools::install_github("austenapigo/lotus")
  # Randomize your community matrix to generate a null model boundary
  null.structural.object <- null.structural(x, iterations = 10, abundance.weighted = TRUE, randomization.method = "shuffle.web", notify = TRUE)
  
- # Calculate the deviance of observed host specificity from the null boundary and get averages per host sample 
+ # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample 
 deviance.structural(data = x, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
- 
- # Plot null or observed host specificity as a function of log-symbiont read abundance
- plot.structural(data = x, randomized = null.structural.object, abundance.weighted = TRUE, trim = FALSE, notify = TRUE) 
-```
+ ```
 #### Expected Output:
 
 
