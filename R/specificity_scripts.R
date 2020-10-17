@@ -232,11 +232,11 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
     # Plot null vs. empirical per sample
     structural.plots[[i+1]] <- 
       ggplot2::ggplot(structural.dat, aes(y = Structural.Specificity, x = log(Abundance))) +
-      geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
-      geom_smooth(color = "red", method = "lm", se = FALSE, lwd = 1, lty = "solid", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
       geom_point(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "black", alpha = 0.01, show.legend = TRUE, size = 3) +
       geom_smooth(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 2, lty = "dashed", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
-      stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = y ~ x + I(x^2), label.x = "left", label.y = "top", color = "black", size = 5) + 
+      geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
+      geom_smooth(color = "red", method = "lm", se = FALSE, lwd = 1, lty = "solid", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
+      stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = y ~ x + I(x^2), label.x = "left", label.y = "bottom", color = "black", size = 5) + 
       theme_bw() +
       ggtitle(rownames(x)[i]) + 
       theme_bw() +
@@ -740,6 +740,7 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 #
 # # Explore data and identify whether negative or variance-decreasing relationships exist between host specificity and symbiont read abundance
 # ## plot histogram
+# ggplot2::ggplot(data = NULL, aes(x = hs.object$Structural.Specificity)) + geom_density(aes(y=..scaled..))
 # plot(density(hs.object$Structural.Specificity))
 # ## visualize host specificity - read abundance relationships
 # read.abund <- as.data.frame(colSums(quad.rarefied)) # get read abundances per symbiont
