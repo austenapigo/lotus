@@ -197,7 +197,7 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
     # Subset a host
     x.sub <- x[i, 1:dim(x)[2]]
     # Remove symbionts with abundance of zero
-    x.sub <- x.sub[ , colSums(x.sub) > 0]
+    x.sub <- x.sub[ , colSums(x.sub) > 0, drop = FALSE]
     # Save column names 
     x.names <- colnames(x.sub)
     # Filter entire community
@@ -232,7 +232,7 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
     # Plot null vs. empirical per sample
     structural.plots[[i+1]] <- 
       ggplot2::ggplot(structural.dat, aes(y = Structural.Specificity, x = log(Abundance))) +
-      geom_point(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "black", alpha = 0.001, show.legend = TRUE, size = 3) +
+      geom_point(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "grey", alpha = 0.01, show.legend = TRUE, size = 3) +
       geom_smooth(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
       geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
       geom_smooth(color = "red", method = "lm", se = FALSE, lwd = 1, lty = "solid", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
@@ -750,11 +750,12 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 #   abline(lm(hs.object$Structural.Specificity~log(read.abund.trim)), col = "red")
 #
 # Randomize community matrix to generate a null model for deviance calculations
-# null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+# null.structural.object <- null.structural(Safariland, iterations = 10, abundance.weighted = TRUE, randomization.method = "swap.web", trim = TRUE, notify = TRUE)
 # head(null.structural.object)
 #
 # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
-# structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+# Safariland <- as.data.frame(Safariland)
+# structural.dev <- deviance.structural(Safariland, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
 # head(structural.dev[[1]]) # View data frame of output
 # structural.dev[[2]] # View occupancy-abundance model for the first sample
 # structural.dev[[81]] # View occupancy-abundance model for the last sample
