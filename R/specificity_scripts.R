@@ -234,11 +234,28 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
       ggplot2::ggplot(structural.dat, aes(y = Structural.Specificity, x = log(Abundance))) +
       geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
       geom_smooth(color = "red", method = "lm", se = FALSE, lwd = 1, lty = "solid", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
-      geom_point(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "blue", alpha = 0.1, show.legend = TRUE, size = 3) +
-      geom_smooth(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "blue", method = "lm", se = FALSE, lwd = 1, lty = "solid", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
+      geom_point(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "black", alpha = 0.01, show.legend = TRUE, size = 3) +
+      geom_smooth(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 2, lty = "dashed", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
       stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = y ~ x + I(x^2), label.x = "left", label.y = "top", color = "black", size = 5) + 
       theme_bw() +
       ggtitle(rownames(x)[i]) + 
+      theme_bw() +
+      theme(
+        axis.text.x = element_text(size = 13, color = "black"), 
+        axis.text.y = element_text(size = 13, color = "black"),
+        axis.title.x = element_text(size = 13, margin = margin(t = 5, r = 0, b = 0, l = 0)), 
+        axis.title.y = element_text(size = 13, margin = margin(t = 0, r = 5, b = 0, l = 0)),
+        legend.title = element_text(size = 13),
+        legend.text = element_text(size = 13),
+        legend.position = "bottom",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line.x = element_blank(),
+        axis.line.y = element_blank(),
+        plot.title = element_text(hjust = 0.5, size = 13, face = "bold.italic"),
+        aspect.ratio = 0.85
+      ) +
       labs(y = "Uncorrected Structural Specificity", x = "Log Absolute Symbiont Read Abundance")
     # Get model coefficients for null model
     null.eqn <- summary(lm(Structural.Specificity ~ log(Abundance) + I(log(Abundance)^2), data = randomized))
@@ -705,18 +722,10 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
   return(beta.plots)
 }
 
-# beta.dev <- deviance.beta(quad.rarefied, randomized = null.beta.object, index = "morisita.horn", trim = TRUE, notify = TRUE) 
-# beta.dev
-# beta.dev[[1]]
-# beta.dev[[2]]
-# beta.dev[[81]]
-# mean(beta.dev[[1]]$Mean.Deviance)
-# 
-# remove.packages("lotus")
-# install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
 
 
-# remove.packages("lotus")
+
+# Example set in ReadMe
 #
 # devtools::install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
 #
@@ -726,24 +735,28 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # help("structural.specificity")
 #
 # # Calculate uncorrected host specificity
-# hs.object <- structural.specificity(phylocom$sample, abundance.weighted = TRUE, trim = TRUE)
+# hs.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
 # hs.object
 #
 # # Explore data and identify whether negative or variance-decreasing relationships exist between host specificity and symbiont read abundance
 # ## plot histogram
 # plot(density(hs.object$Structural.Specificity))
 # ## visualize host specificity - read abundance relationships
-# read.abund <- as.data.frame(colSums(phylocom$sample)) # get read abundances per symbiont
+# read.abund <- as.data.frame(colSums(quad.rarefied)) # get read abundances per symbiont
 # read.abund.trim <- read.abund[rownames(read.abund) %in% rownames(hs.object), ] # trim relative to hs.object
 # cor.test(hs.object$Structural.Specificity, read.abund.trim) # correlation test
 # plot(y = hs.object$Structural.Specificity, x = log(read.abund.trim), ylab = "Uncorrected Structural Specificity (HostRichness)", xlab = "Log Symbiont Read Abundance")
 #   abline(lm(hs.object$Structural.Specificity~log(read.abund.trim)), col = "red")
 #
-# # Randomize community matrix to generate a null model for deviance calculations
-# null.structural.object <- null.structural(phylocom$sample, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+# Randomize community matrix to generate a null model for deviance calculations
+# null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+# head(null.structural.object)
 #
-# # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
-# structural.dev <- deviance.structural(as.data.frame(phylocom$sample), randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
-# structural.dev[[1]] # View data frame of output
+# Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
+# structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+# head(structural.dev[[1]]) # View data frame of output
 # structural.dev[[2]] # View occupancy-abundance model for the first sample
 # structural.dev[[81]] # View occupancy-abundance model for the last sample
+#
+#
+# .rs.restartR()
