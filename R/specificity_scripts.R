@@ -420,7 +420,7 @@ deviance.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
 ##################################################
 # `beta.specificity`: calculate beta-specificity #
 ##################################################
-#' Structural Specificity
+#' Beta-Specificity
 #' 
 #' Calculate structural specificity not corrected by null mdoels. 
 #'
