@@ -201,7 +201,7 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
     # Save column names 
     x.names <- colnames(x.sub)
     # Filter entire community
-    x.input <- x[, colnames(x) %in% x.names]
+    x.input <- x[, colnames(x) %in% x.names, drop = FALSE]
     # Remove rows and columns that sum to zero
     x.input <- as.data.frame(x.input[rowSums(x.input) > 0, colSums(x.input) > 0])
     # Calculate structural specificity
@@ -232,7 +232,7 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
     # Plot null vs. empirical per sample
     structural.plots[[i+1]] <- 
       ggplot2::ggplot(structural.dat, aes(y = Structural.Specificity, x = log(Abundance))) +
-      geom_point(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "grey", alpha = 0.01, show.legend = TRUE, size = 3) +
+      geom_point(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "grey", alpha = 0.5, show.legend = TRUE, size = 3) +
       geom_smooth(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
       geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
       geom_smooth(color = "red", method = "lm", se = FALSE, lwd = 1, lty = "solid", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
@@ -735,18 +735,19 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # help("structural.specificity")
 #
 # # Calculate uncorrected host specificity
-# hs.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+# data(Safariland)
+# hs.object <- structural.specificity(Safariland, abundance.weighted = TRUE, trim = TRUE)
 # hs.object
 #
 # # Explore data and identify whether negative or variance-decreasing relationships exist between host specificity and symbiont read abundance
 # ## plot histogram
-# ggplot2::ggplot(data = NULL, aes(x = hs.object$Structural.Specificity)) + geom_density(aes(y=..scaled..))
+# ggplot(data = NULL, aes(x = hs.object$Structural.Specificity)) + geom_density(aes(y=..scaled..))
 # plot(density(hs.object$Structural.Specificity))
 # ## visualize host specificity - read abundance relationships
-# read.abund <- as.data.frame(colSums(quad.rarefied)) # get read abundances per symbiont
+# read.abund <- as.data.frame(colSums(Safariland)) # get read abundances per symbiont
 # read.abund.trim <- read.abund[rownames(read.abund) %in% rownames(hs.object), ] # trim relative to hs.object
 # cor.test(hs.object$Structural.Specificity, read.abund.trim) # correlation test
-# plot(y = hs.object$Structural.Specificity, x = log(read.abund.trim), ylab = "Uncorrected Structural Specificity (HostRichness)", xlab = "Log Symbiont Read Abundance")
+# plot(y = hs.object$Structural.Specificity, x = log(read.abund.trim), ylab = "Uncorrected Structural Specificity (Host Richness)", xlab = "Log Symbiont Read Abundance")
 #   abline(lm(hs.object$Structural.Specificity~log(read.abund.trim)), col = "red")
 #
 # Randomize community matrix to generate a null model for deviance calculations
