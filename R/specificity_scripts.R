@@ -717,18 +717,18 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 
 
 # remove.packages("lotus")
-# 
+#
 # devtools::install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
-# 
+#
 # library(lotus)
-# 
+#
 # # You can read more about each lotus function with the help function
 # help("structural.specificity")
-# 
+#
 # # Calculate uncorrected host specificity
 # hs.object <- structural.specificity(phylocom$sample, abundance.weighted = TRUE, trim = TRUE)
 # hs.object
-# 
+#
 # # Explore data and identify whether negative or variance-decreasing relationships exist between host specificity and symbiont read abundance
 # ## plot histogram
 # plot(density(hs.object$Structural.Specificity))
@@ -738,10 +738,10 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # cor.test(hs.object$Structural.Specificity, read.abund.trim) # correlation test
 # plot(y = hs.object$Structural.Specificity, x = log(read.abund.trim), ylab = "Uncorrected Structural Specificity (HostRichness)", xlab = "Log Symbiont Read Abundance")
 #   abline(lm(hs.object$Structural.Specificity~log(read.abund.trim)), col = "red")
-# 
+#
 # # Randomize community matrix to generate a null model for deviance calculations
 # null.structural.object <- null.structural(phylocom$sample, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
-# 
+#
 # # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
 # structural.dev <- deviance.structural(as.data.frame(phylocom$sample), randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
 # structural.dev[[1]] # View data frame of output
