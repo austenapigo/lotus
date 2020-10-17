@@ -235,7 +235,6 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
       geom_point(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "grey", alpha = 0.5, show.legend = TRUE, size = 3) +
       geom_smooth(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
       geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
-      geom_smooth(color = "red", method = "lm", se = FALSE, lwd = 1, lty = "solid", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
       stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = y ~ x + I(x^2), label.x = "left", label.y = "bottom", color = "black", size = 5) + 
       theme_bw() +
       ggtitle(rownames(x)[i]) + 
@@ -639,12 +638,12 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
   for (i in 1:nrow(x)) {
     # Subset a host
     x.sub <- x[i, 1:dim(x)[2]]
-    # Remove Symbionts with abundance of zero
-    x.sub <- x.sub[ , colSums(x.sub) > 0]
+    # Remove symbionts with abundance of zero
+    x.sub <- x.sub[ , colSums(x.sub) > 0, drop = FALSE]
     # Save column names 
     x.names <- colnames(x.sub)
     # Filter entire community
-    x.input <- x[, colnames(x) %in% x.names]
+    x.input <- x[, colnames(x) %in% x.names, drop = FALSE]
     # Remove rows and columns that sum to zero
     x.input <- as.data.frame(x.input[rowSums(x.input) > 0, colSums(x.input) > 0])
     # Calculate beta-specificity
@@ -668,33 +667,31 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
            beta.specificity.dat <- beta.specificity.dat) 
     # Plot null vs. empirical per sample
     beta.plots[[i+1]] <- 
-      ggplot(beta.specificity.dat, aes(y = Similarity.Index, x = log(Abundance))) +
-      geom_point(data = randomized, aes(y = Similarity.Index, x = log(Abundance)), color = "blue", alpha = 0.1, show.legend = TRUE, size = 3) +
-      geom_point(aes(y = Similarity.Index, x = log(Abundance)), color = "red", alpha = 1, show.legend = TRUE, size = 3) +
-      geom_smooth(aes(y = Similarity.Index, x = log(Abundance)), color = "red", method = "lm", se = FALSE, lwd = 1, lty = "solid", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
-      geom_smooth(data = randomized, aes(y = Similarity.Index, x = log(Abundance)), color = "blue", method = "lm", se = FALSE, lwd = 1, lty = "solid", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
-      stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula=  y ~ x + I(x^2), label.x = "left", label.y = "top", color = "black", size = 5) + 
+      ggplot2::ggplot(beta.specificity.dat, aes(y = Similarity.Index, x = log(Abundance))) +
+      geom_point(data = randomized, aes(y = Similarity.Index, x = log(Abundance)), color = "grey", alpha = 0.5, show.legend = TRUE, size = 3) +
+      geom_smooth(data = randomized, aes(y = Similarity.Index, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
+      geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
+      stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = y ~ x + I(x^2), label.x = "left", label.y = "bottom", color = "black", size = 5) + 
+      theme_bw() +
+      ggtitle(rownames(x)[i]) + 
       theme_bw() +
       theme(
-        axis.text.x = element_text(size = 15, color = "black"), 
-        axis.text.y = element_text(size = 15, color = "black"),
-        axis.title.x = element_text(size = 15, margin = margin(t = 5, r = 0, b = 0, l = 0)), 
-        axis.title.y = element_text(size = 15, margin = margin(t = 0, r = 5, b = 0, l = 0), vjust = 0.5),
-        legend.title = element_text(size = 15), 
-        legend.text = element_text(size = 15),  
+        axis.text.x = element_text(size = 13, color = "black"), 
+        axis.text.y = element_text(size = 13, color = "black"),
+        axis.title.x = element_text(size = 13, margin = margin(t = 5, r = 0, b = 0, l = 0)), 
+        axis.title.y = element_text(size = 13, margin = margin(t = 0, r = 5, b = 0, l = 0)),
+        legend.title = element_text(size = 13),
+        legend.text = element_text(size = 13),
         legend.position = "bottom",
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line.x = element_blank(),
         axis.line.y = element_blank(),
-        panel.border = element_rect(linetype = "solid", size = 1),
-        plot.title = element_text(hjust = 0.5, size = 12, face = "bold.italic"),
-        text = element_text(),
+        plot.title = element_text(hjust = 0.5, size = 13, face = "bold.italic"),
         aspect.ratio = 0.85
-      ) + 
-      ggtitle(rownames(x)[i]) + 
-      labs(y = "Uncorrected Host Specificity", x = "Log Absolute Endophyte Read Abundance")
+      ) +
+      labs(y = "Uncorrected Structural Specificity", x = "Log Absolute Symbiont Read Abundance")
     # Get model coefficients for null model
     null.eqn <- summary(lm(Similarity.Index ~ log(Abundance) + I(log(Abundance)^2), data = randomized))
     null.eqn$coefficients[1, 1]
