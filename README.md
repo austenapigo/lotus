@@ -77,28 +77,38 @@ devtools::install_github("austenapigo/lotus")
     + `null.beta`: generates a null occupancy-abundance model by randomizing the community matrix and calculating beta-specificity per symbiont within each randomized community
     + `deviance.beta`: calculates and plots the deviance in observed beta-specificity from the null expectation per symbiont per sample
     
- ### Basic Workflow
+ ### Example Worflows
  ```
- library(lotus)
- 
- # You can read more about each lotus function with the help function
- help("structural.specificity")
- 
- # Calculate uncorrected host specificity 
- hs.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
- 
- # Explore data and identify whether negative or variance-decreasing relationships exist between host specificity and symbiont read abundance
- # plot histogram
- pearson.cor <- cor.test(hs.object, colSums(quad.rarefied)) # correlation test
- # visualize host specificity - read abundance relationships 
- ggplot(data = NULL, aes(y = hs.object$Structural.Specificity, x = log(colSums(quad.rarefied)) + geom_point() + geom_smooth()
- 
- # Randomize community matrix to generate a null model for deviance calculations
- null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
- 
- # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample 
+# Install lotus
+# devtools::install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
+
+# Load lotus
+library(lotus)
+
+# You can read more about each lotus function with the help function
+help("structural.specificity")
+
+# Calculate uncorrected host specificity (not relavitized to a null model)
+hs.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+hs.object
+
+# Explore data and identify whether negative or variance-decreasing relationships exist between host specificity and symbiont read abundance
+plot(density(hs.object$Structural.Specificity)) # plot histogram
+
+read.abund <- as.data.frame(colSums(phylocom$sample)) # get read abundances per symbiont
+read.abund.trim <- read.abund[rownames(read.abund) %in% rownames(hs.object), ] # trim relative to hs.object
+
+cor.test(hs.object$Structural.Specificity, read.abund.trim) # correlation test
+
+plot(y = hs.object$Structural.Specificity, x = log(read.abund.trim), ylab = "Uncorrected Structural Specificity (HostRichness)", xlab = "Log Symbiont Read Abundance") # visualize host specificity - read abundance relationships
+abline(lm(hs.object$Structural.Specificity~log(read.abund.trim)), col = "red")
+
+# Randomize community matrix to generate a null model for deviance calculations
+null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+
+# Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
 structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
-structural.dev[[1]] # View data frame of output 
+structural.dev[[1]] # View data frame of output
 structural.dev[[2]] # View occupancy-abundance model for the first sample
 structural.dev[[81]] # View occupancy-abundance model for the last sample
  ```
@@ -124,9 +134,9 @@ structural.dev[[81]] # View occupancy-abundance model for the last sample
 
 You might find that it's common to see host specificity evaluted with multivariate methods that quantify and visualize differences in compositional dissimilarity (e.g., Bray-Curtis) among symbiont communities in multivariate space. Clustering among host samples from the same species or taxonomic group in ordination space to the exclusion of all other samples suggests they share similar communities of symbionts and this is usually interpreted as host specificity. However, we pose that there are many reasons host samples could be clustered.  
 
-For example, if all symbionts in a given group of host samples were only found in those hosts, but not any others, we would expect these samples to cluster in ordination space and have high structural specificity (i.e., a low number of occupied hosts). Alternatively, perhaps these same host samples harbor many rare symbiont generalists found in other samples, but one very abundant specialist symbiont only found in this particular group of hosts. In this case, we might still see clustering in ordination space but symbionts within these hosts would have lower structural specificity, on average, because of all the rare generalists they harbor that occupy many hosts. These two (of many possible) hypothetical scenarios highlight how metrics per symbionts could tell you more about *why* clustering in ordination space occurs and can give a more transparent view of how symbiont communities vary in their host specificity beyond differences in a given dissimilarity metric. 
+For example, if all symbionts in a given group of host samples were only found in those hosts, but not any others, we would expect these samples to cluster in ordination space and have high structural specificity (i.e., a low number of occupied hosts). Alternatively, perhaps these same host samples harbor many rare symbiont generalists found in other samples, but one very abundant specialist symbiont only found in this particular group of hosts. In this case, we might still see clustering in ordination space but symbionts within these hosts would have lower structural specificity, on average, because of all the rare generalists they harbor that occupy many hosts. These two (of many possible) hypothetical scenarios highlight how metrics calculated per symbiont can tell you more about *why* clustering in ordination space occurs (or does not occur) and can give a more transparent view of how symbiont communities vary in their host specificity beyond differences in a given dissimilarity metric. 
 
-We still think multivariate methods are extremely useful tools to identify host specificity, but whether it's always the **best** tool for every question is still an open question. We advocate for future studies to consider using the alternative metrics we propose in conjunction with frequently-used multivariate techniques that each provide useful perspectives to host specificity in host-associated microbiomes.
+We still think multivariate methods are extremely useful tools to identify host specificity, but whether it's the **best** tool for every question is still an open question. We advocate for future studies to consider using the alternative metrics we propose in conjunction with frequently-used multivariate techniques that each provide useful perspectives to host specificity in host-associated microbiomes.
 
 ### Contact 
 
