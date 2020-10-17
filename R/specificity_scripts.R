@@ -232,8 +232,8 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
     # Plot null vs. empirical per sample
     structural.plots[[i+1]] <- 
       ggplot2::ggplot(structural.dat, aes(y = Structural.Specificity, x = log(Abundance))) +
-      geom_point(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "black", alpha = 0.01, show.legend = TRUE, size = 3) +
-      geom_smooth(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 2, lty = "dashed", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
+      geom_point(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "black", alpha = 0.001, show.legend = TRUE, size = 3) +
+      geom_smooth(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
       geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
       geom_smooth(color = "red", method = "lm", se = FALSE, lwd = 1, lty = "solid", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
       stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = y ~ x + I(x^2), label.x = "left", label.y = "bottom", color = "black", size = 5) + 
