@@ -297,9 +297,9 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
 # mean(structural.dev[[1]]$Mean.Deviance)
 # # -0.9141502 vs. -0.9135079
 
-##############################################################
+########################################################
 # `network.specificity`: calculate network specificity #
-##############################################################
+########################################################
 #' Network Specificity
 #' 
 #' Calculate network specificity not corrected by null mdoels. 
@@ -308,7 +308,7 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
 #' 
 #' @param abundance.weighted Logical. TRUE calculates Shannon's H per symbiont. FALSE calculates host richness per symbiont. 
 #' 
-#' @param trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. 
+#'@param abundance.weighted Logical. TRUE calculates the Paired Difference Index per symbiont. FALSE calculates the Resource Range Index per symbiont. 
 #'
 #' @return A data frame with symbiont identifiers and network specificity values. 
 #' @export
@@ -339,9 +339,9 @@ network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 # mean(network.object$Network.Specificity)
 # mean host richness is -5.842963 vs. -5.842963
 
-#######################################################################
+#################################################################
 # `null.network`: calculate null models for network specificity #
-#######################################################################
+#################################################################
 #' Network Specificity Null Models 
 #' 
 #' Generate null models and calculate network specificity per symbiont within each community randomization. 
@@ -350,7 +350,7 @@ network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' 
 #' @param iterations Integer. Indicate the number of randomized communities to generate. 
 #' 
-#' @param abundance.weighted Logical. TRUE calculates Shannon's H per symbiont. FALSE calculates host richness per symbiont. 
+#' @param abundance.weighted Logical. TRUE calculates the Paired Difference Index per symbiont. FALSE calculates the Resource Range Index per symbiont. 
 #' 
 #' @param randomization.method Randomization method. Usage borrowed directly from bipartite::nullmodel. 
 #' Specify as "r2dtable", "swap.web", "vaznull", "shuffle.web" or "mgen". 
@@ -426,9 +426,9 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
 # mean host richness: -4.086787 vs. -3.926589
 # head(null.network.object)
 
-###########################################################################
+#####################################################################
 # `deviance.network`: calculate the deviance in network specificity #
-###########################################################################
+#####################################################################
 #' Deviance in Network Specificity to Null Models 
 #' 
 #' Calculate the deviance in observed network specificity to a null model of network specificity per symbiont. 
@@ -440,7 +440,7 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
 #' 
 #' @param randomized Data frame. Output from null.network function. 
 #' 
-#' @param abundance.weighted Logical. TRUE calculates Shannon's H per symbiont. FALSE calculates host richness per symbiont. 
+#' @param abundance.weighted Logical. TRUE calculates the Paired Difference Index per symbiont. FALSE calculates the Resource Range Index per symbiont. 
 #' 
 #' @param model Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function. 
 #' 
@@ -482,8 +482,8 @@ deviance.network <- function(x, randomized = null.network.object, abundance.weig
     x.input <- as.data.frame(x.input[rowSums(x.input) > 0, colSums(x.input) > 0])
     # Calculate network specificity
     ifelse(abundance.weighted == TRUE, 
-           Network.Specificity <- PDI(x), 
-           Network.Specificity <- PDI((x > 0) + 0))
+           Network.Specificity <- PDI(x.input), 
+           Network.Specificity <- PDI((x.input > 0) + 0))
     # Make holding vectors
     Symbiont <- rep()
     Abundance <- rep()
@@ -499,7 +499,7 @@ deviance.network <- function(x, randomized = null.network.object, abundance.weig
     # Trim noise
     ifelse(trim == TRUE, 
            # only consider symbionts with a network specificity less than 0
-           network.dat <- subset(network.dat, network.dat$Network.Specificity < 0), 
+           network.dat <- subset(network.dat, network.dat$Network.Specificity > 0), 
            network.dat <- network.dat) 
     # Match model argument
     ifelse(model == "first", formula <- "y ~ x", formula <- "y ~ x + I(x^2)")
@@ -1051,6 +1051,7 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # 
 # # You can read more about each lotus function with the help function
 # help("structural.specificity")
+# help("network.specificity")
 # help("phylogenetic.specificity")
 # help("beta.specificity")
 # 
@@ -1076,6 +1077,9 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
 # head(null.structural.object)
 # 
+# null.network.object <- null.network(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+# head(null.network.object)
+# 
 # null.beta.object <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 2, trim = TRUE, notify = TRUE)
 # head(null.beta.object)
 # 
@@ -1091,6 +1095,18 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # mean(structural.dev[[1]]$Mean.Deviance)
 # structural.dev[[2]] # View occupancy-abundance model for the first sample
 # structural.dev[[81]] # View occupancy-abundance model for the last sample
+# 
+# network.dev <- deviance.network(quad.rarefied, randomized = null.network.object, abundance.weighted = TRUE, model = "first", trim = TRUE, notify = FALSE)
+# head(network.dev[[1]]) # View data frame of output
+# mean(network.dev[[1]]$Mean.Deviance)
+# network.dev[[2]] # View occupancy-abundance model for the first sample
+# network.dev[[81]] # View occupancy-abundance model for the last sample
+# 
+# network.dev <- deviance.network(quad.rarefied, randomized = null.network.object, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = FALSE)
+# head(network.dev[[1]]) # View data frame of output
+# mean(network.dev[[1]]$Mean.Deviance)
+# network.dev[[2]] # View occupancy-abundance model for the first sample
+# network.dev[[81]] # View occupancy-abundance model for the last sample
 # 
 # beta.dev <- deviance.beta(quad.rarefied, randomized = null.beta.object, index = "morisita.horn", model = "second", trim = TRUE, notify = TRUE)
 # head(beta.dev[[1]]) # View data frame of output
