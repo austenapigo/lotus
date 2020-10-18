@@ -114,6 +114,15 @@ structural.dev[[81]] # View occupancy-abundance model for the last sample
  ```
 #### Expected Output:
 
+![Output1](https://github.com/austenapigo/lotus/blob/master/figures/structural.output.png)
+
+![Output2](https://github.com/austenapigo/lotus/blob/master/figures/correlation_graph.png)
+
+![Output3](https://github.com/austenapigo/lotus/blob/master/figures/null.output.png)
+
+![Output4](https://github.com/austenapigo/lotus/blob/master/figures/deviance.output.png)
+
+![Output5](https://github.com/austenapigo/lotus/blob/master/figures/deviance.png)
 
 #### Important Notes:
 + The community matrix for analysis should be organized with hosts populating the rows, while symbionts populate the columns.
