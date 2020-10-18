@@ -759,10 +759,12 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # head(structural.dev[[1]]) # View data frame of output
 # structural.dev[[2]] # View occupancy-abundance model for the first sample
 # structural.dev[[81]] # View occupancy-abundance model for the last sample
+#
 # beta.dev <- deviance.beta(quad.rarefied, randomized = null.beta.object, index = "morisita.horn", trim = TRUE, notify = TRUE)
 # head(beta.dev[[1]]) # View data frame of output
 # beta.dev[[2]] # View occupancy-abundance model for the first sample
 # beta.dev[[81]] # View occupancy-abundance model for the last sample
+#
 # phylo.dev <- deviance.phylogenetic(t(phylocom$sample), phylocom$phylo, null.model = "taxa.labels", iterations = 100, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
 # phylo.dev <- deviance.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
 

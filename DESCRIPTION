@@ -18,7 +18,9 @@ Imports:
     vegan,
     bipartite,
     picante,
-    ggpmisc
+    ggpmisc,
+    dplyr,
+    tidyr
 License: GPL
 LazyData: true
 URL: https://github.com/austenapigo/lotus
