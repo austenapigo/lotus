@@ -180,11 +180,11 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
 #' @export
 #' @examples
 #' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-#' structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+#' structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, model = "first", trim = TRUE, notify = TRUE)
 #' structural.dev[[1]] # View data frame of output 
 #' structural.dev[[2]] # View first graph 
 #' structural.dev[[81]] # View last graph 
-deviance.structural <- function(x, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE) {
+deviance.structural <- function(x, randomized = null.structural.object, abundance.weighted = TRUE, model = c("first", "second"), trim = TRUE, notify = TRUE) {
   # Make holding vectors 
   structural.plots <- list()
   mean.structural <- rep()
@@ -229,13 +229,15 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
                   # otherwise, only consider symbionts with a host richness less than -1 
                   structural.dat <- subset(structural.dat, structural.dat$Structural.Specificity < -1)), 
            structural.dat <- structural.dat) 
+    # Match model argument
+    ifelse(model == "first", model <- "y ~ x", model <- "y ~ x + I(x^2)")
     # Plot null vs. empirical per sample
     structural.plots[[i+1]] <- 
       ggplot2::ggplot(structural.dat, aes(y = Structural.Specificity, x = log(Abundance))) +
       geom_point(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "grey", alpha = 0.5, show.legend = TRUE, size = 3) +
-      geom_smooth(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
+      geom_smooth(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = model) + 
       geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
-      stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = y ~ x + I(x^2), label.x = "left", label.y = "bottom", color = "black", size = 5) + 
+      stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = model, label.x = "left", label.y = "bottom", color = "black", size = 5) + 
       theme_bw() +
       ggtitle(rownames(x)[i]) + 
       theme_bw() +
@@ -724,48 +726,49 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 #########################
 # Example set in ReadMe #
 #########################
-
-# # Install lotus
-# devtools::install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
-#
 # # Load lotus
 # library(lotus)
-#
+# 
 # # You can read more about each lotus function with the help function
 # help("structural.specificity")
-#
+# 
+# # Check that input data is a data frame
+# is.data.frame(quad.rarefied)
+# 
 # # Calculate uncorrected host specificity (not relavitized to a null model)
 # hs.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
 # hs.object
-#
+# 
 # # Explore data and identify whether negative or variance-decreasing relationships exist between host specificity and symbiont read abundance
 # plot(density(hs.object$Structural.Specificity)) # plot histogram
-#
-# read.abund <- as.data.frame(colSums(phylocom$sample)) # get read abundances per symbiont
+# 
+# read.abund <- as.data.frame(colSums(quad.rarefied)) # get read abundances per symbiont
 # read.abund.trim <- read.abund[rownames(read.abund) %in% rownames(hs.object), ] # trim relative to hs.object
-#
+# 
 # cor.test(hs.object$Structural.Specificity, read.abund.trim) # correlation test
-#
+# 
 # plot(y = hs.object$Structural.Specificity, x = log(read.abund.trim), ylab = "Uncorrected Structural Specificity (HostRichness)", xlab = "Log Symbiont Read Abundance") # visualize host specificity - read abundance relationships
 # abline(lm(hs.object$Structural.Specificity~log(read.abund.trim)), col = "red")
-#
+# 
 # # Randomize community matrix to generate a null model for deviance calculations
 # null.structural.object <- null.structural(quad.rarefied, iterations = 10, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
 # head(null.structural.object)
-# null.beta.object <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 100, trim = TRUE, notify = TRUE)
-#
+# 
+# null.beta.object <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 2, trim = TRUE, notify = TRUE)
+# 
+# 
 # # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
 # structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
 # head(structural.dev[[1]]) # View data frame of output
 # structural.dev[[2]] # View occupancy-abundance model for the first sample
 # structural.dev[[81]] # View occupancy-abundance model for the last sample
-#
+# 
 # beta.dev <- deviance.beta(quad.rarefied, randomized = null.beta.object, index = "morisita.horn", trim = TRUE, notify = TRUE)
 # head(beta.dev[[1]]) # View data frame of output
 # beta.dev[[2]] # View occupancy-abundance model for the first sample
 # beta.dev[[81]] # View occupancy-abundance model for the last sample
-#
-# phylo.dev <- deviance.phylogenetic(t(phylocom$sample), phylocom$phylo, null.model = "taxa.labels", iterations = 100, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+
+
 # phylo.dev <- deviance.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
 
 # .rs.restartR()
