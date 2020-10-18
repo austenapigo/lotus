@@ -7,7 +7,7 @@
 phylogenetic.specificity(x, utree, abundance.weighted = TRUE, trim = TRUE)
 }
 \arguments{
-\item{x}{Data frame of hosts populating rows and symbionts populating columns.}
+\item{x}{Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns.}
 
 \item{utree}{Newick formatted phylogenetic tree.}
 

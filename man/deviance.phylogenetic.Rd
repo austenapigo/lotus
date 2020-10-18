@@ -16,7 +16,7 @@
 )
 }
 \arguments{
-\item{x}{Data frame of hosts populating rows and symbionts populating columns.}
+\item{x}{Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns.}
 
 \item{utree}{Newick formatted phylogenetic tree.}
 
@@ -31,8 +31,9 @@ FALSE calculates presence-absence mean pairwise phylogenetic distance.}
 \item{notify}{Logical. TRUE prints the current iteration of the for loop.}
 }
 \value{
-A data frame with columns that refer to the host sample identifiers, mean deviance in 
-structural specificity, standard error of structural specificities, number of symbionts per host sample and average symbiont read abundance.
+A data frame with columns that refer to the host sample identifiers, mean deviance in phylogenetic specificity, 
+standard error of structural specificities, number of symbionts per host sample and average symbiont read abundance. This function does not specify 
+a model argument whereas the other three deviance- functions do. Phylogenetic specificity...
 }
 \description{
 Calculate the deviance in observed phylogenetic specificity to a null model of structural specificity per symbiont. 

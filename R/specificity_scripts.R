@@ -1,11 +1,11 @@
 #############################
 # Read in pacakges and data #
 #############################
-library(tidyverse)
-library(ggpmisc)
-library(picante)
-library(vegan)
-library(bipartite)
+# library(tidyverse)
+# library(ggpmisc)
+# library(picante)
+# library(vegan)
+# library(bipartite)
 # 
 # # Read in data 
 # dat <- read.csv("/Users/austenapigo/Desktop/github/lotus/otherdat/example_dat.csv", row.names = 1, header = TRUE)
@@ -295,6 +295,276 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
 # structural.dev[[2]]
 # structural.dev[[81]]
 # mean(structural.dev[[1]]$Mean.Deviance)
+# # -0.9141502 vs. -0.9135079
+
+##############################################################
+# `network.specificity`: calculate network specificity #
+##############################################################
+#' Network Specificity
+#' 
+#' Calculate network specificity not corrected by null mdoels. 
+#'
+#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
+#' 
+#' @param abundance.weighted Logical. TRUE calculates Shannon's H per symbiont. FALSE calculates host richness per symbiont. 
+#' 
+#' @param trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. 
+#'
+#' @return A data frame with symbiont identifiers and network specificity values. 
+#' @export
+#' @examples
+#' # Calculate host richness per symbiont
+#' network.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+#' 
+#' # Calculate Shannon's H per symbiont
+#' network.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
+  # Calculate host richness or Shannon's H
+  ifelse(abundance.weighted == TRUE, network <- PDI(x), network <- PDI((x > 0) + 0))
+  # Make data frame
+  network.dat <- data.frame(Network.Specificity = network)
+  # Trim noise
+  ifelse(trim == TRUE, 
+         # only consider symbionts with a Shannon's H less than 0
+         network.dat <- subset(network.dat, Network.Specificity > 0), 
+         network.dat <- network.dat) 
+  # Return object
+  return(network.dat)
+}
+
+# network.object <- network.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+# mean(network.object$Network.Specificity)
+# mean Shannon's H is -0.7925232 matches source code vs. -0.7925232
+# network.object <- network.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
+# mean(network.object$Network.Specificity)
+# mean host richness is -5.842963 vs. -5.842963
+
+#######################################################################
+# `null.network`: calculate null models for network specificity #
+#######################################################################
+#' Network Specificity Null Models 
+#' 
+#' Generate null models and calculate network specificity per symbiont within each community randomization. 
+#'
+#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
+#' 
+#' @param iterations Integer. Indicate the number of randomized communities to generate. 
+#' 
+#' @param abundance.weighted Logical. TRUE calculates Shannon's H per symbiont. FALSE calculates host richness per symbiont. 
+#' 
+#' @param randomization.method Randomization method. Usage borrowed directly from bipartite::nullmodel. 
+#' Specify as "r2dtable", "swap.web", "vaznull", "shuffle.web" or "mgen". 
+#' 
+#' @param trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. 
+#' 
+#' @param notify Logical. TRUE prints the current iteration of the for loop. 
+#'
+#' @return A data frame with columns that refer to symbiont identifiers, absolute read abundance, network specificities and randomization
+#' identifiers. 
+#' @export
+#' @examples
+#' # Generate randomized communities and calculate network specificity per symbiont 
+#' null.network(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), trim = TRUE, notify = TRUE) {
+  # Set seed
+  set.seed(123)
+  # Match argument specified
+  randomization.method <- match.arg(randomization.method)
+  # Generate 100 randomized communities
+  null.network <- bipartite::nullmodel(x, N = iterations, method = randomization.method)
+  # Make holding list
+  null.dats <- list()
+  # Make holding vectors 
+  Symbiont <- rep()
+  Abundance <- rep()
+  # Calculate network specificity for null models
+  for (i in 1:length(null.network)) {
+    # Call a randomized community
+    null <- null.network[[i]]
+    # Add row and column names
+    rownames(null) <- rownames(x)
+    colnames(null) <- colnames(x)
+    # Make as a data frame
+    null <- as.data.frame(null)
+    # Subset symbiont name and calculate abundance per symbiont
+    for (j in 1:ncol(null)) {
+      # Pull symbiont name
+      Symbiont[j] <- colnames(null)[j]
+      # Calculate total read abundance per symbiont
+      Abundance[j] <- sum(null[,j])
+    }
+    # Calculate network specificity
+    ifelse(abundance.weighted == TRUE, 
+           Network.Specificity <- PDI(x), 
+           Network.Specificity <- PDI((x > 0) + 0))
+    # Make data frame
+    null.temp <- data.frame(Symbiont, Abundance, Network.Specificity)
+    # Populate into holding list 
+    null.dats[[i]] <- null.temp
+    # Print iteration
+    ifelse(notify == TRUE, print(i), NaN)
+  }
+  # Make into one data frame
+  null.dats <- as.data.frame(do.call("rbind", null.dats))
+  # Add randomization number as a new column 
+  null.dats$Randomization <- as.factor(rep(1:iterations, each = ncol(x)))
+  rownames(null.dats) <- NULL
+  # Trim noise
+  ifelse(trim == TRUE,
+         # only consider symbionts with a networks pecificity greater than 0
+         null.dats <- subset(null.dats, null.dats$Network.Specificity > 0),
+         null.dats <- null.dats) 
+  # Read out data frame 
+  return(data.frame(null.dats))
+}
+
+# null.network.object <- null.network(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+# mean(null.network.object$Network.Specificity)
+# mean shannon's h: -0.6402127 vs. -0.6407739
+# null.network.object <- null.network(quad.rarefied, iterations = 100, abundance.weighted = FALSE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+# mean(null.network.object$Network.Specificity)
+# mean host richness: -4.086787 vs. -3.926589
+# head(null.network.object)
+
+###########################################################################
+# `deviance.network`: calculate the deviance in network specificity #
+###########################################################################
+#' Deviance in Network Specificity to Null Models 
+#' 
+#' Calculate the deviance in observed network specificity to a null model of network specificity per symbiont. 
+#' Deviance calculations are measured per symbiont and averaged per host sample. For example, all symbionts within a given host 
+#' are evaluated for their host specificity across the entire host community. The host specificities of each symbiont are averaged
+#' to calculate the mean host specificity for symbionts within a given host. 
+#'
+#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
+#' 
+#' @param randomized Data frame. Output from null.network function. 
+#' 
+#' @param abundance.weighted Logical. TRUE calculates Shannon's H per symbiont. FALSE calculates host richness per symbiont. 
+#' 
+#' @param model Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function. 
+#' 
+#' @param trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. 
+#' 
+#' @param notify Logical. TRUE prints the current iteration of the for loop. 
+#'
+#' @return A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean deviance in 
+#' network specificity, standard error of network specificities, number of symbionts per host sample and average symbiont read abundance. 
+#' All subsequent elements of the list are plots of uncorrected host specificity as a function of log symbiont read abundance with the null mode
+#' in blue relative to the symbionts host specificities in red. 
+#' 
+#' @export
+#' @examples
+#' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
+#' network.dev <- deviance.network(quad.rarefied, randomized = null.network.object, abundance.weighted = TRUE, model = "first", trim = TRUE, notify = TRUE)
+#' network.dev[[1]] # View data frame of output 
+#' network.dev[[2]] # View first graph 
+#' network.dev[[81]] # View last graph 
+deviance.network <- function(x, randomized = null.network.object, abundance.weighted = TRUE, model = c("first", "second"), trim = TRUE, notify = TRUE) {
+  # Make holding vectors 
+  network.plots <- list()
+  mean.network <- rep()
+  se.network <- rep()
+  host.sample <- rep()
+  num.symbionts <- rep()
+  read.abund <- rep()
+  # For every host sample
+  for (i in 1:nrow(x)) {
+    # Subset a host
+    x.sub <- x[i, 1:dim(x)[2], drop = FALSE]
+    # Remove symbionts with abundance of zero
+    x.sub <- x.sub[ , colSums(x.sub) > 0, drop = FALSE]
+    # Save column names 
+    x.names <- colnames(x.sub)
+    # Filter entire community
+    x.input <- x[, colnames(x) %in% x.names, drop = FALSE]
+    # Remove rows and columns that sum to zero
+    x.input <- as.data.frame(x.input[rowSums(x.input) > 0, colSums(x.input) > 0])
+    # Calculate network specificity
+    ifelse(abundance.weighted == TRUE, 
+           Network.Specificity <- PDI(x), 
+           Network.Specificity <- PDI((x > 0) + 0))
+    # Make holding vectors
+    Symbiont <- rep()
+    Abundance <- rep()
+    # For every symbiont
+    for (j in 1:ncol(x.input)) {
+      # Pull symbiont name
+      Symbiont[j] <- colnames(x.input)[j]
+      # Calculate total read abundance per symbiont
+      Abundance[j] <- sum(x.input[,j])
+    }
+    # Make data frame
+    network.dat <- data.frame(Network.Specificity, Symbiont, Abundance)
+    # Trim noise
+    ifelse(trim == TRUE, 
+           # only consider symbionts with a network specificity less than 0
+           network.dat <- subset(network.dat, network.dat$Network.Specificity < 0), 
+           network.dat <- network.dat) 
+    # Match model argument
+    ifelse(model == "first", formula <- "y ~ x", formula <- "y ~ x + I(x^2)")
+    # Plot null vs. empirical per sample
+    network.plots[[i+1]] <- 
+      ggplot2::ggplot(network.dat, aes(y = Network.Specificity, x = log(Abundance))) +
+      geom_point(data = randomized, aes(y = Network.Specificity, x = log(Abundance)), color = "grey", alpha = 0.5, show.legend = TRUE, size = 3) +
+      geom_smooth(data = randomized, aes(y = Network.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = formula) + 
+      geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
+      stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = formula, label.x = "left", label.y = "bottom", color = "black", size = 5) + 
+      theme_bw() +
+      ggtitle(rownames(x)[i]) + 
+      theme_bw() +
+      theme(
+        axis.text.x = element_text(size = 13, color = "black"), 
+        axis.text.y = element_text(size = 13, color = "black"),
+        axis.title.x = element_text(size = 13, margin = margin(t = 5, r = 0, b = 0, l = 0)), 
+        axis.title.y = element_text(size = 13, margin = margin(t = 0, r = 5, b = 0, l = 0)),
+        legend.title = element_text(size = 13),
+        legend.text = element_text(size = 13),
+        legend.position = "bottom",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line.x = element_blank(),
+        axis.line.y = element_blank(),
+        plot.title = element_text(hjust = 0.5, size = 13, face = "bold.italic"),
+        aspect.ratio = 0.85
+      ) +
+      labs(y = "Uncorrected Network Specificity", x = "Log Absolute Symbiont Read Abundance")
+    # Get model coefficients for null model
+    ifelse(model == "first",
+           null.eqn <- summary(lm(Network.Specificity ~ log(Abundance), data = randomized)), 
+           null.eqn <- summary(lm(Network.Specificity ~ log(Abundance) + I(log(Abundance)^2), data = randomized)))
+    # Get null model vector
+    ifelse(model == "first",
+           null.vector <- null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(network.dat$Abundance), 
+           null.vector <- null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(network.dat$Abundance) + null.eqn$coefficients[3, 1]*log(network.dat$Abundance)^2)
+    # Calculate mean deviance
+    mean.network[i] <- mean(network.dat$Network.Specificity - null.vector)
+    # Calculate standard error of mean deviance
+    se.network[i] <- sd(network.dat$Network.Specificity - null.vector) / sqrt(length(network.dat$Network.Specificity - null.vector))
+    # Host sample name
+    host.sample[i] <- rownames(x)[i]
+    # Number of symbionts column
+    num.symbionts[i] <- length(network.dat$Network.Specificity)
+    # Symbiont read abundance 
+    read.abund[i] <- mean(network.dat$Abundance)
+    # Check current iteration
+    ifelse(notify == TRUE, print(i), NaN)
+    # Populate deviance data into data.frame
+    network.plots[[1]] <- data.frame(Host.Sample = host.sample, 
+                                        Mean.Deviance = mean.network, 
+                                        Mean.Deviance.SE = se.network,
+                                        Number.of.Symbionts = num.symbionts,
+                                        Avg.Symbiont.Abundance = read.abund)
+  }
+  return(network.plots)
+}
+
+# network.dev <- deviance.network(quad.rarefied, randomized = null.network.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+# head(network.dev[[1]])
+# network.dev[[2]]
+# network.dev[[81]]
+# mean(network.dev[[1]]$Mean.Deviance)
 # # -0.9141502 vs. -0.9135079
 
 ##################################################################
@@ -807,6 +1077,7 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # head(null.structural.object)
 # 
 # null.beta.object <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 2, trim = TRUE, notify = TRUE)
+# head(null.beta.object)
 # 
 # # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
 # structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, model = "first", trim = TRUE, notify = FALSE)
@@ -826,12 +1097,22 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # beta.dev[[2]] # View occupancy-abundance model for the first sample
 # beta.dev[[81]] # View occupancy-abundance model for the last sample
 # 
+# beta.dev <- deviance.beta(quad.rarefied, randomized = null.beta.object, index = "morisita.horn", model = "first", trim = TRUE, notify = TRUE)
+# head(beta.dev[[1]]) # View data frame of output
+# mean(beta.dev[[1]]$Mean.Deviance)
+# beta.dev[[2]] # View occupancy-abundance model for the first sample
+# beta.dev[[81]] # View occupancy-abundance model for the last sample
+# 
 # beta.dev <- deviance.beta(quad.rarefied, randomized = null.beta.object, index = "morisita.horn", model = "second", trim = TRUE, notify = TRUE)
 # head(beta.dev[[1]]) # View data frame of output
+# mean(beta.dev[[1]]$Mean.Deviance)
 # beta.dev[[2]] # View occupancy-abundance model for the first sample
 # beta.dev[[81]] # View occupancy-abundance model for the last sample
 # 
 # phylo.dev <- deviance.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+# head(phylo.dev)
+# phylo.dev[[2]] # View occupancy-abundance model for the first sample
+# phylo.dev[[81]] # View occupancy-abundance model for the last sample
 
 # devtools::install_github("austenapigo/lotus", auth_token = "c0e3bdcb8154221182f0a2763f3cd65ed2153096")
 # .rs.restartR()

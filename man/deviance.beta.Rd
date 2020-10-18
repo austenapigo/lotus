@@ -8,16 +8,19 @@
   x,
   randomized = null.object,
   index = c("morisita.horn", "horn", "sorensen"),
+  model = c("first", "second"),
   trim = TRUE,
   notify = TRUE
 )
 }
 \arguments{
-\item{x}{Data frame of hosts populating rows and symbionts populating columns.}
+\item{x}{Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns.}
 
 \item{randomized}{Data frame. Output from null.beta function.}
 
 \item{index}{Character. Method for calculation with the Morisita-Horn, Horn or Sorensen Indices.}
+
+\item{model}{Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function.}
 
 \item{trim}{Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts.}
 

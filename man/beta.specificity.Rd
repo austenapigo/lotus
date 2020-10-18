@@ -2,7 +2,7 @@
 % Please edit documentation in R/specificity_scripts.R
 \name{beta.specificity}
 \alias{beta.specificity}
-\title{Structural Specificity}
+\title{Beta-Specificity}
 \usage{
 beta.specificity(
   x,
