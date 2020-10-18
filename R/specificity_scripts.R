@@ -1,11 +1,11 @@
 #############################
 # Read in pacakges and data #
 #############################
-# library(tidyverse)
-# library(ggpmisc)
-# library(picante)
-# library(vegan)
-# library(bipartite)
+library(tidyverse)
+library(ggpmisc)
+library(picante)
+library(vegan)
+library(bipartite)
 # 
 # # Read in data 
 # dat <- read.csv("/Users/austenapigo/Desktop/github/lotus/otherdat/example_dat.csv", row.names = 1, header = TRUE)
@@ -22,7 +22,7 @@
 #' 
 #' Calculate structural specificity not corrected by null mdoels. 
 #'
-#' @param x Data frame of hosts populating rows and symbionts populating columns. 
+#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
 #' 
 #' @param abundance.weighted Logical. TRUE calculates Shannon's H per symbiont. FALSE calculates host richness per symbiont. 
 #' 
@@ -68,7 +68,7 @@ structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' 
 #' Generate null models and calculate structural specificity per symbiont within each community randomization. 
 #'
-#' @param x Data frame of hosts populating rows and symbionts populating columns. 
+#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
 #' 
 #' @param iterations Integer. Indicate the number of randomized communities to generate. 
 #' 
@@ -162,11 +162,13 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
 #' are evaluated for their host specificity across the entire host community. The host specificities of each symbiont are averaged
 #' to calculate the mean host specificity for symbionts within a given host. 
 #'
-#' @param x Data frame of hosts populating rows and symbionts populating columns. 
+#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
 #' 
 #' @param randomized Data frame. Output from null.structural function. 
 #' 
 #' @param abundance.weighted Logical. TRUE calculates Shannon's H per symbiont. FALSE calculates host richness per symbiont. 
+#' 
+#' @param model Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function. 
 #' 
 #' @param trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. 
 #' 
@@ -259,14 +261,18 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
       ) +
       labs(y = "Uncorrected Structural Specificity", x = "Log Absolute Symbiont Read Abundance")
     # Get model coefficients for null model
-    null.eqn <- summary(lm(Structural.Specificity ~ log(Abundance) + I(log(Abundance)^2), data = randomized))
-    null.eqn$coefficients[1, 1]
-    null.eqn$coefficients[2, 1]
-    null.eqn$coefficients[3, 1]
+    ifelse(model == "first",
+           null.eqn <- summary(lm(Structural.Specificity ~ log(Abundance), data = randomized)), 
+           null.eqn <- summary(lm(Structural.Specificity ~ log(Abundance) + I(log(Abundance)^2), data = randomized)))
+    
+    ifelse(model == "first",
+           null.vector <- null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(structural.dat$Abundance), 
+           null.vector <- null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(structural.dat$Abundance) + null.eqn$coefficients[3, 1]*log(structural.dat$Abundance)^2)
+    
     # Calculate mean deviance
-    mean.structural[i] <- mean(structural.dat$Structural.Specificity - (null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(structural.dat$Abundance) + null.eqn$coefficients[3, 1]*log(structural.dat$Abundance)^2))
+    mean.structural[i] <- mean(structural.dat$Structural.Specificity - null.vector)
     # Calculate standard error of mean deviance
-    se.structural[i] <- sd(structural.dat$Structural.Specificity - (null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(structural.dat$Abundance) + null.eqn$coefficients[3, 1]*log(structural.dat$Abundance)^2)) / sqrt(length(structural.dat$Structural.Specificity - (null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(structural.dat$Abundance) + null.eqn$coefficients[3, 1]*log(structural.dat$Abundance)^2)))
+    se.structural[i] <- sd(structural.dat$Structural.Specificity - null.vector) / sqrt(length(structural.dat$Structural.Specificity - null.vector))
     # Host sample name
     host.sample[i] <- rownames(x)[i]
     # Number of symbionts column
@@ -299,7 +305,7 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
 #' 
 #' Calculate phylogenetic specificity not corrected by null mdoels. 
 #'
-#' @param x Data frame of hosts populating rows and symbionts populating columns. 
+#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
 #' 
 #' @param utree Newick formatted phylogenetic tree. 
 #' 
@@ -345,7 +351,7 @@ phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim =
 #' are evaluated for their host specificity across the entire host community. The host specificities of each symbiont are averaged
 #' to calculate the mean host specificity for symbionts within a given host. 
 #'
-#' @param x Data frame of hosts populating rows and symbionts populating columns. 
+#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
 #' 
 #' @param utree Newick formatted phylogenetic tree. 
 #' 
@@ -359,8 +365,9 @@ phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim =
 #' 
 #' @param notify Logical. TRUE prints the current iteration of the for loop.
 #'
-#' @return A data frame with columns that refer to the host sample identifiers, mean deviance in 
-#' structural specificity, standard error of structural specificities, number of symbionts per host sample and average symbiont read abundance. 
+#' @return A data frame with columns that refer to the host sample identifiers, mean deviance in phylogenetic specificity, 
+#' standard error of structural specificities, number of symbionts per host sample and average symbiont read abundance. This function does not specify 
+#' a model argument whereas the other three deviance- functions do. Phylogenetic specificity...
 #' 
 #' @export
 #' @examples
@@ -371,6 +378,7 @@ deviance.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
   phylogenetic.plots <- list()
   mean.phylogenetic <- rep()
   se.phylogenetic <- rep()
+  host.sample <- rep()
   num.symbionts <- rep()
   read.abund <- rep()
   # For every host sample
@@ -404,7 +412,12 @@ deviance.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
       Abundance[j] <- sum(x.input[,j])
     }
     # Make data frame
-    phylogenetic.dat <- data.frame(Symbiont, Abundance, Richness = Phylogenetic.Specificity$ntaxa, Phylogenetic.Specificity = -1* Phylogenetic.Specificity$mpd.obs.z)
+    phylogenetic.dat <- data.frame(Symbiont, 
+                                   Abundance, 
+                                   Richness = Phylogenetic.Specificity$ntaxa, 
+                                   Phylogenetic.Specificity = -1 * Phylogenetic.Specificity$mpd.obs.z,
+                                   Observed.Phylo.Specificity = -1 *Phylogenetic.Specificity$mpd.obs,
+                                   Randomized.Phylo.Specificity = -1 * Phylogenetic.Specificity$mpd.rand.mean)
     # Convert NA to 0
     phylogenetic.dat[is.na(phylogenetic.dat)] <- 0
     # Trim noise
@@ -412,22 +425,53 @@ deviance.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
            # otherwise, only consider symbionts with a host richness greater than 1 
            phylogenetic.dat <- subset(phylogenetic.dat, phylogenetic.dat$Richness > 1), 
            phylogenetic.dat <- phylogenetic.dat) 
+    # Plot null vs. empirical per sample
+    phylogenetic.plots[[i+1]] <- 
+      ggplot2::ggplot(phylogenetic.dat, aes(y = Observed.Phylo.Specificity, x = log(Abundance))) +
+      geom_point(aes(y = Randomized.Phylo.Specificity, x = log(Abundance)), color = "grey", alpha = 0.5, show.legend = TRUE, size = 3) +
+      geom_smooth(aes(y = Randomized.Phylo.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = "y ~ x") + 
+      geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
+      stat_poly_eq(parse = TRUE, aes(y = Randomized.Phylo.Specificity, x = log(Abundance), label = ..eq.label..), formula = "y ~ x", label.x = "left", label.y = "bottom", color = "black", size = 5) + 
+      theme_bw() +
+      ggtitle(rownames(x)[i]) + 
+      theme_bw() +
+      theme(
+        axis.text.x = element_text(size = 13, color = "black"), 
+        axis.text.y = element_text(size = 13, color = "black"),
+        axis.title.x = element_text(size = 13, margin = margin(t = 5, r = 0, b = 0, l = 0)), 
+        axis.title.y = element_text(size = 13, margin = margin(t = 0, r = 5, b = 0, l = 0)),
+        legend.title = element_text(size = 13),
+        legend.text = element_text(size = 13),
+        legend.position = "bottom",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line.x = element_blank(),
+        axis.line.y = element_blank(),
+        plot.title = element_text(hjust = 0.5, size = 13, face = "bold.italic"),
+        aspect.ratio = 0.85
+      ) +
+      labs(y = "Uncorrected Phylogenetic Specificity", x = "Log Absolute Symbiont Read Abundance")
     # Calculate mean deviance
     mean.phylogenetic[i] <- mean(phylogenetic.dat$Phylogenetic.Specificity)
     # Calculate the standard error of the mean
     se.phylogenetic[i] <- sd(phylogenetic.dat$Phylogenetic.Specificity) / sqrt(length(phylogenetic.dat$Phylogenetic.Specificity))
+    # Host sample name
+    host.sample[i] <- rownames(x)[i]
     # Number of symbionts column
     num.symbionts[i] <- length(phylogenetic.dat$Phylogenetic.Specificity)
     # Symbiont read abundance 
     read.abund[i] <- mean(phylogenetic.dat$Abundance)
     # Check current iteration
     ifelse(notify == TRUE, print(i), NaN)
+    # Populate deviance data into data.frame
+    phylogenetic.plots[[1]] <- data.frame(Host.Sample = host.sample, 
+                                        Mean.Deviance = mean.phylogenetic, 
+                                        Mean.Deviance.SE = se.phylogenetic,
+                                        Number.of.Symbionts = num.symbionts,
+                                        Avg.Symbiont.Abundance = read.abund)
   }
-  return(data.frame(Host.Sample = rownames(x),
-                    Mean.Deviance = mean.phylogenetic, 
-                    Mean.Deviance.SE = se.phylogenetic,
-                    Number.of.Symbionts = num.symbionts,
-                    Avg.Symbiont.Abundance = read.abund))
+  return(phylogenetic.plots)
 }
 
 # phylogenetic.dev <- deviance.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
@@ -607,11 +651,13 @@ null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomi
 #' are evaluated for their host specificity across the entire host community. The host specificities of each symbiont are averaged
 #' to calculate the mean host specificity for symbionts within a given host. 
 #'
-#' @param x Data frame of hosts populating rows and symbionts populating columns. 
+#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
 #' 
 #' @param randomized Data frame. Output from null.beta function. 
 #' 
 #' @param index Character. Method for calculation with the Morisita-Horn, Horn or Sorensen Indices. 
+#' 
+#' @param model Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function. 
 #' 
 #' @param trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. 
 #' 
@@ -628,7 +674,7 @@ null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomi
 #' beta.dev[[1]] # View data frame of output 
 #' beta.dev[[2]] # View first graph 
 #' beta.dev[[81]] # View last graph 
-deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn", "horn", "sorensen"), trim = TRUE, notify = TRUE) {
+deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn", "horn", "sorensen"), model = c("first", "second"), trim = TRUE, notify = TRUE) {
   # Make holding vectors 
   beta.plots <- list()
   mean.beta <- rep()
@@ -667,13 +713,15 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
     ifelse(trim == TRUE, 
            beta.specificity.dat <- subset(beta.specificity.dat, Similarity.Index > 0), 
            beta.specificity.dat <- beta.specificity.dat) 
+    # Match model argument
+    ifelse(model == "first", model <- "y ~ x", model <- "y ~ x + I(x^2)")
     # Plot null vs. empirical per sample
     beta.plots[[i+1]] <- 
       ggplot2::ggplot(beta.specificity.dat, aes(y = Similarity.Index, x = log(Abundance))) +
       geom_point(data = randomized, aes(y = Similarity.Index, x = log(Abundance)), color = "grey", alpha = 0.5, show.legend = TRUE, size = 3) +
-      geom_smooth(data = randomized, aes(y = Similarity.Index, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = y ~ x + I(x^2)) + 
+      geom_smooth(data = randomized, aes(y = Similarity.Index, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = model) + 
       geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
-      stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = y ~ x + I(x^2), label.x = "left", label.y = "bottom", color = "black", size = 5) + 
+      stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = model, label.x = "left", label.y = "bottom", color = "black", size = 5) + 
       theme_bw() +
       ggtitle(rownames(x)[i]) + 
       theme_bw() +
@@ -739,7 +787,7 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # hs.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
 # hs.object
 # 
-# # Explore data and identify whether negative or variance-decreasing relationships exist between host specificity and symbiont read abundance
+# # Explore data and relationships between host specificity and symbiont read abundance
 # plot(density(hs.object$Structural.Specificity)) # plot histogram
 # 
 # read.abund <- as.data.frame(colSums(quad.rarefied)) # get read abundances per symbiont
@@ -756,9 +804,8 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # 
 # null.beta.object <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 2, trim = TRUE, notify = TRUE)
 # 
-# 
 # # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
-# structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+# structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)
 # head(structural.dev[[1]]) # View data frame of output
 # structural.dev[[2]] # View occupancy-abundance model for the first sample
 # structural.dev[[81]] # View occupancy-abundance model for the last sample
@@ -770,5 +817,5 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 
 
 # phylo.dev <- deviance.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
-
+# devtools::install_github("austenapigo/lotus", auth_token = "c0e3bdcb8154221182f0a2763f3cd65ed2153096")
 # .rs.restartR()
