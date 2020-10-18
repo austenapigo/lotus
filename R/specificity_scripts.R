@@ -232,14 +232,14 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
                   structural.dat <- subset(structural.dat, structural.dat$Structural.Specificity < -1)), 
            structural.dat <- structural.dat) 
     # Match model argument
-    ifelse(model == "first", model <- "y ~ x", model <- "y ~ x + I(x^2)")
+    ifelse(model == "first", formula <- "y ~ x", formula <- "y ~ x + I(x^2)")
     # Plot null vs. empirical per sample
     structural.plots[[i+1]] <- 
       ggplot2::ggplot(structural.dat, aes(y = Structural.Specificity, x = log(Abundance))) +
       geom_point(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "grey", alpha = 0.5, show.legend = TRUE, size = 3) +
-      geom_smooth(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = model) + 
+      geom_smooth(data = randomized, aes(y = Structural.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = formula) + 
       geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
-      stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = model, label.x = "left", label.y = "bottom", color = "black", size = 5) + 
+      stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = formula, label.x = "left", label.y = "bottom", color = "black", size = 5) + 
       theme_bw() +
       ggtitle(rownames(x)[i]) + 
       theme_bw() +
@@ -264,11 +264,10 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
     ifelse(model == "first",
            null.eqn <- summary(lm(Structural.Specificity ~ log(Abundance), data = randomized)), 
            null.eqn <- summary(lm(Structural.Specificity ~ log(Abundance) + I(log(Abundance)^2), data = randomized)))
-    
+    # Get null model vector
     ifelse(model == "first",
            null.vector <- null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(structural.dat$Abundance), 
            null.vector <- null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(structural.dat$Abundance) + null.eqn$coefficients[3, 1]*log(structural.dat$Abundance)^2)
-    
     # Calculate mean deviance
     mean.structural[i] <- mean(structural.dat$Structural.Specificity - null.vector)
     # Calculate standard error of mean deviance
@@ -708,20 +707,20 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
       Abundance[j] <- sum(x.input[,j])
     }
     # Make data frame
-    beta.specificity.dat <- data.frame(Symbiont, Abundance, Similarity.Index)
+    beta.dat <- data.frame(Symbiont, Abundance, Similarity.Index)
     # Remove noise
     ifelse(trim == TRUE, 
-           beta.specificity.dat <- subset(beta.specificity.dat, Similarity.Index > 0), 
-           beta.specificity.dat <- beta.specificity.dat) 
+           beta.dat <- subset(beta.dat, Similarity.Index > 0), 
+           beta.dat <- beta.dat) 
     # Match model argument
-    ifelse(model == "first", model <- "y ~ x", model <- "y ~ x + I(x^2)")
+    ifelse(model == "first", formula <- "y ~ x", formula <- "y ~ x + I(x^2)")
     # Plot null vs. empirical per sample
     beta.plots[[i+1]] <- 
-      ggplot2::ggplot(beta.specificity.dat, aes(y = Similarity.Index, x = log(Abundance))) +
+      ggplot2::ggplot(beta.dat, aes(y = Similarity.Index, x = log(Abundance))) +
       geom_point(data = randomized, aes(y = Similarity.Index, x = log(Abundance)), color = "grey", alpha = 0.5, show.legend = TRUE, size = 3) +
-      geom_smooth(data = randomized, aes(y = Similarity.Index, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = model) + 
+      geom_smooth(data = randomized, aes(y = Similarity.Index, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = formula) + 
       geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
-      stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = model, label.x = "left", label.y = "bottom", color = "black", size = 5) + 
+      stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = formula, label.x = "left", label.y = "bottom", color = "black", size = 5) + 
       theme_bw() +
       ggtitle(rownames(x)[i]) + 
       theme_bw() +
@@ -743,14 +742,17 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
       ) +
       labs(y = "Uncorrected Structural Specificity", x = "Log Absolute Symbiont Read Abundance")
     # Get model coefficients for null model
-    null.eqn <- summary(lm(Similarity.Index ~ log(Abundance) + I(log(Abundance)^2), data = randomized))
-    null.eqn$coefficients[1, 1]
-    null.eqn$coefficients[2, 1]
-    null.eqn$coefficients[3, 1]
+    ifelse(model == "first",
+           null.eqn <- summary(lm(Similarity.Index ~ log(Abundance), data = randomized)), 
+           null.eqn <- summary(lm(Similarity.Index ~ log(Abundance) + I(log(Abundance)^2), data = randomized)))
+    # Get null model vector
+    ifelse(model == "first",
+           null.vector <- null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(beta.dat$Abundance), 
+           null.vector <- null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(beta.dat$Abundance) + null.eqn$coefficients[3, 1]*log(beta.dat$Abundance)^2)
     # Calculate mean deviance
-    mean.beta[i] <- mean(beta.specificity.dat$Similarity.Index - (null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(beta.specificity.dat$Abundance) + null.eqn$coefficients[3, 1]*log(beta.specificity.dat$Abundance)^2))
+    mean.beta[i] <- mean(beta.dat$Similarity.Index - null.vector)
     # Calculate standard error of mean deviance
-    se.beta[i] <- sd(beta.specificity.dat$Similarity.Index - (null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(beta.specificity.dat$Abundance) + null.eqn$coefficients[3, 1]*log(beta.specificity.dat$Abundance)^2)) / sqrt(length(beta.specificity.dat$Similarity.Index - (null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(beta.specificity.dat$Abundance) + null.eqn$coefficients[3, 1]*log(beta.specificity.dat$Abundance)^2)))
+    se.beta[i] <- sd(beta.dat$Similarity.Index - null.vector) / sqrt(length(beta.dat$Similarity.Index - null.vector))
     # Host sample name
     host.sample[i] <- rownames(x)[i]
     # Number of symbionts column
@@ -779,6 +781,8 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # 
 # # You can read more about each lotus function with the help function
 # help("structural.specificity")
+# help("phylogenetic.specificity")
+# help("beta.specificity")
 # 
 # # Check that input data is a data frame
 # is.data.frame(quad.rarefied)
@@ -799,14 +803,15 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # abline(lm(hs.object$Structural.Specificity~log(read.abund.trim)), col = "red")
 # 
 # # Randomize community matrix to generate a null model for deviance calculations
-# null.structural.object <- null.structural(quad.rarefied, iterations = 10, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+# null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
 # head(null.structural.object)
 # 
 # null.beta.object <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 2, trim = TRUE, notify = TRUE)
 # 
 # # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
-# structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)
+# structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, model = "first", trim = TRUE, notify = FALSE)
 # head(structural.dev[[1]]) # View data frame of output
+# mean(structural.dev[[1]]$Mean.Deviance)
 # structural.dev[[2]] # View occupancy-abundance model for the first sample
 # structural.dev[[81]] # View occupancy-abundance model for the last sample
 # 
@@ -814,8 +819,8 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # head(beta.dev[[1]]) # View data frame of output
 # beta.dev[[2]] # View occupancy-abundance model for the first sample
 # beta.dev[[81]] # View occupancy-abundance model for the last sample
-
-
+# 
 # phylo.dev <- deviance.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+
 # devtools::install_github("austenapigo/lotus", auth_token = "c0e3bdcb8154221182f0a2763f3cd65ed2153096")
 # .rs.restartR()
