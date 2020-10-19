@@ -145,10 +145,14 @@ structural.dev[[81]] # View occupancy-abundance model for the last sample
 + If your preferred null model is not represented in bipartite::nullmodel (we pull directly from this function) you can use any other function to generate randomized communities (e.g., vegan::permatswap). Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any `deviance`-related function. 
 
 + Common `lotus` arguments: 
-    + abundance.weighted Logical. TRUE calculates abundance-weighted metrics per symbiont. FALSE calculates presence-absence metrics per symbiont. 
-    + model Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function. 
-    + trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. Note: We think they should be removed because host specificity from an observation of one will always result in the highest host specificity value and cannot be relevatized in a meaningful way to a null expectation. 
-    + notify Logical. TRUE prints the current iteration of the for loop. FALSE supresses notifications. 
+    + abundance.weighted 
+        + Logical. TRUE calculates abundance-weighted metrics per symbiont. FALSE calculates presence-absence metrics per symbiont. 
+    + model 
+        + Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function. 
+    + trim 
+        + Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. Note: We think they should be removed because host specificity from an observation of one will always result in the highest host specificity value and cannot be relevatized in a meaningful way to a null expectation. 
+    + notify 
+        + Logical. TRUE prints the current iteration of the for loop. FALSE supresses notifications. 
 
 ### Why not use multivariate techniques to evaluate host specificity? 
 
