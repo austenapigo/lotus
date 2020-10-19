@@ -89,7 +89,7 @@ help("structural.specificity")
 
 # `lotus` has two example data sets provided (should be pre-loaded upon installation)
 dim(quad.rarefied) # a community data frame of 80 plant samples and 1117 endophyte amplicon sequence variants
-plot(utree, cex = 05) # an ultrametric phylogenetic tree of plant species in newick format
+plot(utree, cex = 0.5) # an ultrametric phylogenetic tree of plant species in newick format
 
 # Calculate uncorrected host specificity (not relavitized to a null model)
 hs.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
