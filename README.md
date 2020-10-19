@@ -87,9 +87,9 @@ library(lotus)
 # You can read more about each lotus function with the help function
 help("structural.specificity")
 
-# `lotus` has two example data sets provided
-data(quad.rarefied) # a community data frame of endophytes and plants
-data(utree) # an ultrametric phylogenetic tree of plant species in newick format
+# `lotus` has two example data sets provided (should be pre-loaded upon installation)
+dim(quad.rarefied) # a community data frame of 80 plant samples and 1117 endophyte amplicon sequence variants
+plot(utree, cex = 05) # an ultrametric phylogenetic tree of plant species in newick format
 
 # Calculate uncorrected host specificity (not relavitized to a null model)
 hs.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
@@ -148,15 +148,15 @@ structural.dev[[81]] # View occupancy-abundance model for the last sample
     + abundance.weighted Logical. TRUE calculates abundance-weighted metrics per symbiont. FALSE calculates presence-absence metrics per symbiont. 
     + model Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function. 
     + trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. Note: We think they should be removed because host specificity from an observation of one will always result in the highest host specificity value and cannot be relevatized in a meaningful way to a null expectation. 
-    + notify Logical. TRUE prints the current iteration of the for loop. 
+    + notify Logical. TRUE prints the current iteration of the for loop. FALSE supresses notifications. 
 
 ### Why not use multivariate techniques to evaluate host specificity? 
 
-You might find that it's common to see host specificity evaluted with multivariate methods that quantify and visualize differences in compositional dissimilarity (e.g., Bray-Curtis) among symbiont communities in multivariate space. Clustering among host samples from the same species or host taxonomic group in ordination space suggests they share similar communities of symbionts and this is usually interpreted as host specificity. However, we pose that there are many reasons host samples could be clustered.  
+You might find that it's common to see host specificity evaluted with multivariate methods that quantify and visualize differences in compositional dissimilarity (e.g., Bray-Curtis) among symbiont communities in multivariate space. Clustering among host samples from the same species or host taxonomic group in ordination space suggests they share similar communities of symbionts and this is usually interpreted as host specificity. We pose that there are many reasons host samples could be clustered:
 
-For example, if all symbionts in a given group of host samples were only found in those hosts, but not any others, we would expect these samples to cluster in ordination space and have high structural specificity (i.e., a low number of occupied hosts per symbiont across the entire host community). As another scenario, these same host samples could harbor many rare symbiont generalists found in other samples, but one very abundant specialist symbiont only found in this particular group of hosts. In this case, we might still see clustering in ordination space (if using an abundance-weighted metric like Bray-Curtis) but symbionts within these hosts would have lower structural specificity (relative to the previous scenario) because of all the rare generalists they harbor occupy more hosts. 
+For example, if all symbionts in a given group of host samples were only found in those hosts, but not any others, we would expect these samples to cluster in ordination space and have high structural specificity (i.e., a low number of occupied hosts per symbiont across the entire host community). As another scenario, these same host samples could harbor many rare symbiont generalists found in other samples, but one very abundant specialist symbiont only found in this particular group of hosts. In this case, we might still see clustering in ordination space (if using an abundance-weighted metric like Bray-Curtis) but symbionts within these hosts would have lower structural specificity on average (relative to the previous scenario) because of all the rare generalists they harbor occupy many hosts. 
 
-These two (of many possible) hypothetical scenarios highlight how metrics calculated per symbiont can tell you more about *why* clustering in ordination space occurs (or does not occur) and can give a more transparent view of how symbiont communities vary in their host specificity beyond differences in a given dissimilarity metric. We still think multivariate methods are extremely useful tools to identify host specificity, but whether it's the **best** tool for every question related to host specificity is still an open question. We advocate for future studies to consider using the alternative metrics we propose in conjunction with multivariate techniques that each provide useful perspectives to host specificity in host-associated microbiomes.
+These two (of many possible) hypothetical scenarios highlight how metrics calculated per symbiont can tell you more about *why* clustering in ordination space occurs (or does not occur) and can give a more transparent view of how symbiont communities vary in their host specificity beyond differences in a given dissimilarity metric. We still think multivariate methods are extremely useful tools to identify host specificity, but whether it's the **best and only tool** for every question related to host specificity is still an open question. We advocate for future studies to consider using the alternative metrics we propose in conjunction with multivariate techniques that each provide useful perspectives to host specificity in host-associated microbiomes.
 
 ### Contact 
 
