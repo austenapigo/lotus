@@ -107,25 +107,25 @@ abline(lm(hs.object$Structural.Specificity~log(read.abund.trim)), col = "red")
 null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
 
 # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
-structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
 structural.dev[[1]] # View data frame of output
 structural.dev[[2]] # View occupancy-abundance model for the first sample
 structural.dev[[81]] # View occupancy-abundance model for the last sample
  ```
 #### Expected Output:
-Output from structural.specificity()
++ Output from structural.specificity()
 ![Output1](https://github.com/austenapigo/lotus/blob/master/figures/structural.output.png)
 
-Output from cor.test()
++ Output from cor.test()
 ![Output2](https://github.com/austenapigo/lotus/blob/master/figures/correlation_graph.png)
 
-Output from null.structural()
++ Output from null.structural()
 ![Output3](https://github.com/austenapigo/lotus/blob/master/figures/null.output.png)
 
-Output from structural.dev()
++ Output from structural.dev()
 ![Output4](https://github.com/austenapigo/lotus/blob/master/figures/deviance.output.png)
 
-Output from structural.dev()
++ Output from structural.dev()
 ![Output5](https://github.com/austenapigo/lotus/blob/master/figures/deviance.png)
 
 #### Important Notes:
@@ -135,9 +135,11 @@ Output from structural.dev()
 
 + Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
 
-+ More positive values always indicate a narrower symbiont niche and thus higher host specificity. We've negated (multipled by -1) structural and phylogenetic specificity to do this. 
++ More positive values always indicate a narrower symbiont niche and thus higher host specificity. We've negated (multipled by -1) structural and phylogenetic specificity to make this consistent across all metrics. 
 
 + For beta-specificity, labels can vary depending on your questions and taxonomic-level of interest. For example, you might be interested in the beta-specificity of symbionts to a taxonomic family of hosts, rather than host species (see the Discussion in our pre-print that addresses this), and could label hosts as Pinaceae.1, Pinaceae.2, Pinaceae.3, etc., for example. 
+
++ `lotus` functions have a 'model' parameter to choose the type of linear model you'd like to relativize observed host specificity to. You may specificity "first" or "second" for a linear or quadratic equation, respectively. 
 
 + `lotus` functions have a 'trim' parameter within them to remove symbionts that are either singletons (a symbiont with a read abundance of one) or appear in only one host sample. This is a logical statement where TRUE removes these symbionts from analysis. We think they should be removed because host specificity from an observation of one will always result in the highest host specificity value and cannot be relevatized in a meaningful way to a null expectation. 
 
