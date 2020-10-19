@@ -24,8 +24,8 @@ Host specificity exists on a continuum of phylogenetic, spatial and temporal sca
 
 **For each of these metrics, a narrower symbiont niche indicates higher host specificity.**
 
-+ We originally described these metrics here: [Apigo and Oono 2018](https://link.springer.com/chapter/10.1007/978-3-319-89833-9_2).
-+ We used these metrics to test hypotheses in a plant-endophyte system in our recent pre-print here: [Apigo and Oono 2020](_____). 
+We originally described these metrics here: [Apigo and Oono 2018](https://link.springer.com/chapter/10.1007/978-3-319-89833-9_2).  
+We used these metrics to test hypotheses in a plant-endophyte system in our recent pre-print here: [Apigo and Oono 2020](_____).  
 
 ![Host Specificity Figure](https://github.com/austenapigo/lotus/blob/master/figures/specificity.png)
 
@@ -116,19 +116,19 @@ structural.dev[[2]] # View occupancy-abundance model for the first sample
 structural.dev[[81]] # View occupancy-abundance model for the last sample
  ```
 #### Expected Output:
-+ Output from structural.specificity()
++ Output from structural.specificity()  
 ![Output1](https://github.com/austenapigo/lotus/blob/master/figures/structural.output.png)
 
-+ Output from cor.test()
++ Output from cor.test()  
 ![Output2](https://github.com/austenapigo/lotus/blob/master/figures/correlation_graph.png)
 
-+ Output from null.structural()
++ Output from null.structural()  
 ![Output3](https://github.com/austenapigo/lotus/blob/master/figures/null.output.png)
 
-+ Output from structural.dev()
++ Output from structural.dev()  
 ![Output4](https://github.com/austenapigo/lotus/blob/master/figures/deviance.output.png)
 
-+ Output from structural.dev()
++ Output from structural.dev()  
 ![Output5](https://github.com/austenapigo/lotus/blob/master/figures/deviance.png)
 
 #### Important Notes:
