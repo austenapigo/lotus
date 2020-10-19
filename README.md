@@ -77,11 +77,8 @@ devtools::install_github("austenapigo/lotus")
     + `null.beta`: generates a null occupancy-abundance model by randomizing the community matrix and calculating beta-specificity per symbiont within each randomized community
     + `deviance.beta`: calculates and plots the deviance in observed beta-specificity from the null expectation per symbiont per sample
     
- ### Example Worflows
+ ### Example Workflow
  ```
-# Install lotus
-# devtools::install_github("austenapigo/lotus", auth_token = "aecbd6a15b658f307c23cbf296f6831b224b2e61")
-
 # Load lotus
 library(lotus)
 
@@ -95,7 +92,7 @@ hs.object
 # Explore data and identify whether negative or variance-decreasing relationships exist between host specificity and symbiont read abundance
 plot(density(hs.object$Structural.Specificity)) # plot histogram
 
-read.abund <- as.data.frame(colSums(phylocom$sample)) # get read abundances per symbiont
+read.abund <- as.data.frame(colSums(quad.rarefied)) # get read abundances per symbiont
 read.abund.trim <- read.abund[rownames(read.abund) %in% rownames(hs.object), ] # trim relative to hs.object
 
 cor.test(hs.object$Structural.Specificity, read.abund.trim) # correlation test
@@ -107,7 +104,7 @@ abline(lm(hs.object$Structural.Specificity~log(read.abund.trim)), col = "red")
 null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
 
 # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
-structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
 structural.dev[[1]] # View data frame of output
 structural.dev[[2]] # View occupancy-abundance model for the first sample
 structural.dev[[81]] # View occupancy-abundance model for the last sample
