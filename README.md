@@ -91,7 +91,7 @@ help("structural.specificity")
 hs.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
 hs.object
 
-# Explore data and identify whether negative or variance-decreasing relationships exist between host specificity and symbiont read abundance
+# Explore data and evaluate relationships between host specificity and symbiont read abundance
 plot(density(hs.object$Structural.Specificity)) # plot histogram
 
 read.abund <- as.data.frame(colSums(quad.rarefied)) # get read abundances per symbiont
@@ -128,7 +128,7 @@ structural.dev[[81]] # View occupancy-abundance model for the last sample
 ![Output5](https://github.com/austenapigo/lotus/blob/master/figures/deviance.png)
 
 #### Important Notes:
-+ The community matrix for analysis should be organized with hosts populating the rows, while symbionts populate the columns.
++ The community matrix for analysis should be organized with hosts populating the rows, while symbionts populate the columns. Please make sure your input data is a data frame with `is.data.frame()`. 
 
 + The example dataset used here is the same as in our pre-print. Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., host_species_name.1). This format is required to calculated beta-specificity. 
 
@@ -138,11 +138,11 @@ structural.dev[[81]] # View occupancy-abundance model for the last sample
 
 + For beta-specificity, labels can vary depending on your questions and taxonomic-level of interest. For example, you might be interested in the beta-specificity of symbionts to a taxonomic family of hosts, rather than host species (see the Discussion in our pre-print that addresses this), and could label hosts as Pinaceae.1, Pinaceae.2, Pinaceae.3, etc., for example. 
 
-+ `lotus` functions have a 'model' parameter to choose the type of linear model you'd like to relativize observed host specificity to. You may specificity "first" or "second" for a linear or quadratic equation, respectively. 
-
-+ `lotus` functions have a 'trim' parameter within them to remove symbionts that are either singletons (a symbiont with a read abundance of one) or appear in only one host sample. This is a logical statement where TRUE removes these symbionts from analysis. We think they should be removed because host specificity from an observation of one will always result in the highest host specificity value and cannot be relevatized in a meaningful way to a null expectation. 
-
-+ `lotus` functions have a 'notify' parameter within them to tell you which iteration the for() loop is on. 
++ Common `lotus` arguments: 
+    + abundance.weighted Logical. TRUE calculates abundance-weighted metrics per symbiont. FALSE calculates presence-absence metrics per symbiont. 
+    + model Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function. 
+    + trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. Note: We think they should be removed because host specificity from an observation of one will always result in the highest host specificity value and cannot be relevatized in a meaningful way to a null expectation. 
+    + notify Logical. TRUE prints the current iteration of the for loop. 
 
 ### Why not use multivariate techniques to evaluate host specificity? 
 
