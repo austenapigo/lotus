@@ -55,6 +55,8 @@ In our study, we found evidence of negative relationships between host specifici
 # Install lotus
 devtools::install_github("austenapigo/lotus")
 ```
+Download process should look something like this:
+![Download](https://github.com/austenapigo/lotus/blob/master/figures/download.png)
 
 ### R Functions
 + Structural Specificity
