@@ -1,4 +1,4 @@
-# lotus package
+# lotus package (still under development as of 10/18/2020)
 
 > This package is named `lotus` in recognition of Kamala (meaning 'lotus') Devi Harris, a longtime champion for gender equality and the first Black and Asian female nominee for Vice President of the United States on a major party ticket.
 
