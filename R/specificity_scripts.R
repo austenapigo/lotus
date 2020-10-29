@@ -38,9 +38,24 @@
 #' structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
 structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
   # Calculate host richness or Shannon's H
-  ifelse(abundance.weighted == TRUE, structural <- -1 * vegan::diversity(t(x)), structural <- -1 * vegan::specnumber(t(x)))
+  sh.vector <- rep()
+  for (j in 1:ncol(x)) {
+    col <- x[j]
+    colnames(col)[1] <- "Symbiont.Abundance"
+    # Make a new row of metadata from the sample names
+    col$Sample <- row.names(col)
+    # Separate the sample names
+    col.sep <- col %>% separate(Sample, c("Host.Species", "Quadrat"))
+    # Aggregate by quadrat
+    col.agg <- aggregate(col.sep[, 1] ~ Host.Species, col.sep, sum)
+    colnames(col.agg)[2] <- "Abundance"
+    rownames(col.agg) <- col.agg$Host.Species
+    col.agg$Host.Species <- NULL
+    # Make vector 
+    ifelse(abundance.weighted == TRUE, sh.vector[j] <- vegan::diversity(t(col.agg)), sh.vector[j] <- vegan::specnumber(t(col.agg)))
+  }
   # Make data frame
-  structural.dat <- data.frame(Structural.Specificity = structural)
+  structural.dat <- data.frame(Structural.Specificity = sh.vector)
   # Trim noise
   ifelse(trim == TRUE, 
          # if calculating Shannon's H, 
@@ -1134,39 +1149,70 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # # .rs.restartR()
 # 
 # 
-# # Install lotus
-# devtools::install_github("austenapigo/lotus")
-# 
-# # Load lotus
-# library(lotus)
-# 
-# # You can read more about each lotus function with the help function
-# help("structural.specificity")
-# 
-# # `lotus` has two example data sets provided (should be pre-loaded upon installation)
-# dim(quad.rarefied) # a community data frame of 80 plant samples and 1117 endophyte amplicon sequence variants
-# plot(utree) # an ultrametric phylogenetic tree of plant species in newick format
-# 
-# # Calculate uncorrected host specificity (not relavitized to a null model)
-# hs.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
-# hs.object
-# 
-# # Explore data and evaluate relationships between host specificity and symbiont read abundance
-# plot(density(hs.object$Structural.Specificity)) # plot histogram
-# 
-# read.abund <- as.data.frame(colSums(quad.rarefied)) # get read abundances per symbiont
-# read.abund.trim <- read.abund[rownames(read.abund) %in% rownames(hs.object), ] # trim relative to hs.object
-# 
+# Install lotus
+devtools::install_github("austenapigo/lotus")
+
+# Load lotus
+library(lotus)
+
+# You can read more about each lotus function with the help function
+help("structural.specificity")
+
+# `lotus` has two example data sets provided (should be pre-loaded upon installation)
+dim(quad.rarefied) # a community data frame of 80 plant samples and 1117 endophyte amplicon sequence variants
+plot(utree) # an ultrametric phylogenetic tree of plant species in newick format
+
+# Calculate uncorrected host specificity (not relavitized to a null model)
+hs.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+hs.object
+
+# Explore data and evaluate relationships between host specificity and symbiont read abundance
+plot(density(hs.object$Structural.Specificity)) # plot histogram
+
+read.abund <- as.data.frame(colSums(quad.rarefied)) # get read abundances per symbiont
+read.abund.trim <- read.abund[rownames(read.abund) %in% rownames(hs.object), ] # trim relative to hs.object
+
+structural.object <- data.frame(hs.object, Read.Abundance = read.abund.trim)
+
 # cor.test(hs.object$Structural.Specificity, read.abund.trim) # correlation test
-# 
-# plot(y = hs.object$Structural.Specificity, x = log(read.abund.trim), ylab = "Uncorrected Structural Specificity (HostRichness)", xlab = "Log Symbiont Read Abundance") # visualize host specificity - read abundance relationships
-# abline(lm(hs.object$Structural.Specificity~log(read.abund.trim)), col = "red")
-# 
-# # Randomize community matrix to generate a null model for deviance calculations
-# null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
-# 
-# # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
-# structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
-# structural.dev[[1]] # View data frame of output
-# structural.dev[[2]] # View occupancy-abundance model for the first sample
-# structural.dev[[81]] # View occupancy-abundance model for the last sample
+quad.model <- summary(lm(Structural.Specificity ~ log(Read.Abundance) + I(log(Read.Abundance^2)), data = structural.object))
+
+ggplot(data = structural.object, aes(y = Structural.Specificity, x = log(Read.Abundance))) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE, color = "red", formula = y ~ x + I(x^2)) +
+  theme_bw() +
+  theme(
+    axis.text.x = element_text(size = 12, color = "black"), 
+    axis.text.y = element_text(size = 12, color = "black"),
+    axis.title.x = element_text(size = 12, margin = margin(t = 5, r = 0, b = 0, l = 0)), 
+    axis.title.y = element_text(size = 12, margin = margin(t = 0, r = 5, b = 0, l = 0)),
+    legend.title = element_text(size = 12), 
+    legend.text = element_text(size = 12),  
+    legend.position = "bottom",
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_blank(),
+    axis.line.x = element_blank(),
+    axis.line.y = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = 12, face = "bold.italic"),
+    text = element_text(), 
+    aspect.ratio = 0.85
+  ) + 
+  ggtitle("Presence-Absence Structural Specificity") +
+  labs(y = "-1 * Host Species Richness", x = "Log Endophyte Read Abundance Across Entire Plant Community") +
+  annotate(geom = "text", x = min(log(structural.object$Read.Abundance)), y = min(structural.object$Structural.Specificity) + 0.3, label = paste("R^2 ==", signif(quad.model$adj.r.squared, 2)), hjust = 0, parse = T, size = 5) +
+  annotate(geom = "text", x = min(log(structural.object$Read.Abundance)), y = min(structural.object$Structural.Specificity), label = paste("p ==", signif(quad.model$coef[2,4], 2)), hjust = 0, parse = T, size = 5) 
+
+plot(y = hs.object$Structural.Specificity, x = log(read.abund.trim), ylab = "Uncorrected Structural Specificity (HostRichness)", xlab = "Log Symbiont Read Abundance") # visualize host specificity - read abundance relationships
+abline(lm(Structural.Specificity ~ log(Read.Abundance), data = structural.object), col = "red")
+
+lines(pred.quad$fit ~ log(pred.quad$Read.Abundance), col = "red")
+
+# Randomize community matrix to generate a null model for deviance calculations
+null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+
+# Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
+structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+structural.dev[[1]] # View data frame of output
+structural.dev[[2]] # View occupancy-abundance model for the first sample
+structural.dev[[81]] # View occupancy-abundance model for the last sample
