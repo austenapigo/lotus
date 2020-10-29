@@ -12,7 +12,7 @@
 # quad.rarefied <- read.csv("quad_rarefied.csv", row.names = 1, header = TRUE)
 # quad.rarefied <- read.csv("/Users/austenapigo/Desktop/github/lotus/data/quad_rarefied.csv", row.names = 1, header = TRUE)
 # save(quad.rarefied, file = "quad_rarefied.rda")
-# utree <- read.tree("/Users/austenapigo/Desktop/github/lotus/otherdat/utree.txt")
+# utree <- read.tree("/Users/austenapigo/Desktop/github/lotus/otherdat/utree_con_zeroed.txt")
 # save(utree, file = "utree.rda")
 
 ##############################################################
@@ -1074,7 +1074,7 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # abline(lm(hs.object$Structural.Specificity~log(read.abund.trim)), col = "red")
 # 
 # # Randomize community matrix to generate a null model for deviance calculations
-# null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+# null.structural.object <- null.structural(Safariland, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
 # head(null.structural.object)
 # 
 # null.network.object <- null.network(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
@@ -1129,6 +1129,44 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # head(phylo.dev)
 # phylo.dev[[2]] # View occupancy-abundance model for the first sample
 # phylo.dev[[81]] # View occupancy-abundance model for the last sample
-
-# devtools::install_github("austenapigo/lotus", auth_token = "c0e3bdcb8154221182f0a2763f3cd65ed2153096")
-# .rs.restartR()
+# 
+# # devtools::install_github("austenapigo/lotus")
+# # .rs.restartR()
+# 
+# 
+# # Install lotus
+# devtools::install_github("austenapigo/lotus")
+# 
+# # Load lotus
+# library(lotus)
+# 
+# # You can read more about each lotus function with the help function
+# help("structural.specificity")
+# 
+# # `lotus` has two example data sets provided (should be pre-loaded upon installation)
+# dim(quad.rarefied) # a community data frame of 80 plant samples and 1117 endophyte amplicon sequence variants
+# plot(utree) # an ultrametric phylogenetic tree of plant species in newick format
+# 
+# # Calculate uncorrected host specificity (not relavitized to a null model)
+# hs.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+# hs.object
+# 
+# # Explore data and evaluate relationships between host specificity and symbiont read abundance
+# plot(density(hs.object$Structural.Specificity)) # plot histogram
+# 
+# read.abund <- as.data.frame(colSums(quad.rarefied)) # get read abundances per symbiont
+# read.abund.trim <- read.abund[rownames(read.abund) %in% rownames(hs.object), ] # trim relative to hs.object
+# 
+# cor.test(hs.object$Structural.Specificity, read.abund.trim) # correlation test
+# 
+# plot(y = hs.object$Structural.Specificity, x = log(read.abund.trim), ylab = "Uncorrected Structural Specificity (HostRichness)", xlab = "Log Symbiont Read Abundance") # visualize host specificity - read abundance relationships
+# abline(lm(hs.object$Structural.Specificity~log(read.abund.trim)), col = "red")
+# 
+# # Randomize community matrix to generate a null model for deviance calculations
+# null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+# 
+# # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
+# structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+# structural.dev[[1]] # View data frame of output
+# structural.dev[[2]] # View occupancy-abundance model for the first sample
+# structural.dev[[81]] # View occupancy-abundance model for the last sample
