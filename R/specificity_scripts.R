@@ -6,13 +6,16 @@
 # library(picante)
 # library(vegan)
 # library(bipartite)
-# 
-# # Read in data 
+
+# Read in data
 # dat <- read.csv("/Users/austenapigo/Desktop/github/lotus/otherdat/example_dat.csv", row.names = 1, header = TRUE)
-# quad.rarefied <- read.csv("quad_rarefied.csv", row.names = 1, header = TRUE)
+# example.dat <- read.csv("/Users/austenapigo/Desktop/github/lotus/otherdat/example_data_for_beta_specificity.csv", row.names = 1, header = TRUE)
 # quad.rarefied <- read.csv("/Users/austenapigo/Desktop/github/lotus/otherdat/quad_rarefied.csv", row.names = 1, header = TRUE)
-# save(quad.rarefied, file = "quad_rarefied.rda")
 # utree <- read.tree("/Users/austenapigo/Desktop/github/lotus/otherdat/utree_con_zeroed.txt")
+
+
+# save(quad.rarefied, file = "quad_rarefied.rda")
+
 # save(utree, file = "utree.rda")
 
 ##############################################################
@@ -70,6 +73,10 @@ structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 }
 
 # structural.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+# structural.object
+# structural.object <- structural.specificity(example.dat, abundance.weighted = FALSE, trim = TRUE)
+# structural.object
+
 # mean(structural.object$Structural.Specificity)
 # mean Shannon's H is -0.7925232 matches source code vs. -0.7925232
 # structural.object <- structural.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
@@ -160,6 +167,7 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
 }
 
 # null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+# null.structural.object
 # mean(null.structural.object$Structural.Specificity)
 # mean shannon's h: -0.6402127 vs. -0.6407739
 # null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = FALSE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
@@ -306,6 +314,7 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
 }
 
 # structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+# structural.dev
 # head(structural.dev[[1]])
 # structural.dev[[2]]
 # structural.dev[[81]]
@@ -840,7 +849,9 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
 }
 
 # beta.object <- beta.specificity(quad.rarefied, index = "morisita.horn", trim = TRUE, notify = TRUE)
+# beta.object <- beta.specificity(example.dat, index = "morisita.horn", trim = TRUE, notify = TRUE)
 # beta.object
+# Symbiont A: 0.6666667; Symbiont B: 0.8902854; Symbiont C: 0.2496302; Symbiont D: 1.0000000
 # mean(beta.object$Similarity.Index)
 # mean morisita-horn 0.2008582 vs. 0.2008582
 
@@ -922,6 +933,7 @@ null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomi
 }
 
 # null.beta.object <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 100, trim = TRUE, notify = TRUE)
+# null.beta.object <- null.beta(example.dat, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 100, trim = TRUE, notify = TRUE)
 # null.beta.object
 # match 0.1069268 vs. 0.1066938
 
@@ -1056,7 +1068,11 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
   return(beta.plots)
 }
 
-
+# beta.dev <- deviance.beta(quad.rarefied, randomized = null.beta.object, index = "morisita.horn", model = "second", trim = TRUE, notify = TRUE)
+# beta.dev <- deviance.beta(example.dat, randomized = null.beta.object, index = "morisita.horn", model = "second", trim = TRUE, notify = TRUE)
+# head(beta.dev[[1]]) # View data frame of output
+# beta.dev[[2]] # View occupancy-abundance model for the first sample
+# beta.dev[[81]] # View occupancy-abundance model for the last sample
 
 #########################
 # Example set in ReadMe #
@@ -1160,18 +1176,18 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # 
 # # `lotus` has two example data sets provided (should be pre-loaded upon installation)
 # dim(quad.rarefied) # a community data frame of 80 plant samples and 1117 endophyte amplicon sequence variants
-# plot(utree) # an ultrametric phylogenetic tree of plant species in newick format
+# plot(utree, cex = 0.5) # an ultrametric phylogenetic tree of plant species in newick format
 # 
 # # Calculate uncorrected host specificity (not relavitized to a null model)
-# hs.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = FALSE)
-# hs.object
+# hs.object <- structural.specificity(quad.rarefied, abundance.weighted = FALSE, trim = FALSE)
+# head(hs.object)
 # 
 # # Explore data and evaluate relationships between host specificity and symbiont read abundance
 # plot(density(hs.object$Structural.Specificity)) # plot histogram
 # 
-# read.abund <- as.data.frame(colSums(quad.rarefied)) # get read abundances per symbiont
-# read.abund.trim <- read.abund[rownames(read.abund) %in% rownames(hs.object), ] # trim relative to hs.object
-# structural.object <- data.frame(hs.object, Read.Abundance = read.abund.trim) # make data frame
+# read.abund <- (colSums(quad.rarefied)) # get read abundances per symbiont
+# #read.abund.trim <- read.abund[rownames(read.abund) %in% rownames(hs.object), ] # trim relative to hs.object
+# structural.object <- data.frame(hs.object, Read.Abundance = read.abund) # make data frame
 # 
 # # cor.test(hs.object$Structural.Specificity, read.abund.trim) # correlation test
 # quad.model <- summary(lm(Structural.Specificity ~ log(Read.Abundance) + I(log(Read.Abundance^2)), data = structural.object))
@@ -1199,7 +1215,7 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 #   ) +
 #   ggtitle("Presence-Absence Structural Specificity") +
 #   labs(y = "-1 * Host Species Richness", x = "Log Endophyte Read Abundance Across Entire Plant Community") +
-#   annotate(geom = "text", x = min(log(structural.object$Read.Abundance)), y = min(structural.object$Structural.Specificity) + 0.3, label = paste("R^2 ==", signif(quad.model$adj.r.squared, 2)), hjust = 0, parse = T, size = 5) +
+#   annotate(geom = "text", x = min(log(structural.object$Read.Abundance)), y = min(structural.object$Structural.Specificity) + 3, label = paste("R^2 ==", signif(quad.model$adj.r.squared, 2)), hjust = 0, parse = T, size = 5) +
 #   annotate(geom = "text", x = min(log(structural.object$Read.Abundance)), y = min(structural.object$Structural.Specificity), label = paste("p ==", signif(quad.model$coef[2,4], 2)), hjust = 0, parse = T, size = 5)
 # 
 # # plot(y = hs.object$Structural.Specificity, x = log(read.abund.trim), ylab = "Uncorrected Structural Specificity (HostRichness)", xlab = "Log Symbiont Read Abundance") # visualize host specificity - read abundance relationships
@@ -1211,6 +1227,6 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # 
 # # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
 # structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
-# structural.dev[[1]] # View data frame of output
+# head(structural.dev[[1]]) # View data frame of output
 # structural.dev[[2]] # View occupancy-abundance model for the first sample
 # structural.dev[[81]] # View occupancy-abundance model for the last sample

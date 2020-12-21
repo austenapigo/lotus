@@ -14,6 +14,7 @@ library(vegan)
 
 # Read in data 
 dat <- read.csv("example_dat.csv", row.names = 1, header = TRUE)
+dat <- read.csv("example_dat copy.csv", row.names = 1, header = TRUE)
 quad.rarefied <- read.csv("quad_rarefied.csv", row.names = 1, header = TRUE)
 utree <- read.tree("utree.txt")
 ```
@@ -368,6 +369,7 @@ test
 test <- beta.specificity(dat, index = "horn")
 test
 test <- beta.specificity(dat, index = "morisita.horn")
+test
 test <- beta.specificity(quad.rarefied, index = "morisita.horn")
 test
 
