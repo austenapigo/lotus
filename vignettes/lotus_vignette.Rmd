@@ -57,6 +57,14 @@ Common lotus arguments:
 - trim: Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. Note: We think they should be removed because host specificity from an observation of one will always result in the highest host specificity value and cannot be relevatized in a meaningful way to a null expectation.
 - notify: Logical. TRUE prints the current iteration of the for loop. FALSE supresses notifications.
 
+You can read more about each lotus function with the help function
+```{r}
+help("structural.specificity")
+help("network.specificity")
+help("phylogenetic.specificity")
+help("beta.specificity")
+```
+
 ## Installation
 
 Install the latest  version of `lotus`  from [GitHub](https://github.com/austenapigo/lotus) use: 
@@ -69,6 +77,12 @@ devtools::install_github("austenapigo/lotus")
 Load the package
 ```{r, message=FALSE, warning=FALSE}
 library(lotus)
+
+library(tidyverse)
+library(ggpmisc)
+library(picante)
+library(vegan)
+library(bipartite)
 ```
 
 ## Example Data
@@ -79,14 +93,6 @@ data("quad.rarefied") # load data
 dim(quad.rarefied) # check dimensions
 
 quad.rarefied[1:5,1:5] # preview data frame
-```
-
-You can read more about each lotus function with the help function
-```{r}
-help("structural.specificity")
-help("network.specificity")
-help("phylogenetic.specificity")
-help("beta.specificity")
 ```
 
 ## Structural Specificity 
@@ -101,7 +107,7 @@ ggplot(data = NULL, aes(x = hs.object$Structural.Specificity)) +
   labs(x = "Absolute Structural Specificity\n(Host Species Richness)", y = "Proportion of Observations") 
 
 # Make a new data frame with read abundance
-read.abund <- colSums(quad.rarefied) # Calculate read abundances per symbiont
+read.abund <- as.data.frame(colSums(quad.rarefied)) # Calculate read abundances per symbiont
 read.abund.trim <- read.abund[rownames(read.abund) %in% hs.object$Symbiont, ] # trim relative to hs.object
 structural.object <- data.frame(hs.object, Read.Abundance = read.abund.trim) # make data frame
 
@@ -134,7 +140,7 @@ ggplot(data = structural.object, aes(y = Structural.Specificity, x = log(Read.Ab
 
 # Randomize community matrix to generate a null model for deviance calculations
 # This is not the fastest function ever... Setting notify = TRUE will let you know how far along you are. 
-null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+null.structural.object <- null.structural(quad.rarefied, iterations = 1, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
 head(null.structural.object)
 
 # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
