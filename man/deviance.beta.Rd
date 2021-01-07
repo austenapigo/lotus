@@ -48,8 +48,8 @@ A relative host specificity value greater than zero indicates that an endophyte 
 }
 \examples{
 # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-beta.dev <- deviance.beta(quad.rarefied, randomized = null.beta.object, index = "morisita.horn", trim = TRUE, notify = TRUE) 
-beta.dev[[1]] # View data frame of output 
-beta.dev[[2]] # View first graph 
-beta.dev[[81]] # View last graph 
+\donttest{beta.dev <- deviance.beta(quad.rarefied, randomized = null.beta.object, index = "morisita.horn", trim = TRUE, notify = TRUE)}
+\donttest{beta.dev[[1]]} # View data frame of output 
+\donttest{beta.dev[[2]]} # View first graph 
+\donttest{beta.dev[[81]]} # View last graph 
 }

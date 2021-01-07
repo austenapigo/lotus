@@ -31,5 +31,5 @@ More positive values indicate a narrower symbiont niche and thus higher host spe
 }
 \examples{
 # Calculate mean pairwise phylogenetic distance per symbiont
-phylogenetic.specificity(quad.rarefied, utree, abundance.weighted = TRUE, trim = TRUE)
+\donttest{mpd <- phylogenetic.specificity(quad.rarefied, utree, abundance.weighted = TRUE, trim = TRUE)}
 }

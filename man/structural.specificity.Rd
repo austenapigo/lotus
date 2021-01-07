@@ -27,9 +27,6 @@ Host specificity is calculated for a symbiont across the entire host community. 
 More positive values indicate a narrower symbiont niche and thus higher host specificity. Structural and phylogenetic specificity were negated (multipled by -1) to make this consistent across all metrics.
 }
 \examples{
-# Calculate host richness per symbiont
-structural.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
-
-# Calculate Shannon's H per symbiont
-structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+# Calculate host species richness per symbiont
+hr <- structural.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
 }

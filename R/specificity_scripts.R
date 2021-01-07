@@ -15,6 +15,9 @@
 # example.dat <- read.csv("/Users/austenapigo/Desktop/github/lotus/otherdat/example_data_for_beta_specificity.csv", row.names = 1, header = TRUE)
 # quad.rarefied <- read.csv("/Users/austenapigo/Desktop/github/lotus/otherdat/quad_rarefied.csv", row.names = 1, header = TRUE)
 # utree <- read.tree("/Users/austenapigo/Desktop/github/lotus/otherdat/utree_con_zeroed.txt")
+#
+# devtools::document()
+# .rs.restartR()
 
 #######################################################################
 # `structural.specificity`: calculate absolute structural specificity #
@@ -48,11 +51,8 @@
 #' @import picante
 #' 
 #' @examples
-#' # Calculate host richness per symbiont
-#' structural.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
-#' 
-#' # Calculate Shannon's H per symbiont
-#' structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+#' # Calculate host species richness per symbiont
+#' hr <- structural.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
 structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
   # Calculate host richness or Shannon's H
   sh.vector <- rep()
@@ -133,7 +133,7 @@ structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' 
 #' @examples
 #' # Generate randomized communities and calculate structural specificity per symbiont 
-#' null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+#' \donttest{null.str <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)}
 null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), trim = TRUE, notify = TRUE) {
   # Match argument specified
   randomization.method <- match.arg(randomization.method)
@@ -261,10 +261,10 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
 #' 
 #' @examples
 #' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-#' structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object.ab, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)
-#' structural.dev[[1]] # View data frame of output 
-#' structural.dev[[2]] # View first graph 
-#' structural.dev[[81]] # View last graph 
+#' \donttest{structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object.ab, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)}
+#' \donttest{structural.dev[[1]]} # View data frame of output 
+#' \donttest{structural.dev[[2]]} # View first graph 
+#' \donttest{structural.dev[[81]]} # View last graph 
 deviance.structural <- function(x, randomized = null.structural.object, abundance.weighted = TRUE, model = c("first", "second"), trim = TRUE, notify = TRUE) {
 ######################### Calculate Absolute Structural Specificity #########################
   # Make holding vectors 
@@ -424,10 +424,7 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
 #' 
 #' @examples
 #' # Calculate Resource Range Index per symbiont
-#' network.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
-#' 
-#' # Calculate the Paired Difference Index per symbiont
-#' network.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+#' \donttest{rri <- network.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)}
 network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
   # Calculate PDI or RRI
   net.vector <- rep()
@@ -508,7 +505,7 @@ network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' 
 #' @examples
 #' # Generate randomized communities and calculate network specificity per symbiont 
-#' null.network(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+#' \donttest{null.net <- null.network(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)}
 null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), trim = TRUE, notify = TRUE) {
   # Match argument specified
   randomization.method <- match.arg(randomization.method)
@@ -627,10 +624,10 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
 #' 
 #' @examples
 #' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-#' network.dev <- deviance.network(quad.rarefied, randomized = null.network.object, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)
-#' network.dev[[1]] # View data frame of output 
-#' network.dev[[2]] # View first graph 
-#' network.dev[[81]] # View last graph 
+#' \donttest{network.dev <- deviance.network(quad.rarefied, randomized = null.network.object, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)}
+#' \donttest{network.dev[[1]]} # View data frame of output 
+#' \donttest{network.dev[[2]]} # View first graph 
+#' \donttest{network.dev[[81]]} # View last graph 
 deviance.network <- function(x, randomized = null.network.object, abundance.weighted = TRUE, model = c("first", "second"), trim = TRUE, notify = TRUE) {
 ######################### Calculate Absolute Network Specificity #########################
   # Make holding vectors 
@@ -789,7 +786,7 @@ deviance.network <- function(x, randomized = null.network.object, abundance.weig
 #' 
 #' @examples
 #' # Calculate mean pairwise phylogenetic distance per symbiont
-#' phylogenetic.specificity(quad.rarefied, utree, abundance.weighted = TRUE, trim = TRUE)
+#' \donttest{mpd <- phylogenetic.specificity(quad.rarefied, utree, abundance.weighted = TRUE, trim = TRUE)}
 phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim = TRUE) {
   # Calculate abundance-weighted or presence-absence mean pairwise phylogenetic distance
   ifelse(abundance.weighted == TRUE, 
@@ -859,7 +856,7 @@ phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim =
 #' 
 #' @examples
 #' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-#' deviance.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+#' \donttest{phy.dev <- deviance.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)}
 deviance.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richness", "frequency", "sample.pool", "phylogeny.pool", "independentswap", "trialswap"), iterations = 100, model = c("first", "second"), abundance.weighted = TRUE, trim = TRUE, notify = TRUE) {
 ######################### Calculate Absolute Phylogenetic Specificity #########################
   # Make holding vectors 
@@ -1002,7 +999,7 @@ deviance.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
 #' 
 #' @examples
 #' # Calculate beta-specificity
-#' beta.specificity(quad.rarefied, index = "morisita.horn", trim = TRUE, notify = TRUE)
+#' \donttest{beta.mh <- beta.specificity(quad.rarefied, index = "morisita.horn", trim = TRUE, notify = TRUE)}
 beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), trim = TRUE, notify = TRUE) {
   # Make holding vectors 
   output.vec <- rep()
@@ -1103,7 +1100,7 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
 #' 
 #' @examples
 #' # Generate randomized communities and calculate beta-specificity per symbiont 
-#' null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 100, trim = TRUE, notify = TRUE)
+#' \donttest{beta.null <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 100, trim = TRUE, notify = TRUE)}
 null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), iterations = 100, trim = TRUE, notify = TRUE) {
   # Match argument specified
   randomization.method <- match.arg(randomization.method)
@@ -1209,10 +1206,10 @@ null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomi
 #' 
 #' @examples
 #' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-#' beta.dev <- deviance.beta(quad.rarefied, randomized = null.beta.object, index = "morisita.horn", trim = TRUE, notify = TRUE) 
-#' beta.dev[[1]] # View data frame of output 
-#' beta.dev[[2]] # View first graph 
-#' beta.dev[[81]] # View last graph 
+#' \donttest{beta.dev <- deviance.beta(quad.rarefied, randomized = null.beta.object, index = "morisita.horn", trim = TRUE, notify = TRUE)}
+#' \donttest{beta.dev[[1]]} # View data frame of output 
+#' \donttest{beta.dev[[2]]} # View first graph 
+#' \donttest{beta.dev[[81]]} # View last graph 
 deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn", "horn", "sorensen"), model = c("first", "second"), trim = TRUE, notify = TRUE) {
   # Make holding vectors 
   beta.plots <- list()
@@ -1310,10 +1307,3 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
                                 Avg.Symbiont.Abundance = read.abund)
   return(beta.plots)
 }
-
-# beta.dev <- deviance.beta(quad.rarefied, randomized = null.beta.object, index = "morisita.horn", model = "second", trim = TRUE, notify = TRUE)
-# beta.dev <- deviance.beta(example.dat, randomized = null.beta.object, index = "morisita.horn", model = "second", trim = TRUE, notify = TRUE)
-# head(beta.dev[[1]]) # View data frame of output
-# beta.dev[[2]] # View occupancy-abundance model for the first sample
-# beta.dev[[81]] # View occupancy-abundance model for the last sample
-

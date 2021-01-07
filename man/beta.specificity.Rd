@@ -33,5 +33,5 @@ More positive values indicate a narrower symbiont niche and thus higher host spe
 }
 \examples{
 # Calculate beta-specificity
-beta.specificity(quad.rarefied, index = "morisita.horn", trim = TRUE, notify = TRUE)
+\donttest{beta.mh <- beta.specificity(quad.rarefied, index = "morisita.horn", trim = TRUE, notify = TRUE)}
 }

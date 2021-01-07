@@ -45,8 +45,8 @@ If your preferred null model is not represented in bipartite::nullmodel you can 
 }
 \examples{
 # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object.ab, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)
-structural.dev[[1]] # View data frame of output 
-structural.dev[[2]] # View first graph 
-structural.dev[[81]] # View last graph 
+\donttest{structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object.ab, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)}
+\donttest{structural.dev[[1]]} # View data frame of output 
+\donttest{structural.dev[[2]]} # View first graph 
+\donttest{structural.dev[[81]]} # View last graph 
 }

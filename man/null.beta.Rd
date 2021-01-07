@@ -36,5 +36,5 @@ Generate null models and calculate beta-specificity per symbiont within each com
 }
 \examples{
 # Generate randomized communities and calculate beta-specificity per symbiont 
-null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 100, trim = TRUE, notify = TRUE)
+\donttest{beta.null <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 100, trim = TRUE, notify = TRUE)}
 }

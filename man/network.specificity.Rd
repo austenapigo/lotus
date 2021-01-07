@@ -28,8 +28,5 @@ More positive values indicate a narrower symbiont niche and thus higher host spe
 }
 \examples{
 # Calculate Resource Range Index per symbiont
-network.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
-
-# Calculate the Paired Difference Index per symbiont
-network.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+\donttest{rri <- network.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)}
 }

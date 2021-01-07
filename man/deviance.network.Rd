@@ -48,8 +48,8 @@ If your preferred null model is not represented in bipartite::nullmodel you can 
 }
 \examples{
 # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-network.dev <- deviance.network(quad.rarefied, randomized = null.network.object, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)
-network.dev[[1]] # View data frame of output 
-network.dev[[2]] # View first graph 
-network.dev[[81]] # View last graph 
+\donttest{network.dev <- deviance.network(quad.rarefied, randomized = null.network.object, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)}
+\donttest{network.dev[[1]]} # View data frame of output 
+\donttest{network.dev[[2]]} # View first graph 
+\donttest{network.dev[[81]]} # View last graph 
 }

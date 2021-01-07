@@ -47,5 +47,5 @@ More positive values indicate a narrower symbiont niche and thus higher host spe
 }
 \examples{
 # Generate randomized communities and calculate network specificity per symbiont 
-null.network(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+\donttest{null.net <- null.network(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)}
 }

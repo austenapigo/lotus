@@ -45,5 +45,5 @@ If your preferred null model is not represented in bipartite::nullmodel you can 
 }
 \examples{
 # Generate randomized communities and calculate structural specificity per symbiont 
-null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+\donttest{null.str <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)}
 }
