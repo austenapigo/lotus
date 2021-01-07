@@ -59,7 +59,7 @@ Download process should look something like this:
 ![Download](https://github.com/austenapigo/lotus/blob/master/figures/download.png)
 
 ### Getting Started
-see lotus-vignette.Rmd
+see [lotus vignette](https://github.com/austenapigo/lotus/blob/master/vignettes/lotus_vignette.Rmd)
 
 ### Why not use multivariate techniques to evaluate host specificity? 
 
