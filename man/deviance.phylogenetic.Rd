@@ -10,6 +10,7 @@
   null.model = c("taxa.labels", "richness", "frequency", "sample.pool",
     "phylogeny.pool", "independentswap", "trialswap"),
   iterations = 100,
+  model = c("first", "second"),
   abundance.weighted = TRUE,
   trim = TRUE,
   notify = TRUE
@@ -18,7 +19,7 @@
 \arguments{
 \item{x}{Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns.}
 
-\item{utree}{Newick formatted phylogenetic tree.}
+\item{utree}{Newick formatted host phylogenetic tree. Cophenetic distances will be calculated the function.}
 
 \item{null.model}{Randomization method. Usage borrowed directly from picante::mpd 
 Specify as "taxa.labels", "richness", "frequency", "sample.pool", "phylogeny.pool", "independentswap" or "trialswap".}
@@ -32,16 +33,23 @@ FALSE calculates presence-absence mean pairwise phylogenetic distance.}
 }
 \value{
 A data frame with columns that refer to the host sample identifiers, mean deviance in phylogenetic specificity, 
-standard error of structural specificities, number of symbionts per host sample and average symbiont read abundance. This function does not specify 
-a model argument whereas the other three deviance- functions do. Phylogenetic specificity...
+standard error of structural specificities, number of symbionts per host sample and average symbiont read abundance.
 }
 \description{
-Calculate the deviance in observed phylogenetic specificity to a null model of structural specificity per symbiont. 
-Deviance calculations are measured per symbiont and averaged per host sample. For example, all symbionts within a given host 
-are evaluated for their host specificity across the entire host community. The host specificities of each symbiont are averaged
-to calculate the mean host specificity for symbionts within a given host.
+Calculate the deviance in observed phylogenetic specificity to a null model of structural specificity per symbiont.
+}
+\details{
+Please make sure your host or sample identifiers match the labels on the host phylogenetic tree. 
+
+Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
+
+Deviance calculations are measured per symbiont and averaged per host sample. The host specificities of each symbiont are averaged to calculate the mean host specificity for symbionts within a given host. Unlike relative structural and network specificity, relative phylogenetic specificity is not calculated as the vertical distance between absolute host specificity and the null model with respect to read abundance. Instead, relative phylogenetic specificity is calculated as the difference between absolute phylogenetic specificity and the mean value of phylogenetic specificity from randomized communities divided by the standard deviation of the null distribution of absolute phylogenetic specificity. 
+
+A relative host specificity value greater than zero indicates that an endophyte was more host-specific relative to endophytes with the same read abundances within randomized communities. 
+
+see documentation for `picante` for more documentation regarding the ses.mpd function
 }
 \examples{
 # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-deviance.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+deviance.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
 }

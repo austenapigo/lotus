@@ -6,10 +6,10 @@
 # library(picante)
 # library(vegan)
 # library(bipartite)
-library(roxygen2) # In-Line Documentation for R 
-library(devtools) # Tools to Make Developing R Packages Easier
-library(testthat) # Unit Testing for R
-library(usethis)  # Automate Package and Project Setup
+# library(roxygen2) # In-Line Documentation for R 
+# library(devtools) # Tools to Make Developing R Packages Easier
+# library(testthat) # Unit Testing for R
+# library(usethis)  # Automate Package and Project Setup
 # 
 # # Read in data
 # example.dat <- read.csv("/Users/austenapigo/Desktop/github/lotus/otherdat/example_data_for_beta_specificity.csv", row.names = 1, header = TRUE)
@@ -38,6 +38,15 @@ library(usethis)  # Automate Package and Project Setup
 #' More positive values indicate a narrower symbiont niche and thus higher host specificity. Structural and phylogenetic specificity were negated (multipled by -1) to make this consistent across all metrics.
 #' 
 #' @export
+#' 
+#' @import ggplot2
+#' @import ggpmisc
+#' @import dplyr
+#' @import tidyr
+#' @import vegan
+#' @import bipartite
+#' @import picante
+#' 
 #' @examples
 #' # Calculate host richness per symbiont
 #' structural.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
@@ -113,6 +122,15 @@ structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
 #' 
 #' @export
+#' 
+#' @import ggplot2
+#' @import ggpmisc
+#' @import dplyr
+#' @import tidyr
+#' @import vegan
+#' @import bipartite
+#' @import picante
+#' 
 #' @examples
 #' # Generate randomized communities and calculate structural specificity per symbiont 
 #' null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
@@ -127,9 +145,6 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
          null.structural <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method))
   # Make holding list
   null.dats <- list()
-  # Make holding vectors 
-  Symbiont <- rep()
-  Abundance <- rep()
   # Calculate structural specificity for null models
   for (i in 1:length(null.structural)) {
     # Call a randomized community
@@ -139,6 +154,9 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
     colnames(null) <- colnames(x)
     # Make as a data frame
     null <- as.data.frame(null)
+    # Make holding vectors 
+    Symbiont <- rep()
+    Abundance <- rep()
     # Subset symbiont name and calculate abundance per symbiont
     for (j in 1:ncol(null)) {
       # Pull symbiont name
@@ -192,13 +210,13 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
 # dim(subset(null.structural.object, null.structural.object$Randomization == 1))
 # dim(subset(null.structural.object, null.structural.object$Randomization == 2))
 
-## Internal check ##
-null.structural.object.ab <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
-mean(null.structural.object.ab$Structural.Specificity)
-# mean shannon's h: -0.6223652
-null.structural.object.pa <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = FALSE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
-mean(null.structural.object.pa$Structural.Specificity)
-# mean host richness: -4.939931
+# ## Internal check ##
+# null.structural.object.ab <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+# mean(null.structural.object.ab$Structural.Specificity)
+# # mean shannon's h: -0.6223652
+# null.structural.object.pa <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = FALSE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+# mean(null.structural.object.pa$Structural.Specificity)
+# # mean host richness: -4.939931
 
 ####################################################################
 # `deviance.structural`: calculate relative structural specificity #
@@ -231,7 +249,16 @@ mean(null.structural.object.pa$Structural.Specificity)
 #' 
 #' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
 #' 
-#' @export
+#' @export deviance.structural
+#' 
+#' @import ggplot2
+#' @import ggpmisc
+#' @import dplyr
+#' @import tidyr
+#' @import vegan
+#' @import bipartite
+#' @import picante
+#' 
 #' @examples
 #' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
 #' structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object.ab, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)
@@ -386,6 +413,15 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
 #' More positive values indicate a narrower symbiont niche and thus higher host specificity. Structural and phylogenetic specificity were negated (multipled by -1) to make this consistent across all metrics.
 #' 
 #' @export
+#' 
+#' @import ggplot2
+#' @import ggpmisc
+#' @import dplyr
+#' @import tidyr
+#' @import vegan
+#' @import bipartite
+#' @import picante
+#' 
 #' @examples
 #' # Calculate Resource Range Index per symbiont
 #' network.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
@@ -461,6 +497,15 @@ network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' #' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
 #' 
 #' @export
+#' 
+#' @import ggplot2
+#' @import ggpmisc
+#' @import dplyr
+#' @import tidyr
+#' @import vegan
+#' @import bipartite
+#' @import picante
+#' 
 #' @examples
 #' # Generate randomized communities and calculate network specificity per symbiont 
 #' null.network(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
@@ -475,9 +520,6 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
          null.network <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method))
   # Make holding list
   null.dats <- list()
-  # Make holding vectors 
-  Symbiont <- rep()
-  Abundance <- rep()
   # For every randomized community
   for (i in 1:length(null.network)) {
     # Call a randomized community
@@ -487,6 +529,9 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
     colnames(null) <- colnames(x)
     # Make as a data frame
     null <- as.data.frame(null)
+    # Make holding vectors 
+    Symbiont <- rep()
+    Abundance <- rep()
     # Subset symbiont name and calculate abundance per symbiont
     for (j in 1:ncol(null)) {
       # Pull symbiont name
@@ -534,7 +579,7 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
 
 # null.network.object <- null.network(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
 # null.network.object <- null.network(quad.rarefied, iterations = 100, abundance.weighted = FALSE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
-null.network(example.dat, iterations = 100, abundance.weighted = FALSE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+# null.network(example.dat, iterations = 100, abundance.weighted = FALSE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
 
 ##############################################################
 # `deviance.network`: calculate relative network specificity #
@@ -570,7 +615,16 @@ null.network(example.dat, iterations = 100, abundance.weighted = FALSE, randomiz
 #' 
 #' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
 #' 
-#' @export
+#' @export deviance.network
+#' 
+#' @import ggplot2
+#' @import ggpmisc
+#' @import dplyr
+#' @import tidyr
+#' @import vegan
+#' @import bipartite
+#' @import picante
+#' 
 #' @examples
 #' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
 #' network.dev <- deviance.network(quad.rarefied, randomized = null.network.object, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)
@@ -724,6 +778,15 @@ deviance.network <- function(x, randomized = null.network.object, abundance.weig
 #' More positive values indicate a narrower symbiont niche and thus higher host specificity. Structural and phylogenetic specificity were negated (multipled by -1) to make this consistent across all metrics.
 #'
 #' @export
+#' 
+#' @import ggplot2
+#' @import ggpmisc
+#' @import dplyr
+#' @import tidyr
+#' @import vegan
+#' @import bipartite
+#' @import picante
+#' 
 #' @examples
 #' # Calculate mean pairwise phylogenetic distance per symbiont
 #' phylogenetic.specificity(quad.rarefied, utree, abundance.weighted = TRUE, trim = TRUE)
@@ -784,7 +847,15 @@ phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim =
 #' 
 #' see documentation for `picante` for more documentation regarding the ses.mpd function 
 #' 
-#' @export
+#' @export deviance.phylogenetic
+#' 
+#' @import ggplot2
+#' @import ggpmisc
+#' @import dplyr
+#' @import tidyr
+#' @import vegan
+#' @import bipartite
+#' @import picante
 #' 
 #' @examples
 #' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
@@ -921,6 +992,14 @@ deviance.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
 #'
 #' @export
 #' 
+#' @import ggplot2
+#' @import ggpmisc
+#' @import dplyr
+#' @import tidyr
+#' @import vegan
+#' @import bipartite
+#' @import picante
+#' 
 #' @examples
 #' # Calculate beta-specificity
 #' beta.specificity(quad.rarefied, index = "morisita.horn", trim = TRUE, notify = TRUE)
@@ -1014,6 +1093,14 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
 #' 
 #' @export
 #' 
+#' @import ggplot2
+#' @import ggpmisc
+#' @import dplyr
+#' @import tidyr
+#' @import vegan
+#' @import bipartite
+#' @import picante
+#' 
 #' @examples
 #' # Generate randomized communities and calculate beta-specificity per symbiont 
 #' null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 100, trim = TRUE, notify = TRUE)
@@ -1028,9 +1115,6 @@ null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomi
          null.beta.specificity <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method))
     # Make holding list
   null.dats <- list()
-  # Make holding vectors for Symbiont identifer, read abundance and beta.specificity metric
-  Symbiont <- rep()
-  Abundance <- rep()
   # Calculate beta-specificity for null models
   for (i in 1:length(null.beta.specificity)) {
     # Call a randomized community
@@ -1040,6 +1124,9 @@ null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomi
     colnames(null) <- colnames(x)
     # Make as a data frame
     null <- as.data.frame(null)
+    # Make holding vectors for Symbiont identifer, read abundance and beta.specificity metric
+    Symbiont <- rep()
+    Abundance <- rep()
     # Calculate beta.specificity per symbiont
     for (j in 1:ncol(null)) {
       # Pull Symbiont name
@@ -1110,7 +1197,15 @@ null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomi
 #' beta-specificity, standard error of beta-specificities, number of symbionts per host sample and average symbiont read abundance. 
 #' All subsequent elements of the list are plots of uncorrected host specificity as a function of log symbiont read abundance with the null mode in blue relative to the symbionts host specificities in red. 
 #' 
-#' @export
+#' @export deviance.beta
+#' 
+#' @import ggplot2
+#' @import ggpmisc
+#' @import dplyr
+#' @import tidyr
+#' @import vegan
+#' @import bipartite
+#' @import picante
 #' 
 #' @examples
 #' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
@@ -1222,160 +1317,3 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
 # beta.dev[[2]] # View occupancy-abundance model for the first sample
 # beta.dev[[81]] # View occupancy-abundance model for the last sample
 
-#########################
-# Example set in ReadMe #
-#########################
-# Load lotus
-library(lotus)
-
-# You can read more about each lotus function with the help function
-help("structural.specificity")
-help("network.specificity")
-help("phylogenetic.specificity")
-help("beta.specificity")
-
-# Check that input data is a data frame
-is.data.frame(quad.rarefied)
-
-# Calculate uncorrected host specificity (not relavitized to a null model)
-hs.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
-hs.object <- structural.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
-hs.object
-
-# Explore data and relationships between host specificity and symbiont read abundance
-plot(density(hs.object$Structural.Specificity)) # plot histogram
-
-read.abund <- as.data.frame(colSums(quad.rarefied)) # get read abundances per symbiont
-read.abund.trim <- read.abund[rownames(read.abund) %in% rownames(hs.object), ] # trim relative to hs.object
-
-cor.test(hs.object$Structural.Specificity, read.abund.trim) # correlation test
-
-plot(y = hs.object$Structural.Specificity, x = log(read.abund.trim), ylab = "Uncorrected Structural Specificity (HostRichness)", xlab = "Log Symbiont Read Abundance") # visualize host specificity - read abundance relationships
-abline(lm(hs.object$Structural.Specificity~log(read.abund.trim)), col = "red")
-
-# Randomize community matrix to generate a null model for deviance calculations
-null.structural.object <- null.structural(Safariland, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
-head(null.structural.object)
-
-null.network.object <- null.network(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
-head(null.network.object)
-
-null.beta.object <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 2, trim = TRUE, notify = TRUE)
-head(null.beta.object)
-
-# Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
-structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, model = "first", trim = TRUE, notify = FALSE)
-head(structural.dev[[1]]) # View data frame of output
-mean(structural.dev[[1]]$Mean.Deviance)
-structural.dev[[2]] # View occupancy-abundance model for the first sample
-structural.dev[[81]] # View occupancy-abundance model for the last sample
-
-structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = FALSE)
-head(structural.dev[[1]]) # View data frame of output
-mean(structural.dev[[1]]$Mean.Deviance)
-structural.dev[[2]] # View occupancy-abundance model for the first sample
-structural.dev[[81]] # View occupancy-abundance model for the last sample
-
-network.dev <- deviance.network(quad.rarefied, randomized = null.network.object, abundance.weighted = TRUE, model = "first", trim = TRUE, notify = FALSE)
-head(network.dev[[1]]) # View data frame of output
-mean(network.dev[[1]]$Mean.Deviance)
-network.dev[[2]] # View occupancy-abundance model for the first sample
-network.dev[[81]] # View occupancy-abundance model for the last sample
-
-network.dev <- deviance.network(quad.rarefied, randomized = null.network.object, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = FALSE)
-head(network.dev[[1]]) # View data frame of output
-mean(network.dev[[1]]$Mean.Deviance)
-network.dev[[2]] # View occupancy-abundance model for the first sample
-network.dev[[81]] # View occupancy-abundance model for the last sample
-
-beta.dev <- deviance.beta(quad.rarefied, randomized = null.beta.object, index = "morisita.horn", model = "second", trim = TRUE, notify = TRUE)
-head(beta.dev[[1]]) # View data frame of output
-beta.dev[[2]] # View occupancy-abundance model for the first sample
-beta.dev[[81]] # View occupancy-abundance model for the last sample
-
-beta.dev <- deviance.beta(quad.rarefied, randomized = null.beta.object, index = "morisita.horn", model = "first", trim = TRUE, notify = TRUE)
-head(beta.dev[[1]]) # View data frame of output
-mean(beta.dev[[1]]$Mean.Deviance)
-beta.dev[[2]] # View occupancy-abundance model for the first sample
-beta.dev[[81]] # View occupancy-abundance model for the last sample
-
-beta.dev <- deviance.beta(quad.rarefied, randomized = null.beta.object, index = "morisita.horn", model = "second", trim = TRUE, notify = TRUE)
-head(beta.dev[[1]]) # View data frame of output
-mean(beta.dev[[1]]$Mean.Deviance)
-beta.dev[[2]] # View occupancy-abundance model for the first sample
-beta.dev[[81]] # View occupancy-abundance model for the last sample
-
-phylo.dev <- deviance.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100, abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
-head(phylo.dev)
-phylo.dev[[2]] # View occupancy-abundance model for the first sample
-phylo.dev[[81]] # View occupancy-abundance model for the last sample
-
-# devtools::install_github("austenapigo/lotus")
-# .rs.restartR()
-
-#############################################################################################################
-# Install lotus
-devtools::install_github("austenapigo/lotus")
-
-# Load lotus
-library(lotus)
-
-# You can read more about each lotus function with the help function
-help("structural.specificity")
-
-# `lotus` has two example data sets provided (should be pre-loaded upon installation)
-dim(quad.rarefied) # a community data frame of 80 plant samples and 1117 endophyte amplicon sequence variants
-plot(utree, cex = 0.5) # an ultrametric phylogenetic tree of plant species in newick format
-
-# Calculate uncorrected host specificity (not relavitized to a null model)
-hs.object <- structural.specificity(quad.rarefied, abundance.weighted = FALSE, trim = FALSE)
-head(hs.object)
-
-# Explore data and evaluate relationships between host specificity and symbiont read abundance
-plot(density(hs.object$Structural.Specificity)) # plot histogram
-
-read.abund <- (colSums(quad.rarefied)) # get read abundances per symbiont
-#read.abund.trim <- read.abund[rownames(read.abund) %in% rownames(hs.object), ] # trim relative to hs.object
-structural.object <- data.frame(hs.object, Read.Abundance = read.abund) # make data frame
-
-# cor.test(hs.object$Structural.Specificity, read.abund.trim) # correlation test
-quad.model <- summary(lm(Structural.Specificity ~ log(Read.Abundance) + I(log(Read.Abundance^2)), data = structural.object))
-
-ggplot(data = structural.object, aes(y = Structural.Specificity, x = log(Read.Abundance))) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE, color = "red", formula = y ~ x + I(x^2)) +
-  theme_bw() +
-  theme(
-    axis.text.x = element_text(size = 12, color = "black"),
-    axis.text.y = element_text(size = 12, color = "black"),
-    axis.title.x = element_text(size = 12, margin = margin(t = 5, r = 0, b = 0, l = 0)),
-    axis.title.y = element_text(size = 12, margin = margin(t = 0, r = 5, b = 0, l = 0)),
-    legend.title = element_text(size = 12),
-    legend.text = element_text(size = 12),
-    legend.position = "bottom",
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.background = element_blank(),
-    axis.line.x = element_blank(),
-    axis.line.y = element_blank(),
-    plot.title = element_text(hjust = 0.5, size = 12, face = "bold.italic"),
-    text = element_text(),
-    aspect.ratio = 0.85
-  ) +
-  ggtitle("Presence-Absence Structural Specificity") +
-  labs(y = "-1 * Host Species Richness", x = "Log Endophyte Read Abundance Across Entire Plant Community") +
-  annotate(geom = "text", x = min(log(structural.object$Read.Abundance)), y = min(structural.object$Structural.Specificity) + 3, label = paste("R^2 ==", signif(quad.model$adj.r.squared, 2)), hjust = 0, parse = T, size = 5) +
-  annotate(geom = "text", x = min(log(structural.object$Read.Abundance)), y = min(structural.object$Structural.Specificity), label = paste("p ==", signif(quad.model$coef[2,4], 2)), hjust = 0, parse = T, size = 5)
-
-# plot(y = hs.object$Structural.Specificity, x = log(read.abund.trim), ylab = "Uncorrected Structural Specificity (HostRichness)", xlab = "Log Symbiont Read Abundance") # visualize host specificity - read abundance relationships
-# abline(lm(Structural.Specificity ~ log(Read.Abundance), data = structural.object), col = "red")
-
-# Randomize community matrix to generate a null model for deviance calculations
-null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
-head(null.structural.object)
-
-# Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
-structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
-head(structural.dev[[1]]) # View data frame of output
-structural.dev[[2]] # View occupancy-abundance model for the first sample
-structural.dev[[81]] # View occupancy-abundance model for the last sample

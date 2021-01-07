@@ -2,7 +2,7 @@
 % Please edit documentation in R/specificity_scripts.R
 \name{deviance.network}
 \alias{deviance.network}
-\title{Deviance in Network Specificity to Null Models}
+\title{Relative Network Specificity}
 \usage{
 \method{deviance}{network}(
   x,
@@ -18,7 +18,7 @@
 
 \item{randomized}{Data frame. Output from null.network function.}
 
-\item{abundance.weighted}{Logical. TRUE calculates Shannon's H per symbiont. FALSE calculates host richness per symbiont.}
+\item{abundance.weighted}{Logical. TRUE calculates the Paired Difference Index per symbiont. FALSE calculates the Resource Range Index per symbiont.}
 
 \item{model}{Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function.}
 
@@ -33,14 +33,22 @@ All subsequent elements of the list are plots of uncorrected host specificity as
 in blue relative to the symbionts host specificities in red.
 }
 \description{
-Calculate the deviance in observed network specificity to a null model of network specificity per symbiont. 
-Deviance calculations are measured per symbiont and averaged per host sample. For example, all symbionts within a given host 
-are evaluated for their host specificity across the entire host community. The host specificities of each symbiont are averaged
-to calculate the mean host specificity for symbionts within a given host.
+Calculate the deviance in absolute network specificity to a null model of network specificity per symbiont.
+}
+\details{
+Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., hostA.1). This naming scheme is required and helps differentiate host samples that are of the same species. If this naming scheme does not apply to your experimental design, you can add in 'dummy variables' (e.g., .1, .2, .3, etc. after each host species or sample identifer).
+
+Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
+
+Deviance calculations are measured per symbiont and averaged per host sample. The host specificities of each symbiont are averaged to calculate the mean host specificity for symbionts within a given host. 
+
+A relative host specificity value greater than zero indicates that an endophyte was more host-specific relative to endophytes with the same read abundances within randomized communities. 
+
+If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
 }
 \examples{
 # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-network.dev <- deviance.network(quad.rarefied, randomized = null.network.object, abundance.weighted = TRUE, model = "first", trim = TRUE, notify = TRUE)
+network.dev <- deviance.network(quad.rarefied, randomized = null.network.object, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)
 network.dev[[1]] # View data frame of output 
 network.dev[[2]] # View first graph 
 network.dev[[81]] # View last graph 

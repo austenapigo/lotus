@@ -2,7 +2,7 @@
 % Please edit documentation in R/specificity_scripts.R
 \name{structural.specificity}
 \alias{structural.specificity}
-\title{Structural Specificity}
+\title{Absolute Structural Specificity}
 \usage{
 structural.specificity(x, abundance.weighted = TRUE, trim = TRUE)
 }
@@ -11,17 +11,24 @@ structural.specificity(x, abundance.weighted = TRUE, trim = TRUE)
 
 \item{abundance.weighted}{Logical. TRUE calculates Shannon's H per symbiont. FALSE calculates host richness per symbiont.}
 
-\item{trim}{Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts.}
+\item{trim}{Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts.}
 }
 \value{
 A data frame with symbiont identifiers and structural specificity values.
 }
 \description{
-Calculate structural specificity not corrected by null mdoels.
+Calculate absolute structural specificity not relativized by null mdoels.
+}
+\details{
+Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., hostA.1). This naming scheme is required and helps differentiate host samples that are of the same species. If this naming scheme does not apply to your experimental design, you can add in 'dummy variables' (e.g., .1, .2, .3, etc. after each host species or sample identifer).
+
+Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset.
+
+More positive values indicate a narrower symbiont niche and thus higher host specificity. Structural and phylogenetic specificity were negated (multipled by -1) to make this consistent across all metrics.
 }
 \examples{
 # Calculate host richness per symbiont
-structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+structural.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
 
 # Calculate Shannon's H per symbiont
 structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)

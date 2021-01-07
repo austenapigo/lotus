@@ -18,7 +18,7 @@ null.network(
 
 \item{iterations}{Integer. Indicate the number of randomized communities to generate.}
 
-\item{abundance.weighted}{Logical. TRUE calculates Shannon's H per symbiont. FALSE calculates host richness per symbiont.}
+\item{abundance.weighted}{Logical. TRUE calculates the Paired Difference Index per symbiont. FALSE calculates the Resource Range Index per symbiont.}
 
 \item{randomization.method}{Randomization method. Usage borrowed directly from bipartite::nullmodel. 
 Specify as "r2dtable", "swap.web", "vaznull", "shuffle.web" or "mgen".}
@@ -33,6 +33,17 @@ identifiers.
 }
 \description{
 Generate null models and calculate network specificity per symbiont within each community randomization.
+}
+\details{
+Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., hostA.1). This naming scheme is required and helps differentiate host samples that are of the same species. If this naming scheme does not apply to your experimental design, you can add in 'dummy variables' (e.g., .1, .2, .3, etc. after each host species or sample identifer).
+
+Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
+
+Deviance calculations are measured per symbiont and averaged per host sample. The host specificities of each symbiont are averaged to calculate the mean host specificity for symbionts within a given host. 
+
+More positive values indicate a narrower symbiont niche and thus higher host specificity. 
+
+#' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
 }
 \examples{
 # Generate randomized communities and calculate network specificity per symbiont 

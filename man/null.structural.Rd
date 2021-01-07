@@ -2,7 +2,7 @@
 % Please edit documentation in R/specificity_scripts.R
 \name{null.structural}
 \alias{null.structural}
-\title{Structural Specificity Null Models}
+\title{Absolute Structural Specificity Null Models}
 \usage{
 null.structural(
   x,
@@ -23,7 +23,7 @@ null.structural(
 \item{randomization.method}{Randomization method. Usage borrowed directly from bipartite::nullmodel. 
 Specify as "r2dtable", "swap.web", "vaznull", "shuffle.web" or "mgen".}
 
-\item{trim}{Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts.}
+\item{trim}{Logical. TRUE removes symbionts that occupy one host species FALSE keeps all symbionts.}
 
 \item{notify}{Logical. TRUE prints the current iteration of the for loop.}
 }
@@ -32,9 +32,18 @@ A data frame with columns that refer to symbiont identifiers, absolute read abun
 identifiers.
 }
 \description{
-Generate null models and calculate structural specificity per symbiont within each community randomization.
+Generate null models and calculate relative structural specificity per symbiont within each community randomization.
+}
+\details{
+Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., hostA.1). This naming scheme is required and helps differentiate host samples that are of the same species. If this naming scheme does not apply to your experimental design, you can add in 'dummy variables' (e.g., .1, .2, .3, etc. after each host species or sample identifer).
+
+Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset.
+
+More positive relative host specificity values indicate a narrower symbiont niche and thus higher host specificity. Structural and phylogenetic specificity were negated (multipled by -1) to make this consistent across all metrics.
+
+If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
 }
 \examples{
 # Generate randomized communities and calculate structural specificity per symbiont 
-null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+null.structural.object <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/specificity_scripts.R
 \name{deviance.structural}
 \alias{deviance.structural}
-\title{Deviance in Structural Specificity to Null Models}
+\title{Relative Structural Specificity}
 \usage{
 \method{deviance}{structural}(
   x,
@@ -22,25 +22,30 @@
 
 \item{model}{Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function.}
 
-\item{trim}{Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts.}
+\item{trim}{Logical. TRUE removes symbionts that occupy one host species FALSE keeps all symbionts.}
 
 \item{notify}{Logical. TRUE prints the current iteration of the for loop.}
 }
 \value{
-A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean deviance in 
-structural specificity, standard error of structural specificities, number of symbionts per host sample and average symbiont read abundance. 
-All subsequent elements of the list are plots of uncorrected host specificity as a function of log symbiont read abundance with the null mode
-in blue relative to the symbionts host specificities in red.
+A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean deviance in structural specificity, standard error of structural specificities, number of symbionts per host sample and average symbiont read abundance. All subsequent elements of the list are plots of absolute host specificity as a function of natural log symbiont read abundance with the null mode in blue relative to the symbionts host specificities in red. Within graphs, there is an inset equation that refers to the null model expectation.
 }
 \description{
-Calculate the deviance in observed structural specificity to a null model of structural specificity per symbiont. 
-Deviance calculations are measured per symbiont and averaged per host sample. For example, all symbionts within a given host 
-are evaluated for their host specificity across the entire host community. The host specificities of each symbiont are averaged
-to calculate the mean host specificity for symbionts within a given host.
+Calculate the deviance in absolute structural specificity to a null model of structural specificity per symbiont.
+}
+\details{
+Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., hostA.1). This naming scheme is required and helps differentiate host samples that are of the same species. If this naming scheme does not apply to your experimental design, you can add in 'dummy variables' (e.g., .1, .2, .3, etc. after each host species or sample identifer).
+
+Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
+
+Deviance calculations are measured per symbiont and averaged per host sample. The host specificities of each symbiont are averaged to calculate the mean host specificity for symbionts within a given host.
+
+A relative host specificity value greater than zero indicates that an endophyte was more host-specific relative to endophytes with the same read abundances within randomized communities. 
+
+If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
 }
 \examples{
 # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object, abundance.weighted = TRUE, model = "first", trim = TRUE, notify = TRUE)
+structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object.ab, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)
 structural.dev[[1]] # View data frame of output 
 structural.dev[[2]] # View first graph 
 structural.dev[[81]] # View last graph 

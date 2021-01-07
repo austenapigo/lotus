@@ -9,20 +9,27 @@ network.specificity(x, abundance.weighted = TRUE, trim = TRUE)
 \arguments{
 \item{x}{Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns.}
 
-\item{abundance.weighted}{Logical. TRUE calculates Shannon's H per symbiont. FALSE calculates host richness per symbiont.}
-
-\item{trim}{Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts.}
+\item{abundance.weighted}{Logical. TRUE calculates the Paired Difference Index per symbiont. FALSE calculates the Resource Range Index per symbiont.}
 }
 \value{
 A data frame with symbiont identifiers and network specificity values.
 }
 \description{
-Calculate network specificity not corrected by null mdoels.
+Calculate absolute network specificity not relativized by null models.
+}
+\details{
+Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., hostA.1). This naming scheme is required and helps differentiate host samples that are of the same species. If this naming scheme does not apply to your experimental design, you can add in 'dummy variables' (e.g., .1, .2, .3, etc. after each host species or sample identifer).
+
+Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
+
+Deviance calculations are measured per symbiont and averaged per host sample. The host specificities of each symbiont are averaged to calculate the mean host specificity for symbionts within a given host. 
+
+More positive values indicate a narrower symbiont niche and thus higher host specificity. Structural and phylogenetic specificity were negated (multipled by -1) to make this consistent across all metrics.
 }
 \examples{
-# Calculate host richness per symbiont
-network.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+# Calculate Resource Range Index per symbiont
+network.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
 
-# Calculate Shannon's H per symbiont
+# Calculate the Paired Difference Index per symbiont
 network.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
 }

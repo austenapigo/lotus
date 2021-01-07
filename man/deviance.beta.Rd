@@ -29,14 +29,22 @@
 \value{
 A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean deviance in 
 beta-specificity, standard error of beta-specificities, number of symbionts per host sample and average symbiont read abundance. 
-All subsequent elements of the list are plots of uncorrected host specificity as a function of log symbiont read abundance with the null mode
-in blue relative to the symbionts host specificities in red.
+All subsequent elements of the list are plots of uncorrected host specificity as a function of log symbiont read abundance with the null mode in blue relative to the symbionts host specificities in red.
 }
 \description{
 Calculate the deviance in observed beta-specificity to a null model of beta-specificity per symbiont. 
 Deviance calculations are measured per symbiont and averaged per host sample. For example, all symbionts within a given host 
 are evaluated for their host specificity across the entire host community. The host specificities of each symbiont are averaged
 to calculate the mean host specificity for symbionts within a given host.
+}
+\details{
+Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., hostA.1). This naming scheme is required and helps differentiate host samples that are of the same species. If this naming scheme does not apply to your experimental design, you can add in 'dummy variables' (e.g., .1, .2, .3, etc. after each host species or sample identifer).
+
+Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
+
+Deviance calculations are measured per symbiont and averaged per host sample. The host specificities of each symbiont are averaged to calculate the mean host specificity for symbionts within a given host. 
+
+A relative host specificity value greater than zero indicates that an endophyte was more host-specific relative to endophytes with the same read abundances within randomized communities.
 }
 \examples{
 # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 

@@ -22,7 +22,14 @@ beta.specificity(
 A data frame with symbiont identifiers and beta-specificity values.
 }
 \description{
-Calculate structural specificity not corrected by null mdoels.
+Calculate structural specificity not corrected by null models.
+}
+\details{
+Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., hostA.1). This naming scheme is required and helps differentiate host samples that are of the same species. If this naming scheme does not apply to your experimental design, you can add in 'dummy variables' (e.g., .1, .2, .3, etc. after each host species or sample identifer).
+
+Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset.
+
+More positive values indicate a narrower symbiont niche and thus higher host specificity.
 }
 \examples{
 # Calculate beta-specificity
