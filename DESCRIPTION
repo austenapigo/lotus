@@ -1,7 +1,8 @@
+Type: Package
 Package: lotus
+Title: Host Specificity 
 Version: 0.9.0
 Date: 2020-10
-Title: Host Specificity
 Authors@R: c(person("Austen", "Apigo", role = c("aut", "cre"),
     email = "aapigo@ucsb.edu", comment = c(ORCID = "0000-0002-2525-0394")),
     person("Ryoko", "Oono", role = "aut",
@@ -21,7 +22,7 @@ Imports:
     ggpmisc,
     dplyr,
     tidyr
-License: GPL
+License: GPL-3
 LazyData: true
 URL: https://github.com/austenapigo/lotus
 BugReports: https://github.com/austenapigo/lotus/issues
