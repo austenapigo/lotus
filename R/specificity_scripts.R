@@ -1107,7 +1107,7 @@ null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomi
   # Set seed
   set.seed(123)
   # Make 100 randomized communities
-  ifelse(abundance.weighted == TRUE, 
+  ifelse(index == "morisista.horn" | "horn", 
          null.beta.specificity <- bipartite::nullmodel(x, N = iterations, method = randomization.method), 
          null.beta.specificity <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method))
     # Make holding list
