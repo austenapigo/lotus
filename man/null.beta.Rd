@@ -6,9 +6,9 @@
 \usage{
 null.beta(
   x,
+  iterations = 100,
   index = c("morisita.horn", "horn", "sorensen"),
   randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"),
-  iterations = 100,
   trim = TRUE,
   notify = TRUE
 )
@@ -16,14 +16,14 @@ null.beta(
 \arguments{
 \item{x}{Data frame of hosts populating rows and symbionts populating columns.}
 
+\item{iterations}{Integer. Indicate the number of randomized communities to generate.}
+
 \item{index}{Character. Method for calculation with the Morisita-Horn, Horn or Sorensen Indices.}
 
 \item{randomization.method}{Randomization method. Usage borrowed directly from bipartite::nullmodel. 
 Specify as "r2dtable", "swap.web", "vaznull", "shuffle.web" or "mgen".}
 
-\item{iterations}{Integer. Indicate the number of randomized communities to generate.}
-
-\item{trim}{Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts.}
+\item{trim}{Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts.}
 
 \item{notify}{Logical. TRUE prints the current iteration of the for loop. NOTE: This function can take some time.}
 }
@@ -36,5 +36,5 @@ Generate null models and calculate beta-specificity per symbiont within each com
 }
 \examples{
 # Generate randomized communities and calculate beta-specificity per symbiont 
-\donttest{beta.null <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 100, trim = TRUE, notify = TRUE)}
+\donttest{null.beta <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web")}
 }

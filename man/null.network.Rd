@@ -23,7 +23,7 @@ null.network(
 \item{randomization.method}{Randomization method. Usage borrowed directly from bipartite::nullmodel. 
 Specify as "r2dtable", "swap.web", "vaznull", "shuffle.web" or "mgen".}
 
-\item{trim}{Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts.}
+\item{trim}{Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts.}
 
 \item{notify}{Logical. TRUE prints the current iteration of the for loop.}
 }
@@ -47,5 +47,5 @@ More positive values indicate a narrower symbiont niche and thus higher host spe
 }
 \examples{
 # Generate randomized communities and calculate network specificity per symbiont 
-\donttest{null.net <- null.network(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)}
+\donttest{null.net <- null.network(quad.rarefied, randomization.method = "shuffle.web")}
 }

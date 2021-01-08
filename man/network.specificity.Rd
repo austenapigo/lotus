@@ -10,6 +10,8 @@ network.specificity(x, abundance.weighted = TRUE, trim = TRUE)
 \item{x}{Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns.}
 
 \item{abundance.weighted}{Logical. TRUE calculates the Paired Difference Index per symbiont. FALSE calculates the Resource Range Index per symbiont.}
+
+\item{trim}{Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts.}
 }
 \value{
 A data frame with symbiont identifiers and network specificity values.

@@ -31,6 +31,10 @@
 #' @importFrom bipartite "PDI"
 #' @importFrom picante "mpd"
 #' @importFrom picante "ses.mpd"
+#' @importFrom stats "aggregate"
+#' @importFrom stats "cophenetic"
+#' @importFrom stats "lm"
+#' @importFrom stats "sd"
 #' 
 #' @examples
 #' # Calculate host species richness per symbiont
@@ -67,10 +71,6 @@ structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
   # Return object
   return(structural.dat)
 }
-
-# structural.object <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
-# mean(structural.object$Structural.Specificity)
-# matches source code: -0.7063895
 
 ################################################################################
 # `null.structural`: calculate null models for absolute structural specificity #
@@ -115,10 +115,14 @@ structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' @importFrom bipartite "PDI"
 #' @importFrom picante "mpd"
 #' @importFrom picante "ses.mpd"
+#' @importFrom stats "aggregate"
+#' @importFrom stats "cophenetic"
+#' @importFrom stats "lm"
+#' @importFrom stats "sd"
 #' 
 #' @examples
 #' # Generate randomized communities and calculate structural specificity per symbiont 
-#' \donttest{null.str <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)}
+#' \donttest{null.str <- null.structural(quad.rarefied, randomization.method = "shuffle.web")}
 null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), trim = TRUE, notify = TRUE) {
   # Match argument specified
   randomization.method <- match.arg(randomization.method)
@@ -191,20 +195,8 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
   return(data.frame(null.dats))
 }
 
-# Check to see if TRIM works 
-# dim(subset(null.structural.object, null.structural.object$Randomization == 1))
-# dim(subset(null.structural.object, null.structural.object$Randomization == 2))
-
-# ## Internal check ##
-# null.structural.object.ab <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
-# mean(null.structural.object.ab$Structural.Specificity)
-# # mean shannon's h: -0.6223652
-# null.structural.object.pa <- null.structural(quad.rarefied, iterations = 100, abundance.weighted = FALSE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
-# mean(null.structural.object.pa$Structural.Specificity)
-# # mean host richness: -4.939931
-
 ####################################################################
-# `deviance.structural`: calculate relative structural specificity #
+# `relative.structural`: calculate relative structural specificity #
 ####################################################################
 #' Relative Structural Specificity
 #' 
@@ -234,7 +226,7 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
 #' 
 #' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
 #' 
-#' @export deviance.structural
+#' @export relative.structural
 #' 
 #' @importFrom ggplot2 "ggplot"
 #' @importFrom ggpmisc "stat_poly_eq"
@@ -246,14 +238,19 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
 #' @importFrom bipartite "PDI"
 #' @importFrom picante "mpd"
 #' @importFrom picante "ses.mpd"
+#' @importFrom stats "aggregate"
+#' @importFrom stats "cophenetic"
+#' @importFrom stats "lm"
+#' @importFrom stats "sd"
 #' 
 #' @examples
-#' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-#' \donttest{structural.dev <- deviance.structural(quad.rarefied, randomized = null.str, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)}
-#' \donttest{structural.dev[[1]]} # View data frame of output 
-#' \donttest{structural.dev[[2]]} # View first graph 
-#' \donttest{structural.dev[[81]]} # View last graph 
-deviance.structural <- function(x, randomized = null.structural.object, abundance.weighted = TRUE, model = c("first", "second"), trim = TRUE, notify = TRUE) {
+#' # Calculate mean relative structural specificity per symbiont per host sample 
+#' \donttest{str.dev <- relative.structural(quad.rarefied, randomized = null.str, abundance.weighted = TRUE)}
+#' \donttest{str.dev[[1]]} # View data frame of output 
+#' # Visualize null vs. absolute host specifities 
+#' \donttest{str.dev[[2]]} # View first graph 
+#' \donttest{str.dev[[81]]} # View last graph 
+relative.structural <- function(x, randomized = null.str, abundance.weighted = TRUE, model = c("first", "second"), trim = TRUE, notify = TRUE) {
 ######################### Calculate Absolute Structural Specificity #########################
   # Make holding vectors 
   structural.plots <- list()
@@ -366,16 +363,12 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
     # Populate deviance data into data.frame
     structural.plots[[1]] <- data.frame(Host.Sample = host.sample, 
                                         Mean.Deviance = mean.structural, 
-                                        Mean.Deviance.SE = se.structural,
+                                        Mean.relative.SE = se.structural,
                                         Number.of.Symbionts = num.symbionts,
                                         Avg.Symbiont.Abundance = read.abund)
   }
     return(structural.plots)
 }
-
-## Internal Check ##
-# mean(structural.dev[[1]]$Mean.Deviance)
-# -0.7333748 
 
 #################################################################
 # `network.specificity`: calculate absolute network specificity #
@@ -389,6 +382,8 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
 #' @param abundance.weighted Logical. TRUE calculates the Paired Difference Index per symbiont. FALSE calculates Resource Range Index per symbiont. 
 #' 
 #' @param abundance.weighted Logical. TRUE calculates the Paired Difference Index per symbiont. FALSE calculates the Resource Range Index per symbiont. 
+#' 
+#' @param trim Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts. 
 #'
 #' @return A data frame with symbiont identifiers and network specificity values. 
 #' 
@@ -445,12 +440,6 @@ network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
   return(network.dat)
 }
 
-# network.object <- network.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
-# mean(network.object$Network.Specificity)
-# network.object <- network.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
-# mean(network.object$Network.Specificity)
-# network.object <- network.specificity(example.dat, abundance.weighted = TRUE, trim = TRUE)
-
 #################################################################
 # `null.network`: calculate null models for network specificity #
 #################################################################
@@ -467,7 +456,7 @@ network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' @param randomization.method Randomization method. Usage borrowed directly from bipartite::nullmodel. 
 #' Specify as "r2dtable", "swap.web", "vaznull", "shuffle.web" or "mgen". 
 #' 
-#' @param trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. 
+#' @param trim Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts. 
 #' 
 #' @param notify Logical. TRUE prints the current iteration of the for loop. 
 #'
@@ -499,7 +488,7 @@ network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' 
 #' @examples
 #' # Generate randomized communities and calculate network specificity per symbiont 
-#' \donttest{null.net <- null.network(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)}
+#' \donttest{null.net <- null.network(quad.rarefied, randomization.method = "shuffle.web")}
 null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), trim = TRUE, notify = TRUE) {
   # Match argument specified
   randomization.method <- match.arg(randomization.method)
@@ -568,12 +557,8 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
   return(data.frame(null.dats))
 }
 
-# null.network.object <- null.network(quad.rarefied, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
-# null.network.object <- null.network(quad.rarefied, iterations = 100, abundance.weighted = FALSE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
-# null.network(example.dat, iterations = 100, abundance.weighted = FALSE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
-
 ##############################################################
-# `deviance.network`: calculate relative network specificity #
+# `relative.network`: calculate relative network specificity #
 ##############################################################
 #' Relative Network Specificity 
 #' 
@@ -587,7 +572,7 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
 #' 
 #' @param model Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function. 
 #' 
-#' @param trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. 
+#' @param trim Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts. 
 #' 
 #' @param notify Logical. TRUE prints the current iteration of the for loop. 
 #'
@@ -606,7 +591,7 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
 #' 
 #' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
 #' 
-#' @export deviance.network
+#' @export relative.network
 #' 
 #' @importFrom ggplot2 "ggplot"
 #' @importFrom ggpmisc "stat_poly_eq"
@@ -618,14 +603,20 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
 #' @importFrom bipartite "PDI"
 #' @importFrom picante "mpd"
 #' @importFrom picante "ses.mpd"
+#' @importFrom stats "aggregate"
+#' @importFrom stats "cophenetic"
+#' @importFrom stats "lm"
+#' @importFrom stats "sd"
+#' 
 #' 
 #' @examples
-#' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-#' \donttest{network.dev <- deviance.network(quad.rarefied, randomized = null.network.object, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)}
-#' \donttest{network.dev[[1]]} # View data frame of output 
-#' \donttest{network.dev[[2]]} # View first graph 
-#' \donttest{network.dev[[81]]} # View last graph 
-deviance.network <- function(x, randomized = null.network.object, abundance.weighted = TRUE, model = c("first", "second"), trim = TRUE, notify = TRUE) {
+#' # Calculate mean network specificity per symbiont per host sample
+#' \donttest{net.dev <- relative.network(quad.rarefied, randomized = null.net, abundance.weighted = TRUE)}
+#' \donttest{net.dev[[1]]} # View data frame of output 
+#' # Visualize null vs. absolute host specifities 
+#' \donttest{net.dev[[2]]} # View first graph 
+#' \donttest{net.dev[[81]]} # View last graph 
+relative.network <- function(x, randomized = null.net, abundance.weighted = TRUE, model = c("first", "second"), trim = TRUE, notify = TRUE) {
 ######################### Calculate Absolute Network Specificity #########################
   # Make holding vectors 
   network.plots <- list()
@@ -734,18 +725,12 @@ deviance.network <- function(x, randomized = null.network.object, abundance.weig
     # Populate deviance data into data.frame
     network.plots[[1]] <- data.frame(Host.Sample = host.sample, 
                                         Mean.Deviance = mean.network, 
-                                        Mean.Deviance.SE = se.network,
+                                        Mean.relative.SE = se.network,
                                         Number.of.Symbionts = num.symbionts,
                                         Avg.Symbiont.Abundance = read.abund)
   }
   return(network.plots)
 }
-
-# network.dev <- deviance.network(quad.rarefied, randomized = null.network.object, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
-# head(network.dev[[1]])
-# network.dev[[2]]
-# network.dev[[81]]
-# mean(network.dev[[1]]$Mean.Deviance)
 
 ##################################################################
 # `phylogenetic.specificity`: calculate phylogenetic specificity #
@@ -761,7 +746,7 @@ deviance.network <- function(x, randomized = null.network.object, abundance.weig
 #' @param abundance.weighted Logical. TRUE calculates abundance-weighted mean pairwise phylogenetic distance. 
 #' FALSE calculates presence-absence mean pairwise phylogenetic distance. 
 #' 
-#' @param trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. 
+#' @param trim Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts. 
 #'
 #' @return A data frame with symbiont identifiers and phylogenetic specificity values.
 #'
@@ -783,6 +768,10 @@ deviance.network <- function(x, randomized = null.network.object, abundance.weig
 #' @importFrom bipartite "PDI"
 #' @importFrom picante "mpd"
 #' @importFrom picante "ses.mpd"
+#' @importFrom stats "aggregate"
+#' @importFrom stats "cophenetic"
+#' @importFrom stats "lm"
+#' @importFrom stats "sd"
 #' 
 #' @examples
 #' # Calculate mean pairwise phylogenetic distance per symbiont
@@ -804,14 +793,8 @@ phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim =
   return(phylogenetic.dat)
 }
 
-# Internal Check
-# phylogenetic.object <- phylogenetic.specificity(quad.rarefied, utree, abundance.weighted = TRUE, trim = TRUE)
-# phylogenetic.object
-# mean(phylogenetic.object$Phylogenetic.Specificity)
-# -146.6859 
-
 ###############################################################################
-# `deviance.phylogenetic`: calculate the deviance in phylogenetic specificity #
+# `relative.phylogenetic`: calculate the deviance in phylogenetic specificity #
 ###############################################################################
 #' Deviance in Phylogenetic Specificity to Null Models 
 #' 
@@ -826,8 +809,12 @@ phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim =
 #' 
 #' @param abundance.weighted Logical. TRUE calculates abundance-weighted mean pairwise phylogenetic distance. 
 #' FALSE calculates presence-absence mean pairwise phylogenetic distance. 
+#' 
+#' @param iterations Integer. Indicate the number of randomized communities to generate. 
+#' 
+#' @param model Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function.
 #'  
-#' @param trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. 
+#' @param trim Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts. 
 #' 
 #' @param notify Logical. TRUE prints the current iteration of the for loop.
 #'
@@ -844,7 +831,7 @@ phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim =
 #' 
 #' see documentation for `picante` for more documentation regarding the ses.mpd function 
 #' 
-#' @export deviance.phylogenetic
+#' @export relative.phylogenetic
 #' 
 #' @importFrom ggplot2 "ggplot"
 #' @importFrom ggpmisc "stat_poly_eq"
@@ -856,11 +843,15 @@ phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim =
 #' @importFrom bipartite "PDI"
 #' @importFrom picante "mpd"
 #' @importFrom picante "ses.mpd"
+#' @importFrom stats "aggregate"
+#' @importFrom stats "cophenetic"
+#' @importFrom stats "lm"
+#' @importFrom stats "sd"
 #' 
 #' @examples
-#' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-#' \donttest{phy.dev <- deviance.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)}
-deviance.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richness", "frequency", "sample.pool", "phylogeny.pool", "independentswap", "trialswap"), iterations = 100, model = c("first", "second"), abundance.weighted = TRUE, trim = TRUE, notify = TRUE) {
+#' # Calculate mean deviance per symbiont per host sample and visualize null vs. absolute host specifities 
+#' \donttest{phy.dev <- relative.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)}
+relative.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richness", "frequency", "sample.pool", "phylogeny.pool", "independentswap", "trialswap"), iterations = 100, abundance.weighted = TRUE, model = c("first", "second"), trim = TRUE, notify = TRUE) {
 ######################### Calculate Absolute Phylogenetic Specificity #########################
   # Make holding vectors 
   phylogenetic.plots <- list()
@@ -913,6 +904,8 @@ deviance.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
            phylogenetic.dat <- subset(phylogenetic.dat, Observed.Phylo.Specificity < 0), 
            phylogenetic.dat <- phylogenetic.dat) 
 ######################### Plot Null Models and Absolute Phylogenetic Specificity #########################
+    # Match model argument
+    ifelse(model == "first", formula <- "y ~ x", formula <- "y ~ x + I(x^2)")
     # Plot null vs. empirical per sample
     phylogenetic.plots[[i+1]] <- 
       ggplot2::ggplot(phylogenetic.dat, aes(y = Observed.Phylo.Specificity, x = log(Abundance))) +
@@ -956,18 +949,12 @@ deviance.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
     # Populate deviance data into data.frame
     phylogenetic.plots[[1]] <- data.frame(Host.Sample = host.sample, 
                                         Mean.Deviance = mean.phylogenetic, 
-                                        Mean.Deviance.SE = se.phylogenetic,
+                                        Mean.relative.SE = se.phylogenetic,
                                         Number.of.Symbionts = num.symbionts,
                                         Avg.Symbiont.Abundance = read.abund)
   }
   return(phylogenetic.plots)
 }
-
-# phylogenetic.dev <- deviance.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
-# head(phylogenetic.dev[[1]])
-# phylogenetic.dev[[2]]
-# mean(phylogenetic.dev[[1]]$Mean.Deviance)
-# # -0.9141502 vs. -0.9135079
 
 ##################################################
 # `beta.specificity`: calculate beta-specificity #
@@ -980,7 +967,9 @@ deviance.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
 #' 
 #' @param index Character. Method for calculation with the Morisita-Horn, Horn or Sorensen Indices. 
 #' 
-#' @param trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. 
+#' @param trim Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts. 
+#' 
+#' @param notify Logical. TRUE prints the current iteration of the for loop. 
 #'
 #' @return A data frame with symbiont identifiers and beta-specificity values. 
 #' 
@@ -1002,6 +991,10 @@ deviance.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
 #' @importFrom bipartite "PDI"
 #' @importFrom picante "mpd"
 #' @importFrom picante "ses.mpd"
+#' @importFrom stats "aggregate"
+#' @importFrom stats "cophenetic"
+#' @importFrom stats "lm"
+#' @importFrom stats "sd"
 #' 
 #' @examples
 #' # Calculate beta-specificity
@@ -1056,20 +1049,13 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
     ifelse(notify == TRUE, print(j), NaN)
   }
   # Make data frame
-  beta.dat <- data.frame(Symbiont = colnames(x), Similarity.Index = output.vec)
+  beta.dat <- data.frame(Symbiont = colnames(x), Beta.Specificity = output.vec)
   # Trim noise
   ifelse(trim == TRUE, 
-         beta.dat <- subset(beta.dat, Similarity.Index > 0), 
+         beta.dat <- subset(beta.dat, Beta.Specificity > 0), 
          beta.dat <- beta.dat)
   return(beta.dat)
 }
-
-# beta.object <- beta.specificity(quad.rarefied, index = "morisita.horn", trim = TRUE, notify = TRUE)
-# beta.object <- beta.specificity(example.dat, index = "morisita.horn", trim = TRUE, notify = TRUE)
-# beta.object
-# Symbiont A: 0.6666667; Symbiont B: 0.8902854; Symbiont C: 0.2496302; Symbiont D: 1.0000000
-# mean(beta.object$Similarity.Index)
-# mean morisita-horn 0.2008582 vs. 0.2008582
 
 ###########################################################
 # `null.beta`: calculate null models for beta-specificity #
@@ -1087,7 +1073,7 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
 #' @param randomization.method Randomization method. Usage borrowed directly from bipartite::nullmodel. 
 #' Specify as "r2dtable", "swap.web", "vaznull", "shuffle.web" or "mgen". 
 #' 
-#' @param trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. 
+#' @param trim Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts. 
 #' 
 #' @param notify Logical. TRUE prints the current iteration of the for loop. NOTE: This function can take some time. 
 #'
@@ -1106,11 +1092,15 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
 #' @importFrom bipartite "PDI"
 #' @importFrom picante "mpd"
 #' @importFrom picante "ses.mpd"
+#' @importFrom stats "aggregate"
+#' @importFrom stats "cophenetic"
+#' @importFrom stats "lm"
+#' @importFrom stats "sd"
 #' 
 #' @examples
 #' # Generate randomized communities and calculate beta-specificity per symbiont 
-#' \donttest{beta.null <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 100, trim = TRUE, notify = TRUE)}
-null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), iterations = 100, trim = TRUE, notify = TRUE) {
+#' \donttest{null.beta <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web")}
+null.beta <- function(x, iterations = 100, index = c("morisita.horn", "horn", "sorensen"), randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), trim = TRUE, notify = TRUE) {
   # Match argument specified
   randomization.method <- match.arg(randomization.method)
   # Set seed
@@ -1158,19 +1148,14 @@ null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomi
   # Trim noise
   ifelse(trim == TRUE,
          # only consider symbionts with a multiple-site overlap greater than 0
-         null.dats.beta <- subset(null.dats.beta, null.dats.beta$Similarity.Index > 0),
+         null.dats.beta <- subset(null.dats.beta, null.dats.beta$Beta.Specificity > 0),
          null.dats.beta <- null.dats.beta)
   # Read out data frame 
   return(data.frame(null.dats.beta))
 }
 
-# null.beta.object <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 100, trim = TRUE, notify = TRUE)
-# null.beta.object <- null.beta(example.dat, index = "morisita.horn", randomization.method = "shuffle.web", iterations = 100, trim = TRUE, notify = TRUE)
-# mean(null.beta.object$Similarity.Index)
-# match 0.1069268 vs. 0.1066938
-
 ###############################################################
-# `deviance.beta`: calculate the deviance in beta-specificity #
+# `relative.beta`: calculate the deviance in beta-specificity #
 ###############################################################
 #' Deviance in Beta-Specificity to Null Models 
 #' 
@@ -1187,7 +1172,7 @@ null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomi
 #' 
 #' @param model Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function. 
 #' 
-#' @param trim Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts. 
+#' @param trim Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts. 
 #' 
 #' @param notify Logical. TRUE prints the current iteration of the for loop. 
 #'
@@ -1203,7 +1188,7 @@ null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomi
 #' beta-specificity, standard error of beta-specificities, number of symbionts per host sample and average symbiont read abundance. 
 #' All subsequent elements of the list are plots of uncorrected host specificity as a function of log symbiont read abundance with the null mode in blue relative to the symbionts host specificities in red. 
 #' 
-#' @export deviance.beta
+#' @export
 #' 
 #' @importFrom ggplot2 "ggplot"
 #' @importFrom ggpmisc "stat_poly_eq"
@@ -1215,14 +1200,19 @@ null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomi
 #' @importFrom bipartite "PDI"
 #' @importFrom picante "mpd"
 #' @importFrom picante "ses.mpd"
+#' @importFrom stats "aggregate"
+#' @importFrom stats "cophenetic"
+#' @importFrom stats "lm"
+#' @importFrom stats "sd"
 #' 
 #' @examples
-#' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-#' \donttest{beta.dev <- deviance.beta(quad.rarefied, randomized = beta.null, index = "morisita.horn", trim = TRUE, notify = TRUE)}
+#' # Calculate relative beta specificity per symbiont per host sample 
+#' \donttest{beta.dev <- relative.beta(quad.rarefied, randomized = null.beta, index = "morisita.horn")}
 #' \donttest{beta.dev[[1]]} # View data frame of output 
+#' # Visualize null vs. absolute host specifities 
 #' \donttest{beta.dev[[2]]} # View first graph 
 #' \donttest{beta.dev[[81]]} # View last graph 
-deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn", "horn", "sorensen"), model = c("first", "second"), trim = TRUE, notify = TRUE) {
+relative.beta <- function(x, randomized = null.beta, index = c("morisita.horn", "horn", "sorensen"), model = c("first", "second"), trim = TRUE, notify = TRUE) {
   # Make holding vectors 
   beta.plots <- list()
   mean.beta <- rep()
@@ -1244,7 +1234,7 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
     x.input <- as.data.frame(x.input[rowSums(x.input) > 0, colSums(x.input) > 0])
     # Calculate beta-specificity
     index = match.arg(index)
-    Similarity.Index <- beta.specificity(x.input, index = index, trim = FALSE, notify = FALSE)
+    Beta.Specificity <- beta.specificity(x.input, index = index, trim = FALSE, notify = FALSE)
     # Make holding vectors
     Symbiont <- rep()
     Abundance <- rep()
@@ -1256,18 +1246,18 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
       Abundance[j] <- sum(x.input[,j])
     }
     # Make data frame
-    beta.dat <- data.frame(Symbiont, Abundance, Similarity.Index)
+    beta.dat <- data.frame(Symbiont, Abundance, Beta.Specificity)
     # Remove noise
     ifelse(trim == TRUE, 
-           beta.dat <- subset(beta.dat, Similarity.Index > 0), 
+           beta.dat <- subset(beta.dat, Beta.Specificity > 0), 
            beta.dat <- beta.dat) 
     # Match model argument
     ifelse(model == "first", formula <- "y ~ x", formula <- "y ~ x + I(x^2)")
     # Plot null vs. empirical per sample
     beta.plots[[i+1]] <- 
-      ggplot2::ggplot(beta.dat, aes(y = Similarity.Index, x = log(Abundance))) +
-      geom_point(data = randomized, aes(y = Similarity.Index, x = log(Abundance)), color = "grey", alpha = 0.5, show.legend = TRUE, size = 3) +
-      geom_smooth(data = randomized, aes(y = Similarity.Index, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = formula) + 
+      ggplot2::ggplot(beta.dat, aes(y = Beta.Specificity, x = log(Abundance))) +
+      geom_point(data = randomized, aes(y = Beta.Specificity, x = log(Abundance)), color = "grey", alpha = 0.5, show.legend = TRUE, size = 3) +
+      geom_smooth(data = randomized, aes(y = Beta.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = formula) + 
       geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
       stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = formula, label.x = "left", label.y = "bottom", color = "black", size = 5) + 
       theme_bw() +
@@ -1292,20 +1282,20 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
       labs(y = "Absolute Structural Specificity", x = "Log Absolute Symbiont Read Abundance")
     # Get model coefficients for null model
     ifelse(model == "first",
-           null.eqn <- summary(lm(Similarity.Index ~ log(Abundance), data = randomized)), 
-           null.eqn <- summary(lm(Similarity.Index ~ log(Abundance) + I(log(Abundance)^2), data = randomized)))
+           null.eqn <- summary(lm(Beta.Specificity ~ log(Abundance), data = randomized)), 
+           null.eqn <- summary(lm(Beta.Specificity ~ log(Abundance) + I(log(Abundance)^2), data = randomized)))
     # Get null model vector
     ifelse(model == "first",
            null.vector <- null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(beta.dat$Abundance), 
            null.vector <- null.eqn$coefficients[1, 1] + null.eqn$coefficients[2, 1]*log(beta.dat$Abundance) + null.eqn$coefficients[3, 1]*log(beta.dat$Abundance)^2)
     # Calculate mean deviance
-    mean.beta[i] <- mean(beta.dat$Similarity.Index - null.vector)
+    mean.beta[i] <- mean(beta.dat$Beta.Specificity - null.vector)
     # Calculate standard error of mean deviance
-    se.beta[i] <- sd(beta.dat$Similarity.Index - null.vector) / sqrt(length(beta.dat$Similarity.Index - null.vector))
+    se.beta[i] <- sd(beta.dat$Beta.Specificity - null.vector) / sqrt(length(beta.dat$Beta.Specificity - null.vector))
     # Host sample name
     host.sample[i] <- rownames(x)[i]
     # Number of symbionts column
-    num.symbionts[i] <- length(beta.dat$Similarity.Index)
+    num.symbionts[i] <- length(beta.dat$Beta.Specificity)
     # Symbiont read abundance 
     read.abund[i] <- mean(beta.dat$Abundance)
     # Check current iteration
@@ -1314,7 +1304,7 @@ deviance.beta <- function(x, randomized = null.object, index = c("morisita.horn"
   # Populate deviance data into data.frame
   beta.plots[[1]] <- data.frame(Host.Sample = host.sample, 
                                 Mean.Deviance = mean.beta, 
-                                Mean.Deviance.SE = se.beta,
+                                Mean.relative.SE = se.beta,
                                 Number.of.Symbionts = num.symbionts,
                                 Avg.Symbiont.Abundance = read.abund)
   return(beta.plots)

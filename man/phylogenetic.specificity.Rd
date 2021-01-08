@@ -14,7 +14,7 @@ phylogenetic.specificity(x, utree, abundance.weighted = TRUE, trim = TRUE)
 \item{abundance.weighted}{Logical. TRUE calculates abundance-weighted mean pairwise phylogenetic distance. 
 FALSE calculates presence-absence mean pairwise phylogenetic distance.}
 
-\item{trim}{Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts.}
+\item{trim}{Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts.}
 }
 \value{
 A data frame with symbiont identifiers and phylogenetic specificity values.

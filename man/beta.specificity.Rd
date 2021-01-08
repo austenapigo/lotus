@@ -16,7 +16,9 @@ beta.specificity(
 
 \item{index}{Character. Method for calculation with the Morisita-Horn, Horn or Sorensen Indices.}
 
-\item{trim}{Logical. TRUE removes symbionts that occupy one host sample. FALSE keeps all symbionts.}
+\item{trim}{Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts.}
+
+\item{notify}{Logical. TRUE prints the current iteration of the for loop.}
 }
 \value{
 A data frame with symbiont identifiers and beta-specificity values.
