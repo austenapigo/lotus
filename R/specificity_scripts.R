@@ -18,6 +18,8 @@
 #
 # devtools::document()
 # .rs.restartR()
+# devtools::install_github("austenapigo/lotus")
+# library(lotus)
 
 #######################################################################
 # `structural.specificity`: calculate absolute structural specificity #
@@ -261,7 +263,7 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
 #' 
 #' @examples
 #' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-#' \donttest{structural.dev <- deviance.structural(quad.rarefied, randomized = null.structural.object.ab, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)}
+#' \donttest{structural.dev <- deviance.structural(quad.rarefied, randomized = null.str, abundance.weighted = TRUE, model = "second", trim = TRUE, notify = TRUE)}
 #' \donttest{structural.dev[[1]]} # View data frame of output 
 #' \donttest{structural.dev[[2]]} # View first graph 
 #' \donttest{structural.dev[[81]]} # View last graph 
@@ -1107,10 +1109,10 @@ null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomi
   # Set seed
   set.seed(123)
   # Make 100 randomized communities
-  ifelse(index == "morisista.horn" | "horn", 
-         null.beta.specificity <- bipartite::nullmodel(x, N = iterations, method = randomization.method), 
-         null.beta.specificity <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method))
-    # Make holding list
+  ifelse(index == "sorensen", 
+         null.beta.specificity <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method), 
+         null.beta.specificity <- bipartite::nullmodel(x, N = iterations, method = randomization.method))
+  # Make holding list
   null.dats <- list()
   # Calculate beta-specificity for null models
   for (i in 1:length(null.beta.specificity)) {
