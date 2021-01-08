@@ -77,12 +77,6 @@ devtools::install_github("austenapigo/lotus")
 Load the package
 ```{r, message=FALSE, warning=FALSE}
 library(lotus)
-
-library(tidyverse)
-library(ggpmisc)
-library(picante)
-library(vegan)
-library(bipartite)
 ```
 
 ## Example Data

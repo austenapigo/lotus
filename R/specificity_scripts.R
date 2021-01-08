@@ -1,26 +1,3 @@
-#############################
-# Read in pacakges and data #
-#############################
-# library(tidyverse)
-# library(ggpmisc)
-# library(picante)
-# library(vegan)
-# library(bipartite)
-# library(roxygen2) # In-Line Documentation for R 
-# library(devtools) # Tools to Make Developing R Packages Easier
-# library(testthat) # Unit Testing for R
-# library(usethis)  # Automate Package and Project Setup
-# 
-# # Read in data
-# example.dat <- read.csv("/Users/austenapigo/Desktop/github/lotus/otherdat/example_data_for_beta_specificity.csv", row.names = 1, header = TRUE)
-# quad.rarefied <- read.csv("/Users/austenapigo/Desktop/github/lotus/otherdat/quad_rarefied.csv", row.names = 1, header = TRUE)
-# utree <- read.tree("/Users/austenapigo/Desktop/github/lotus/otherdat/utree_con_zeroed.txt")
-#
-# devtools::document()
-# .rs.restartR()
-# devtools::install_github("austenapigo/lotus")
-# library(lotus)
-
 #######################################################################
 # `structural.specificity`: calculate absolute structural specificity #
 #######################################################################
@@ -44,13 +21,16 @@
 #' 
 #' @export
 #' 
-#' @import ggplot2
-#' @import ggpmisc
-#' @import dplyr
-#' @import tidyr
-#' @import vegan
-#' @import bipartite
-#' @import picante
+#' @importFrom ggplot2 "ggplot"
+#' @importFrom ggpmisc "stat_poly_eq"
+#' @importFrom dplyr "%>%"
+#' @importFrom tidyr "separate"
+#' @importFrom vegan "diversity"
+#' @importFrom vegan "specnumber"
+#' @importFrom bipartite "nullmodel"
+#' @importFrom bipartite "PDI"
+#' @importFrom picante "mpd"
+#' @importFrom picante "ses.mpd"
 #' 
 #' @examples
 #' # Calculate host species richness per symbiont
@@ -125,13 +105,16 @@ structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' 
 #' @export
 #' 
-#' @import ggplot2
-#' @import ggpmisc
-#' @import dplyr
-#' @import tidyr
-#' @import vegan
-#' @import bipartite
-#' @import picante
+#' @importFrom ggplot2 "ggplot"
+#' @importFrom ggpmisc "stat_poly_eq"
+#' @importFrom dplyr "%>%"
+#' @importFrom tidyr "separate"
+#' @importFrom vegan "diversity"
+#' @importFrom vegan "specnumber"
+#' @importFrom bipartite "nullmodel"
+#' @importFrom bipartite "PDI"
+#' @importFrom picante "mpd"
+#' @importFrom picante "ses.mpd"
 #' 
 #' @examples
 #' # Generate randomized communities and calculate structural specificity per symbiont 
@@ -253,13 +236,16 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
 #' 
 #' @export deviance.structural
 #' 
-#' @import ggplot2
-#' @import ggpmisc
-#' @import dplyr
-#' @import tidyr
-#' @import vegan
-#' @import bipartite
-#' @import picante
+#' @importFrom ggplot2 "ggplot"
+#' @importFrom ggpmisc "stat_poly_eq"
+#' @importFrom dplyr "%>%"
+#' @importFrom tidyr "separate"
+#' @importFrom vegan "diversity"
+#' @importFrom vegan "specnumber"
+#' @importFrom bipartite "nullmodel"
+#' @importFrom bipartite "PDI"
+#' @importFrom picante "mpd"
+#' @importFrom picante "ses.mpd"
 #' 
 #' @examples
 #' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
@@ -416,13 +402,16 @@ deviance.structural <- function(x, randomized = null.structural.object, abundanc
 #' 
 #' @export
 #' 
-#' @import ggplot2
-#' @import ggpmisc
-#' @import dplyr
-#' @import tidyr
-#' @import vegan
-#' @import bipartite
-#' @import picante
+#' @importFrom ggplot2 "ggplot"
+#' @importFrom ggpmisc "stat_poly_eq"
+#' @importFrom dplyr "%>%"
+#' @importFrom tidyr "separate"
+#' @importFrom vegan "diversity"
+#' @importFrom vegan "specnumber"
+#' @importFrom bipartite "nullmodel"
+#' @importFrom bipartite "PDI"
+#' @importFrom picante "mpd"
+#' @importFrom picante "ses.mpd"
 #' 
 #' @examples
 #' # Calculate Resource Range Index per symbiont
@@ -497,13 +486,16 @@ network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' 
 #' @export
 #' 
-#' @import ggplot2
-#' @import ggpmisc
-#' @import dplyr
-#' @import tidyr
-#' @import vegan
-#' @import bipartite
-#' @import picante
+#' @importFrom ggplot2 "ggplot"
+#' @importFrom ggpmisc "stat_poly_eq"
+#' @importFrom dplyr "%>%"
+#' @importFrom tidyr "separate"
+#' @importFrom vegan "diversity"
+#' @importFrom vegan "specnumber"
+#' @importFrom bipartite "nullmodel"
+#' @importFrom bipartite "PDI"
+#' @importFrom picante "mpd"
+#' @importFrom picante "ses.mpd"
 #' 
 #' @examples
 #' # Generate randomized communities and calculate network specificity per symbiont 
@@ -616,13 +608,16 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
 #' 
 #' @export deviance.network
 #' 
-#' @import ggplot2
-#' @import ggpmisc
-#' @import dplyr
-#' @import tidyr
-#' @import vegan
-#' @import bipartite
-#' @import picante
+#' @importFrom ggplot2 "ggplot"
+#' @importFrom ggpmisc "stat_poly_eq"
+#' @importFrom dplyr "%>%"
+#' @importFrom tidyr "separate"
+#' @importFrom vegan "diversity"
+#' @importFrom vegan "specnumber"
+#' @importFrom bipartite "nullmodel"
+#' @importFrom bipartite "PDI"
+#' @importFrom picante "mpd"
+#' @importFrom picante "ses.mpd"
 #' 
 #' @examples
 #' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
@@ -778,13 +773,16 @@ deviance.network <- function(x, randomized = null.network.object, abundance.weig
 #'
 #' @export
 #' 
-#' @import ggplot2
-#' @import ggpmisc
-#' @import dplyr
-#' @import tidyr
-#' @import vegan
-#' @import bipartite
-#' @import picante
+#' @importFrom ggplot2 "ggplot"
+#' @importFrom ggpmisc "stat_poly_eq"
+#' @importFrom dplyr "%>%"
+#' @importFrom tidyr "separate"
+#' @importFrom vegan "diversity"
+#' @importFrom vegan "specnumber"
+#' @importFrom bipartite "nullmodel"
+#' @importFrom bipartite "PDI"
+#' @importFrom picante "mpd"
+#' @importFrom picante "ses.mpd"
 #' 
 #' @examples
 #' # Calculate mean pairwise phylogenetic distance per symbiont
@@ -848,13 +846,16 @@ phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim =
 #' 
 #' @export deviance.phylogenetic
 #' 
-#' @import ggplot2
-#' @import ggpmisc
-#' @import dplyr
-#' @import tidyr
-#' @import vegan
-#' @import bipartite
-#' @import picante
+#' @importFrom ggplot2 "ggplot"
+#' @importFrom ggpmisc "stat_poly_eq"
+#' @importFrom dplyr "%>%"
+#' @importFrom tidyr "separate"
+#' @importFrom vegan "diversity"
+#' @importFrom vegan "specnumber"
+#' @importFrom bipartite "nullmodel"
+#' @importFrom bipartite "PDI"
+#' @importFrom picante "mpd"
+#' @importFrom picante "ses.mpd"
 #' 
 #' @examples
 #' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
@@ -991,13 +992,16 @@ deviance.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
 #'
 #' @export
 #' 
-#' @import ggplot2
-#' @import ggpmisc
-#' @import dplyr
-#' @import tidyr
-#' @import vegan
-#' @import bipartite
-#' @import picante
+#' @importFrom ggplot2 "ggplot"
+#' @importFrom ggpmisc "stat_poly_eq"
+#' @importFrom dplyr "%>%"
+#' @importFrom tidyr "separate"
+#' @importFrom vegan "diversity"
+#' @importFrom vegan "specnumber"
+#' @importFrom bipartite "nullmodel"
+#' @importFrom bipartite "PDI"
+#' @importFrom picante "mpd"
+#' @importFrom picante "ses.mpd"
 #' 
 #' @examples
 #' # Calculate beta-specificity
@@ -1092,13 +1096,16 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
 #' 
 #' @export
 #' 
-#' @import ggplot2
-#' @import ggpmisc
-#' @import dplyr
-#' @import tidyr
-#' @import vegan
-#' @import bipartite
-#' @import picante
+#' @importFrom ggplot2 "ggplot"
+#' @importFrom ggpmisc "stat_poly_eq"
+#' @importFrom dplyr "%>%"
+#' @importFrom tidyr "separate"
+#' @importFrom vegan "diversity"
+#' @importFrom vegan "specnumber"
+#' @importFrom bipartite "nullmodel"
+#' @importFrom bipartite "PDI"
+#' @importFrom picante "mpd"
+#' @importFrom picante "ses.mpd"
 #' 
 #' @examples
 #' # Generate randomized communities and calculate beta-specificity per symbiont 
@@ -1198,17 +1205,20 @@ null.beta <- function(x, index = c("morisita.horn", "horn", "sorensen"), randomi
 #' 
 #' @export deviance.beta
 #' 
-#' @import ggplot2
-#' @import ggpmisc
-#' @import dplyr
-#' @import tidyr
-#' @import vegan
-#' @import bipartite
-#' @import picante
+#' @importFrom ggplot2 "ggplot"
+#' @importFrom ggpmisc "stat_poly_eq"
+#' @importFrom dplyr "%>%"
+#' @importFrom tidyr "separate"
+#' @importFrom vegan "diversity"
+#' @importFrom vegan "specnumber"
+#' @importFrom bipartite "nullmodel"
+#' @importFrom bipartite "PDI"
+#' @importFrom picante "mpd"
+#' @importFrom picante "ses.mpd"
 #' 
 #' @examples
 #' # Calculate mean deviance per symbiont per host sample and visualize null vs. observed host specifities 
-#' \donttest{beta.dev <- deviance.beta(quad.rarefied, randomized = null.beta.object, index = "morisita.horn", trim = TRUE, notify = TRUE)}
+#' \donttest{beta.dev <- deviance.beta(quad.rarefied, randomized = beta.null, index = "morisita.horn", trim = TRUE, notify = TRUE)}
 #' \donttest{beta.dev[[1]]} # View data frame of output 
 #' \donttest{beta.dev[[2]]} # View first graph 
 #' \donttest{beta.dev[[81]]} # View last graph 

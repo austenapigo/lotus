@@ -11,18 +11,10 @@ Author: Austen Apigo [aut, cre],
   Pat Developer [aut],
   A. User [ctb]
 Maintainer: Austen Apigo <aapigo@ucsb.edu>
-Description: Host Specificity Scripts
+Description: Scripts that quantify various types of host specificity. 
 Depends:
     R (>= 3.5.0)
-Imports:
-    ggplot2,
-    vegan,
-    bipartite,
-    picante,
-    ggpmisc,
-    dplyr,
-    tidyr
-License: GPL-3
+License: GPL-3 + file LICENSE
 LazyData: true
 URL: https://github.com/austenapigo/lotus
 BugReports: https://github.com/austenapigo/lotus/issues
@@ -30,5 +22,6 @@ RoxygenNote: 7.1.1
 Encoding: UTF-8
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat
 VignetteBuilder: knitr
