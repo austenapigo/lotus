@@ -7,14 +7,18 @@ Authors@R: c(person("Austen", "Apigo", role = c("aut", "cre"),
     email = "aapigo@ucsb.edu", comment = c(ORCID = "0000-0002-2525-0394")),
     person("Ryoko", "Oono", role = "aut",
     email = "ryoko.oono@lifesci.ucsb.edu"))
-Author: Austen Apigo [aut, cre],
-  Pat Developer [aut],
-  A. User [ctb]
-Maintainer: Austen Apigo <aapigo@ucsb.edu>
 Description: Scripts that quantify various types of host specificity. 
 Depends:
     R (>= 3.5.0)
-License: GPL-3 + file LICENSE
+Imports:
+    ggplot2,
+    vegan,
+    bipartite,
+    picante,
+    ggpmisc,
+    dplyr,
+    tidyr
+License: GPL-3
 LazyData: true
 URL: https://github.com/austenapigo/lotus
 BugReports: https://github.com/austenapigo/lotus/issues

@@ -21,7 +21,7 @@
 #' 
 #' @export
 #' 
-#' @importFrom ggplot2 "ggplot"
+#' @import ggplot2
 #' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"
@@ -105,7 +105,7 @@ structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' 
 #' @export
 #' 
-#' @importFrom ggplot2 "ggplot"
+#' @import ggplot2
 #' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"
@@ -226,9 +226,9 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
 #' 
 #' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
 #' 
-#' @export relative.structural
+#' @export
 #' 
-#' @importFrom ggplot2 "ggplot"
+#' @import ggplot2
 #' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"
@@ -397,7 +397,7 @@ relative.structural <- function(x, randomized = null.str, abundance.weighted = T
 #' 
 #' @export
 #' 
-#' @importFrom ggplot2 "ggplot"
+#' @import ggplot2
 #' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"
@@ -475,7 +475,7 @@ network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' 
 #' @export
 #' 
-#' @importFrom ggplot2 "ggplot"
+#' @import ggplot2
 #' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"
@@ -591,9 +591,9 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
 #' 
 #' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
 #' 
-#' @export relative.network
+#' @export
 #' 
-#' @importFrom ggplot2 "ggplot"
+#' @import ggplot2
 #' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"
@@ -758,7 +758,7 @@ relative.network <- function(x, randomized = null.net, abundance.weighted = TRUE
 #'
 #' @export
 #' 
-#' @importFrom ggplot2 "ggplot"
+#' @import ggplot2
 #' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"
@@ -833,7 +833,7 @@ phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim =
 #' 
 #' @export relative.phylogenetic
 #' 
-#' @importFrom ggplot2 "ggplot"
+#' @import ggplot2
 #' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"
@@ -849,8 +849,12 @@ phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim =
 #' @importFrom stats "sd"
 #' 
 #' @examples
-#' # Calculate mean deviance per symbiont per host sample and visualize null vs. absolute host specifities 
-#' \donttest{phy.dev <- relative.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)}
+#' # Calculate mean deviance per symbiont per host sample
+#' \donttest{phy.dev <- relative.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100)}
+#' \donttest{phy.dev[[1]]} # View data frame of output 
+#' # Visualize null vs. absolute host specifities 
+#' \donttest{phy.dev[[2]]} # View first graph 
+#' \donttest{phy.dev[[81]]} # View last graph 
 relative.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richness", "frequency", "sample.pool", "phylogeny.pool", "independentswap", "trialswap"), iterations = 100, abundance.weighted = TRUE, model = c("first", "second"), trim = TRUE, notify = TRUE) {
 ######################### Calculate Absolute Phylogenetic Specificity #########################
   # Make holding vectors 
@@ -981,7 +985,7 @@ relative.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
 #'
 #' @export
 #' 
-#' @importFrom ggplot2 "ggplot"
+#' @import ggplot2
 #' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"
@@ -1082,7 +1086,7 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
 #' 
 #' @export
 #' 
-#' @importFrom ggplot2 "ggplot"
+#' @import ggplot2
 #' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"
@@ -1190,7 +1194,7 @@ null.beta <- function(x, iterations = 100, index = c("morisita.horn", "horn", "s
 #' 
 #' @export
 #' 
-#' @importFrom ggplot2 "ggplot"
+#' @import ggplot2
 #' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"

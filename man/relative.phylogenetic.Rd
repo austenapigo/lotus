@@ -54,6 +54,10 @@ A relative host specificity value greater than zero indicates that an endophyte 
 see documentation for `picante` for more documentation regarding the ses.mpd function
 }
 \examples{
-# Calculate mean deviance per symbiont per host sample and visualize null vs. absolute host specifities 
-\donttest{phy.dev <- relative.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)}
+# Calculate mean deviance per symbiont per host sample
+\donttest{phy.dev <- relative.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100)}
+\donttest{phy.dev[[1]]} # View data frame of output 
+# Visualize null vs. absolute host specifities 
+\donttest{phy.dev[[2]]} # View first graph 
+\donttest{phy.dev[[81]]} # View last graph 
 }
