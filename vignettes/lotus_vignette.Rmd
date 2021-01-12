@@ -22,30 +22,31 @@ Structural Specificity
 
 - `structural.specificity`: calculates presence-absence host species richness (the number of hosts a symbionts occupies) or abundance-weighted Shannon’s H diversity index (Shannon and Weaver 1948) to quantify symbiont presence and evenness among hosts.
 - `null.structural`: generates a null occupancy-abundance model by randomizing the community matrix and calculating absolute structural specificity per symbiont within each randomized community.
-- `deviance.structural` : calculates and plots the deviance in absolute structural specificity from the null expectation per symbiont per host.
+- `relative.structural` : calculates and plots the deviance in absolute structural specificity from the null expectation per symbiont per host.
 
 Network Specificity
 
 - `network.specificity`: calculates the presence-absence Resource Range Index or abundance-weighted Paired Difference Index (Poisot et al. 2012) to quantify the 'strength' of host-symbiont interactions by accounting for all potential hosts a symbiont could occupy in a host community.
 - `null.network`: generates a null occupancy-abundance model by randomizing the community matrix and calculating absolute network specificity per symbiont within each randomized community.
-- `deviance.network`: calculates and plots the deviance in absolute network specificity from the null expectation per symbiont per host.
+- `relative.network`: calculates and plots the deviance in absolute network specificity from the null expectation per symbiont per host.
 
 Phylogenetic Specificity
 
 - `phylogenetic.specificity`: calculates as the presence-absence and abundance-weighted Mean Pairwise Phylogenetic Distance (Webb 2000) to quantify symbiont presence and evenness as a function of host phylogenetic breadth. You must supply a phylogenetic tree and the function will calculate a phylogenetic distance matrix for you.
-- `deviance.phylogenetic`: calculates and plots the deviance in observed phylogenetic specificity from the null expectation per symbiont per host. Note: null.phylogenetic is combined within deviance.phylogenetic. The picante package conveniently produces null phylogenetic models and calculates deviance (i.e., standardized effect sizes).
+- `relative.phylogenetic`: calculates and plots the deviance in observed phylogenetic specificity from the null expectation per symbiont per host. Note: null.phylogenetic is combined within deviance.phylogenetic. The picante package conveniently produces null phylogenetic models and calculates deviance (i.e., standardized effect sizes).
++ For phylogenetic specificity, as the number of host species an symbiont occupies approaches the total number of host species in the community, the range of possible phylogenetic specificity values converges to a single value, or the MPD of the entire plant community. This produces a ‘funnel-shaped’ relationship between MPD and host species richness per symbiont and is often correlated with symbiont abundance. To account for this, relative phylogenetic specificity is calculated as the standardized effect size of MPD to quantify the difference between absolute phylogenetic specificity and the mean value of phylogenetic specificity from randomized communities.
 
 Beta-Specificity
 
 - `beta.specificity`: calculates the Sørensen (Diserud and Odegaard 2007) or Morisita-Horn (Chao et al. 2008) Multiple-Assemblage Overlap Measure to quantify symbiont interaction consistency to a given host group (species, genus, family, etc.) across space or time.
 - `null.beta`: generates a null occupancy-abundance model by randomizing the community matrix and calculating beta-specificity per symbiont within each randomized community.
 deviance.beta: calculates and plots the deviance in observed beta-specificity from the null expectation per symbiont per host.
-- `deviance.beta`: calculates and plots the deviance in absolute network specificity from the null expectation per symbiont per host.
+- `relative.beta`: calculates and plots the deviance in absolute network specificity from the null expectation per symbiont per host.
 
 Important Notes:
 
 - The community matrix for analysis should be organized with hosts populating the rows, while symbionts populate the columns.
-- Plant hosts populating the rows, while fungal symbionts populate the columns. Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) and helps differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. 
+- Plant hosts populate the rows, while fungal symbionts populate the columns. Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) and helps differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. 
 - Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset.
 - More positive values always indicate a narrower symbiont niche and thus higher host specificity. We've negated (multipled by -1) structural and phylogenetic specificity to make this consistent across all metrics.
 - For beta-specificity, labels can vary depending on your questions and taxonomic-level of interest. For example, you might be interested in the beta-specificity of symbionts to a taxonomic family of hosts, rather than host species, and could label hosts as Pinaceae.1, Pinaceae.2, Pinaceae.3, etc., for example.
@@ -58,7 +59,7 @@ Common lotus arguments:
 - notify: Logical. TRUE prints the current iteration of the for loop. FALSE supresses notifications.
 
 You can read more about each lotus function with the help function
-```{r}
+```{r message=FALSE, warning=FALSE}
 help("structural.specificity")
 help("network.specificity")
 help("phylogenetic.specificity")
@@ -75,7 +76,7 @@ devtools::install_github("austenapigo/lotus")
 ```
 
 Load the package
-```{r, message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE}
 library(lotus)
 library(ggplot2)
 library(ggpmisc)
@@ -94,7 +95,7 @@ dim(quad.rarefied) # check dimensions
 quad.rarefied[1:5,1:5] # preview data frame
 ```
 
-## Structural Specificity 
+## Structural Specificity Example
 ```{r}
 # Calculate uncorrected host specificity (not relavitized to a null model)
 hs.object <- structural.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
@@ -139,11 +140,11 @@ ggplot(data = structural.object, aes(y = Structural.Specificity, x = log(Read.Ab
 
 # Randomize community matrix to generate a null model for deviance calculations
 # This is not the fastest function ever... Setting notify = TRUE will let you know how far along you are. 
-null.structural.object <- null.structural(quad.rarefied, iterations = 1, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+null.structural.object <- null.structural(quad.rarefied, iterations = 10, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = FALSE)
 head(null.structural.object)
 
 # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
-structural.dev <- relative.structural(quad.rarefied, randomized = null.structural.object, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+structural.dev <- relative.structural(quad.rarefied, randomized = null.structural.object, model = "second", abundance.weighted = TRUE, trim = TRUE, notify = FALSE)
 head(structural.dev[[1]]) # View data frame of output
 structural.dev[[2]] # View occupancy-abundance model for the first sample
 structural.dev[[81]] # View occupancy-abundance model for the last sample
