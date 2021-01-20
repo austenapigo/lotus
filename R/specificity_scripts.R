@@ -116,15 +116,15 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
   # Generate 100 randomized communities with option for user to supply their own list of randomized communities
   ifelse(is.null(randomized.object), 
          ifelse(abundance.weighted == TRUE, 
-                null.structural <- bipartite::nullmodel(x, N = iterations, method = randomization.method), 
-                null.structural <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method)), 
-         null.structural <- randomized.object)
+                null.object <- bipartite::nullmodel(x, N = iterations, method = randomization.method), 
+                null.object <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method)), 
+         null.object <- randomized.object)
   # Make holding list
   null.dats <- list()
   # Calculate structural specificity for null models
-  for (i in 1:length(null.structural)) {
+  for (i in 1:length(null.object)) {
     # Call a randomized community
-    null <- null.structural[[i]]
+    null <- null.object[[i]]
     # Add row and column names
     rownames(null) <- rownames(x)
     colnames(null) <- colnames(x)
@@ -379,12 +379,9 @@ relative.structural <- function(x, randomized = null.str, abundance.weighted = T
 #' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"
-#' @importFrom vegan "diversity"
-#' @importFrom vegan "specnumber"
 #' @importFrom bipartite "nullmodel"
 #' @importFrom bipartite "PDI"
-#' @importFrom picante "mpd"
-#' @importFrom picante "ses.mpd"
+#' @importFrom stats "aggregate"
 #' 
 #' @examples
 #' # Calculate Resource Range Index per symbiont
@@ -398,14 +395,14 @@ network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
     # Make a new row of metadata from the sample names
     col$Sample <- row.names(col)
     # Separate the sample names
-    col.sep <- col %>% separate(Sample, c("Host.Species", "Quadrat"))
+    col.sep <- col %>% tidyr::separate(Sample, c("Host.Species", "Quadrat"))
     # Aggregate by quadrat
-    col.agg <- aggregate(col.sep[, 1] ~ Host.Species, col.sep, sum)
+    col.agg <- stats::aggregate(col.sep[, 1] ~ Host.Species, col.sep, sum)
     colnames(col.agg)[2] <- "Abundance"
     rownames(col.agg) <- col.agg$Host.Species
     col.agg$Host.Species <- NULL
     # Calculate PDI or RRI
-    ifelse(abundance.weighted == TRUE, net.vector[j] <- PDI(col.agg), net.vector[j] <- PDI((col.agg > 0) + 0))
+    ifelse(abundance.weighted == TRUE, net.vector[j] <- bipartite::PDI(col.agg), net.vector[j] <- bipartite::PDI((col.agg > 0) + 0))
   }
   # Make data frame
   network.dat <- data.frame(Symbiont = colnames(x), Network.Specificity = net.vector)
@@ -450,16 +447,11 @@ network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' 
 #' @export
 #' 
-#' @import ggplot2
-#' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"
-#' @importFrom vegan "diversity"
-#' @importFrom vegan "specnumber"
 #' @importFrom bipartite "nullmodel"
 #' @importFrom bipartite "PDI"
-#' @importFrom picante "mpd"
-#' @importFrom picante "ses.mpd"
+#' @importFrom stats "aggregate"
 #' 
 #' @examples
 #' # Generate randomized communities and calculate network specificity per symbiont 
@@ -472,15 +464,15 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
   # Generate 100 randomized communities with option for user to supply their own list of randomized communities
   ifelse(is.null(randomized.object), 
          ifelse(abundance.weighted == TRUE, 
-                null.network <- bipartite::nullmodel(x, N = iterations, method = randomization.method), 
-                null.network <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method)), 
-         null.network <- randomized.object)
+                null.object <- bipartite::nullmodel(x, N = iterations, method = randomization.method), 
+                null.object <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method)), 
+         null.object <- randomized.object)
   # Make holding list
   null.dats <- list()
   # For every randomized community
-  for (i in 1:length(null.network)) {
+  for (i in 1:length(null.object)) {
     # Call a randomized community
-    null <- null.network[[i]]
+    null <- null.object[[i]]
     # Add row and column names
     rownames(null) <- rownames(x)
     colnames(null) <- colnames(x)
@@ -1096,15 +1088,15 @@ null.beta <- function(x, iterations = 100, index = c("morisita.horn", "horn", "s
   # Generate 100 randomized communities with option for user to supply their own list of randomized communities
   ifelse(is.null(randomized.object), 
          ifelse(abundance.weighted == TRUE, 
-                null.beta.specificity <- bipartite::nullmodel(x, N = iterations, method = randomization.method), 
-                null.beta.specificity <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method)), 
-         null.structural <- randomized.object)
+                null.object <- bipartite::nullmodel(x, N = iterations, method = randomization.method), 
+                null.object <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method)), 
+         null.object <- randomized.object)
   # Make holding list
   null.dats <- list()
   # Calculate beta-specificity for null models
-  for (i in 1:length(null.beta.specificity)) {
+  for (i in 1:length(null.object)) {
     # Call a randomized community
-    null <- null.beta.specificity[[i]]
+    null <- null.object[[i]]
     # Add row and column names
     rownames(null) <- rownames(x)
     colnames(null) <- colnames(x)
