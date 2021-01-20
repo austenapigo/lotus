@@ -5,42 +5,34 @@
 #' 
 #' Calculate absolute structural specificity not relativized by null mdoels. 
 #'
-#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
+#' @param x Data frame. Host by symbiont data frame with hosts populating rows and symbionts populating columns. 
 #' 
 #' @param abundance.weighted Logical. TRUE calculates Shannon's H per symbiont. FALSE calculates host richness per symbiont. 
 #' 
 #' @param trim Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts. 
 #'
-#' @return A data frame with symbiont identifiers and structural specificity values. 
+#' @return A data frame with symbiont identifiers and absolute structural specificity values. 
 #' 
-#' @details Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples.  If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
+#' @details Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples.  If this naming scheme does not apply to your experimental design, you should still add  identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
 #' 
-#' Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity across all hosts species that are in a given dataset.
+#' Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity. Structural specificity is negated (multipled by -1) to make this consistent across all metrics.
 #' 
-#' More positive values indicate a narrower symbiont niche and higher host specificity. Structural specificity is negated (multipled by -1) to make this consistent across all metrics.
-#' 
-#' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal endophytes. In review. 
+#' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review. 
 #' 
 #' @export
 #' 
-#' @import ggplot2
-#' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"
 #' @importFrom vegan "diversity"
 #' @importFrom vegan "specnumber"
-#' @importFrom bipartite "nullmodel"
-#' @importFrom bipartite "PDI"
-#' @importFrom picante "mpd"
-#' @importFrom picante "ses.mpd"
 #' @importFrom stats "aggregate"
-#' @importFrom stats "cophenetic"
-#' @importFrom stats "lm"
-#' @importFrom stats "sd"
 #' 
 #' @examples
 #' # Calculate host species richness per symbiont
-#' hr <- structural.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
+#' host.richness <- structural.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
+#' 
+#' # Calculate host species richness per symbiont
+#' shannons.h <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
 structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
   # Calculate host richness or Shannon's H
   sh.vector <- rep()
@@ -50,9 +42,9 @@ structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
     # Make a new row of metadata from the sample names
     col$Sample <- row.names(col)
     # Separate the sample names
-    col.sep <- col %>% separate(Sample, c("Host.Species", "Quadrat"))
+    col.sep <- col %>% tidyr::separate(Sample, c("Host.Species", "Quadrat"))
     # Aggregate by quadrat
-    col.agg <- aggregate(col.sep[, 1] ~ Host.Species, col.sep, sum)
+    col.agg <- stats::aggregate(col.sep[, 1] ~ Host.Species, col.sep, sum)
     colnames(col.agg)[2] <- "Abundance"
     rownames(col.agg) <- col.agg$Host.Species
     col.agg$Host.Species <- NULL
@@ -79,9 +71,9 @@ structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 ################################################################################
 #' Absolute Structural Specificity Null Models
 #' 
-#' Generate null models and calculate relative structural specificity per symbiont within each community randomization. 
+#' Generate null models of structural specificity by calculating absolute structural specificity per symbiont within each community randomization. 
 #'
-#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
+#' @param x Data frame. Host by symbiont data frame with hosts populating rows and symbionts populating columns. 
 #' 
 #' @param iterations Integer. Indicate the number of randomized communities to generate. 
 #' 
@@ -90,52 +82,43 @@ structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' @param randomization.method Randomization method. Usage borrowed directly from bipartite::nullmodel. 
 #' Specify as "r2dtable", "swap.web", "vaznull", "shuffle.web" or "mgen". 
 #' 
-#' @param trim Logical. TRUE removes symbionts that occupy one host species FALSE keeps all symbionts. 
+#' @param trim Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts. 
 #' 
 #' @param notify Logical. TRUE prints the current iteration of the for loop. NOTE: This function can take some time.
 #'
-#' @return A data frame with columns that refer to symbiont identifiers, absolute read abundance, structural specificities and randomization identifiers. 
+#' @return A data frame with columns that refer to symbiont identifiers, absolute read abundance, absolute structural specificities and randomization identifiers. 
 #' 
-#' @details Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples.  If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
+#' @details Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
 #' 
-#' Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity across all hosts species that are in a given dataset.
+#' Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity. Structural specificity is negated (multipled by -1) to make this consistent across all metrics.
 #' 
-#' More positive values indicate a narrower symbiont niche and higher host specificity. Structural specificity is negated (multipled by -1) to make this consistent across all metrics.
+#' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list of matrices (match output from bipartite::nullmodel) and you can supply this to the `randomized.object` argument. 
 #' 
-#' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
-#' 
-#' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal endophytes. In review. 
-#' 
+#' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review. 
 #' 
 #' @export
 #' 
-#' @import ggplot2
-#' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"
 #' @importFrom vegan "diversity"
 #' @importFrom vegan "specnumber"
 #' @importFrom bipartite "nullmodel"
-#' @importFrom bipartite "PDI"
-#' @importFrom picante "mpd"
-#' @importFrom picante "ses.mpd"
 #' @importFrom stats "aggregate"
-#' @importFrom stats "cophenetic"
-#' @importFrom stats "lm"
-#' @importFrom stats "sd"
 #' 
 #' @examples
 #' # Generate randomized communities and calculate structural specificity per symbiont 
 #' \donttest{null.str <- null.structural(quad.rarefied, randomization.method = "shuffle.web")}
-null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), trim = TRUE, notify = TRUE) {
+null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), trim = TRUE, notify = TRUE, randomized.object = NULL) {
   # Match argument specified
   randomization.method <- match.arg(randomization.method)
   # Set seed
   set.seed(123)
-  # Generate 100 randomized communities
-  ifelse(abundance.weighted == TRUE, 
-         null.structural <- bipartite::nullmodel(x, N = iterations, method = randomization.method), 
-         null.structural <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method))
+  # Generate 100 randomized communities with option for user to supply their own list of randomized communities
+  ifelse(is.null(randomized.object), 
+         ifelse(abundance.weighted == TRUE, 
+                null.structural <- bipartite::nullmodel(x, N = iterations, method = randomization.method), 
+                null.structural <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method)), 
+         null.structural <- randomized.object)
   # Make holding list
   null.dats <- list()
   # Calculate structural specificity for null models
@@ -165,9 +148,9 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
       # Make a new row of metadata from the sample names
       col$Sample <- row.names(col)
       # Separate the sample names
-      col.sep <- col %>% separate(Sample, c("Host.Species", "Quadrat"))
+      col.sep <- col %>% tidyr::separate(Sample, c("Host.Species", "Quadrat"))
       # Aggregate by quadrat
-      col.agg <- aggregate(col.sep[, 1] ~ Host.Species, col.sep, sum)
+      col.agg <- stats::aggregate(col.sep[, 1] ~ Host.Species, col.sep, sum)
       colnames(col.agg)[2] <- "Abundance"
       rownames(col.agg) <- col.agg$Host.Species
       col.agg$Host.Species <- NULL
@@ -206,7 +189,7 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
 #' 
 #' Calculate the deviance in absolute structural specificity to a null model of structural specificity per symbiont. 
 #'
-#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
+#' @param x Data frame. Host by symbiont data frame with hosts populating rows and symbionts populating columns. 
 #' 
 #' @param randomized Data frame. Output from null.structural function. 
 #' 
@@ -218,15 +201,15 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
 #' 
 #' @param notify Logical. TRUE prints the current iteration of the for loop. 
 #'
-#' @return A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean deviance in structural specificity, standard error of structural specificities, number of symbionts per host sample and average symbiont read abundance. All subsequent elements of the list are plots of absolute host specificity as a function of natural log symbiont read abundance with the null model in black relative to the symbionts host specificities in red. Within graphs, there is an inset equation that refers to the null model expectation. 
+#' @return A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean relative structural specificity, standard error of structural specificities, number of symbionts per host sample and average symbiont read abundance. All subsequent elements of the list are plots of absolute host specificity as a function of natural log symbiont read abundance with the null model in black (derived from host specificity of symbionts from randomized communities in grey) and absolute host specificities of the observed symbionts in red. Within graphs, there is an inset equation that refers to the null model expectation. 
 #' 
-#' @details Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., hostA.1). This naming scheme is required and helps differentiate host samples that are of the same species. If this naming scheme does not apply to your experimental design, you can add in 'dummy variables' (e.g., .1, .2, .3, etc. after each host species or sample identifer).
+#' @details Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
 #' 
-#' Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
+#' Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity.
 #' 
 #' Deviance calculations are measured per symbiont and averaged per host sample. The host specificities of each symbiont are averaged to calculate the mean host specificity for symbionts within a given host.
 #' 
-#' A relative host specificity value greater than zero indicates that an endophyte was more host-specific relative to endophytes with the same read abundances within randomized communities. 
+#' A relative host specificity value greater than zero indicates that an symbiont was more host-specific relative to symbionts with the same read abundances within randomized communities. 
 #' 
 #' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
 #' 
@@ -238,12 +221,7 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
 #' @importFrom tidyr "separate"
 #' @importFrom vegan "diversity"
 #' @importFrom vegan "specnumber"
-#' @importFrom bipartite "nullmodel"
-#' @importFrom bipartite "PDI"
-#' @importFrom picante "mpd"
-#' @importFrom picante "ses.mpd"
 #' @importFrom stats "aggregate"
-#' @importFrom stats "cophenetic"
 #' @importFrom stats "lm"
 #' @importFrom stats "sd"
 #' 
@@ -283,9 +261,9 @@ relative.structural <- function(x, randomized = null.str, abundance.weighted = T
       # Make a new row of metadata from the sample names
       col$Sample <- row.names(col)
       # Separate the sample names
-      col.sep <- col %>% separate(Sample, c("Host.Species", "Quadrat"))
+      col.sep <- col %>% tidyr::separate(Sample, c("Host.Species", "Quadrat"))
       # Aggregate by quadrat
-      col.agg <- aggregate(col.sep[, 1] ~ Host.Species, col.sep, sum)
+      col.agg <- stats::aggregate(col.sep[, 1] ~ Host.Species, col.sep, sum)
       colnames(col.agg)[2] <- "Abundance"
       rownames(col.agg) <- col.agg$Host.Species
       col.agg$Host.Species <- NULL
@@ -391,11 +369,9 @@ relative.structural <- function(x, randomized = null.str, abundance.weighted = T
 #' 
 #' @details Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples.  If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
 #' 
-#' Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity across all hosts species that are in a given dataset.
+#' Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity.
 #' 
-#' More positive values indicate a narrower symbiont niche and higher host specificity. 
-#' 
-#' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal endophytes. In review. 
+#' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review. 
 #' 
 #' @export
 #' 
@@ -447,9 +423,9 @@ network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #################################################################
 #' Absolute Network Specificity Null Models 
 #' 
-#' Generate null models and calculate network specificity per symbiont within each community randomization. 
+#' Generate null models of network specificity by calculating absolute network specificity per symbiont within each community randomization. 
 #'
-#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
+#' @param x Data frame. Host by symbiont data frame with hosts populating rows and symbionts populating columns. 
 #' 
 #' @param iterations Integer. Indicate the number of randomized communities to generate. 
 #' 
@@ -464,15 +440,13 @@ network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #'
 #' @return A data frame with columns that refer to symbiont identifiers, absolute read abundance, network specificities and randomization identifiers. 
 #' 
-#' @details Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples.  If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
+#' @details Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
 #' 
-#' Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity across all hosts species that are in a given dataset.
+#' Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity.
 #' 
-#' More positive values indicate a narrower symbiont niche and higher host specificity.
+#' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list of matrices (match output from bipartite::nullmodel) and you can supply this to the `randomized.object` argument. 
 #' 
-#' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
-#' 
-#' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal endophytes. In review. 
+#' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review. 
 #' 
 #' @export
 #' 
@@ -490,15 +464,17 @@ network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' @examples
 #' # Generate randomized communities and calculate network specificity per symbiont 
 #' \donttest{null.net <- null.network(quad.rarefied, randomization.method = "shuffle.web")}
-null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), trim = TRUE, notify = TRUE) {
+null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), trim = TRUE, notify = TRUE, randomized.object = NULL) {
   # Match argument specified
   randomization.method <- match.arg(randomization.method)
   # Set seed
   set.seed(123)
-  # Generate 100 randomized communities
-  ifelse(abundance.weighted == TRUE, 
-         null.network <- bipartite::nullmodel(x, N = iterations, method = randomization.method), 
-         null.network <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method))
+  # Generate 100 randomized communities with option for user to supply their own list of randomized communities
+  ifelse(is.null(randomized.object), 
+         ifelse(abundance.weighted == TRUE, 
+                null.network <- bipartite::nullmodel(x, N = iterations, method = randomization.method), 
+                null.network <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method)), 
+         null.structural <- randomized.object)
   # Make holding list
   null.dats <- list()
   # For every randomized community
@@ -565,7 +541,7 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
 #' 
 #' Calculate the deviance in absolute network specificity to a null model of network specificity per symbiont. 
 #'
-#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
+#' @param x Data frame. Host by symbiont data frame with hosts populating rows and symbionts populating columns. 
 #' 
 #' @param randomized Data frame. Output from null.network function. 
 #' 
@@ -577,15 +553,15 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
 #' 
 #' @param notify Logical. TRUE prints the current iteration of the for loop. 
 #'
-#' @return A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean relative network specificity, standard error of network specificities, number of symbionts per host sample and average symbiont read abundance. All subsequent elements of the list are plots of absolute network specificity as a function of natural log symbiont read abundance with the null model in black relative to the symbiont absolute network specificities in red. Within graphs, there is an inset equation that refers to the null model expectation.
+#' @return A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean relative network specificity, standard error of network specificities, number of symbionts per host sample and average symbiont read abundance. All subsequent elements of the list are plots of absolute network specificity as a function of natural log symbiont read abundance with the null model in black (derived from host specificity of symbionts from randomized communities in grey) and the symbiont absolute network specificities in red. Within graphs, there is an inset equation that refers to the null model expectation.
 #' 
-#' @details Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., hostA.1). This naming scheme is required and helps differentiate host samples that are of the same species. If this naming scheme does not apply to your experimental design, you can add in 'dummy variables' (e.g., .1, .2, .3, etc. after each host species or sample identifer).
+#' @details Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
 #' 
-#' Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
+#' Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity.
 #' 
 #' Deviance calculations are measured per symbiont and averaged per host sample. The host specificities of each symbiont are averaged to calculate the mean host specificity for symbionts within a given host. 
 #' 
-#' A relative host specificity value greater than zero indicates that an endophyte was more host-specific relative to endophytes with the same read abundances within randomized communities. 
+#' A relative host specificity value greater than zero indicates that an symbiont was more host-specific relative to symbionts with the same read abundances within randomized communities. 
 #' 
 #' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
 #' 
@@ -737,7 +713,7 @@ relative.network <- function(x, randomized = null.net, abundance.weighted = TRUE
 #' 
 #' Calculate phylogenetic specificity not relativized by null mdoels. 
 #'
-#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
+#' @param x Data frame. Host by symbiont data frame with hosts populating rows and symbionts populating columns. 
 #' 
 #' @param utree Newick formatted host phylogenetic tree. Cophenetic distances will be calculated the function. 
 #' 
@@ -748,13 +724,11 @@ relative.network <- function(x, randomized = null.net, abundance.weighted = TRUE
 #'
 #' @return A data frame with symbiont identifiers and phylogenetic specificity values.
 #'
-#' @details Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) and helps differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples.  If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
+#' @details Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
 #' 
-#' Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity across all hosts species that are in a given dataset.
+#' Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity.Phylogenetic specificity is negated (multipled by -1) to make this consistent across all metrics.
 #' 
-#' More positive values indicate a narrower symbiont niche and higher host specificity. Phylogenetic specificity is negated (multipled by -1) to make this consistent across all metrics.
-#' 
-#' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal endophytes. In review. 
+#' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review. 
 #'
 #' @export
 #' 
@@ -800,7 +774,7 @@ phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim =
 #' 
 #' Calculate the deviance in observed phylogenetic specificity to a null model of structural specificity per symbiont.
 #'
-#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
+#' @param x Data frame. Host by symbiont data frame with hosts populating rows and symbionts populating columns. 
 #' 
 #' @param utree Newick formatted host phylogenetic tree. Cophenetic distances will be calculated the function. 
 #' 
@@ -818,17 +792,17 @@ phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim =
 #' 
 #' @param notify Logical. TRUE prints the current iteration of the for loop.
 #' 
-#' @return A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean relative phylogenetic specificity, standard error of phylogenetic specificities, number of symbionts per host sample and average symbiont read abundance. All subsequent elements of the list are plots of absolute phylogenetic specificity as a function of natural log symbiont read abundance with the null model in black relative to the symbiont absolute phylogenetic specificities in red. Within graphs, there is an inset equation that refers to the null model expectation.
+#' @return A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean relative phylogenetic specificity, standard error of phylogenetic specificities, number of symbionts per host sample and average symbiont read abundance. All subsequent elements of the list are plots of absolute phylogenetic specificity as a function of natural log symbiont read abundance with the null model in black (derived from host specificity of symbionts from randomized communities in grey) and the symbiont absolute phylogenetic specificities in red. Within graphs, there is an inset equation that refers to the null model expectation.
 #' 
 #' @details Please make sure your host or sample identifiers match the labels on the host phylogenetic tree. 
 #' 
-#' Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
+#' Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity. 
 #' 
 #' Deviance calculations are measured per symbiont and averaged per host sample. The host specificities of each symbiont are averaged to calculate the mean host specificity for symbionts within a given host. Unlike relative structural, network and beta-specificity, relative phylogenetic specificity is not calculated as the vertical distance between absolute host specificity and the null model with respect to read abundance. Instead, relative phylogenetic specificity is calculated as the difference between absolute phylogenetic specificity and the mean value of phylogenetic specificity from randomized communities divided by the standard deviation of the null distribution of absolute phylogenetic specificity. 
 #' 
 #' For phylogenetic specificity, as the number of host species an symbiont occupies approaches the total number of host species in the community, the range of possible phylogenetic specificity values converges to a single value, or the MPD of the entire plant community. This produces a ‘funnel-shaped’ relationship between MPD and host species richness per symbiont and is often correlated with symbiont abundance. To account for this, relative phylogenetic specificity is calculated as the standardized effect size of MPD to quantify the difference between absolute phylogenetic specificity and the mean value of phylogenetic specificity from randomized communities.
 #' 
-#' A relative host specificity value greater than zero indicates that an endophyte was more host-specific relative to endophytes with the same read abundances within randomized communities. 
+#' A relative host specificity value greater than zero indicates that an symbiont was more host-specific relative to symbionts with the same read abundances within randomized communities. 
 #' 
 #' see documentation for `picante` for more documentation regarding the ses.mpd function 
 #' 
@@ -980,13 +954,11 @@ relative.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
 #' 
 #' @details Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
 #' 
-#' Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity across all hosts species that are in a given dataset.
-#' 
-#' More positive values indicate a narrower symbiont niche and higher host specificity.
+#' Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity.
 #' 
 #' For further detail on the mathematics of beta-specificity, see Jost L, Chao A, Chazdon, L. R. Compositional similarity and β (beta) diversity. In: Magurran AE, McGill BJ, editors. Biological Diversity: Frontiers in Measurement and Assessment. Oxford University Press; 2011. p. 66–84.
 #' 
-#' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal endophytes. In review. 
+#' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review. 
 #'
 #' @export
 #' 
@@ -1071,7 +1043,7 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
 ###########################################################
 #' Beta-Specificity Null Models 
 #' 
-#' Generate null models and calculate beta-specificity per symbiont within each community randomization. 
+#' Generate null models of beta-specificity by calculating absolute beta-specificity per symbiont within each community randomization. 
 #'
 #' @param x Data frame of hosts populating rows and symbionts populating columns. 
 #' 
@@ -1088,15 +1060,13 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
 #'
 #' @return A data frame with columns that refer to symbiont identifiers, absolute read abundance, beta-specificities and randomization identifiers. 
 #' 
-#' @details Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples.  If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
+#' @details Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
 #' 
-#' Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity across all hosts species that are in a given dataset.
+#' Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity.
 #' 
-#' More positive values indicate a narrower symbiont niche and higher host specificity. 
+#' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list of matrices (match output from bipartite::nullmodel) and you can supply this to the `randomized.object` argument. 
 #' 
-#' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
-#' 
-#' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal endophytes. In review. 
+#' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review. 
 #' 
 #' @export
 #' 
@@ -1118,15 +1088,17 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
 #' @examples
 #' # Generate randomized communities and calculate beta-specificity per symbiont 
 #' \donttest{null.beta <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web")}
-null.beta <- function(x, iterations = 100, index = c("morisita.horn", "horn", "sorensen"), randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), trim = TRUE, notify = TRUE) {
+null.beta <- function(x, iterations = 100, index = c("morisita.horn", "horn", "sorensen"), randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"), trim = TRUE, notify = TRUE, randomized.object = NULL) {
   # Match argument specified
   randomization.method <- match.arg(randomization.method)
   # Set seed
   set.seed(123)
-  # Make 100 randomized communities
-  ifelse(index == "sorensen", 
-         null.beta.specificity <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method), 
-         null.beta.specificity <- bipartite::nullmodel(x, N = iterations, method = randomization.method))
+  # Generate 100 randomized communities with option for user to supply their own list of randomized communities
+  ifelse(is.null(randomized.object), 
+         ifelse(abundance.weighted == TRUE, 
+                null.beta.specificity <- bipartite::nullmodel(x, N = iterations, method = randomization.method), 
+                null.beta.specificity <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method)), 
+         null.structural <- randomized.object)
   # Make holding list
   null.dats <- list()
   # Calculate beta-specificity for null models
@@ -1182,7 +1154,7 @@ null.beta <- function(x, iterations = 100, index = c("morisita.horn", "horn", "s
 #' are evaluated for their host specificity across the entire host community. The host specificities of each symbiont are averaged
 #' to calculate the mean host specificity for symbionts within a given host. 
 #'
-#' @param x Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns. 
+#' @param x Data frame. Host by symbiont data frame with hosts populating rows and symbionts populating columns. 
 #' 
 #' @param randomized Data frame. Output from null.beta function. 
 #' 
@@ -1194,15 +1166,15 @@ null.beta <- function(x, iterations = 100, index = c("morisita.horn", "horn", "s
 #' 
 #' @param notify Logical. TRUE prints the current iteration of the for loop. 
 #'
-#' @details Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., hostA.1). This naming scheme is required and helps differentiate host samples that are of the same species. If this naming scheme does not apply to your experimental design, you can add in 'dummy variables' (e.g., .1, .2, .3, etc. after each host species or sample identifer).
+#'#' @return A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean relative beta-specificity, standard error of beta-specificities, number of symbionts per host sample and average symbiont read abundance. All subsequent elements of the list are plots of absolute beta-specificity as a function of natural log symbiont read abundance with the null model in black (derived from host specificity of symbionts from randomized communities in grey) and the symbiont absolute beta-specificities in red. Within graphs, there is an inset equation that refers to the null model expectation.
+#'
+#' @details Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
 #' 
-#' Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
+#' Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity.
 #' 
 #' Deviance calculations are measured per symbiont and averaged per host sample. The host specificities of each symbiont are averaged to calculate the mean host specificity for symbionts within a given host. 
 #' 
-#' A relative host specificity value greater than zero indicates that an endophyte was more host-specific relative to endophytes with the same read abundances within randomized communities. 
-#' 
-#' @return A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean relative beta-specificity, standard error of beta-specificities, number of symbionts per host sample and average symbiont read abundance. All subsequent elements of the list are plots of absolute beta-specificity as a function of natural log symbiont read abundance with the null model in black relative to the symbiont absolute beta-specificities in red. Within graphs, there is an inset equation that refers to the null model expectation.
+#' A relative host specificity value greater than zero indicates that an symbiont was more host-specific relative to symbionts with the same read abundances within randomized communities. 
 #' 
 #' @export
 #' 
