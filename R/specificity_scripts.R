@@ -92,7 +92,7 @@ structural.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' 
 #' Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity. Structural specificity is negated (multipled by -1) to make this consistent across all metrics.
 #' 
-#' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list of matrices (match output from bipartite::nullmodel) and you can supply this to the `randomized.object` argument. 
+#' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list of matrices (match output from bipartite::nullmodel) and you can supply this to the `randomized.object` argument. The `iterations` argument should match the number of iterations in the provided `randomized.object`.
 #' 
 #' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review. 
 #' 
@@ -444,7 +444,7 @@ network.specificity <- function(x, abundance.weighted = TRUE, trim = TRUE) {
 #' 
 #' Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity.
 #' 
-#' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list of matrices (match output from bipartite::nullmodel) and you can supply this to the `randomized.object` argument. 
+#' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list of matrices (match output from bipartite::nullmodel) and you can supply this to the `randomized.object` argument. The `iterations` argument should match the number of iterations in the provided `randomized.object`.
 #' 
 #' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review. 
 #' 
@@ -474,7 +474,7 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
          ifelse(abundance.weighted == TRUE, 
                 null.network <- bipartite::nullmodel(x, N = iterations, method = randomization.method), 
                 null.network <- bipartite::nullmodel((x > 0) + 0, N = iterations, method = randomization.method)), 
-         null.structural <- randomized.object)
+         null.network <- randomized.object)
   # Make holding list
   null.dats <- list()
   # For every randomized community
@@ -1064,7 +1064,7 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
 #' 
 #' Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity.
 #' 
-#' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list of matrices (match output from bipartite::nullmodel) and you can supply this to the `randomized.object` argument. 
+#' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list of matrices (match output from bipartite::nullmodel) and you can supply this to the `randomized.object` argument. The `iterations` argument should match the number of iterations in the provided `randomized.object`.
 #' 
 #' @references Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review. 
 #' 
