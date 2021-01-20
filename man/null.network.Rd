@@ -2,7 +2,7 @@
 % Please edit documentation in R/specificity_scripts.R
 \name{null.network}
 \alias{null.network}
-\title{Network Specificity Null Models}
+\title{Absolute Network Specificity Null Models}
 \usage{
 null.network(
   x,
@@ -10,11 +10,12 @@ null.network(
   abundance.weighted = TRUE,
   randomization.method = c("r2dtable", "swap.web", "vaznull", "shuffle.web", "mgen"),
   trim = TRUE,
-  notify = TRUE
+  notify = TRUE,
+  randomized.object = NULL
 )
 }
 \arguments{
-\item{x}{Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns.}
+\item{x}{Data frame. Host by symbiont data frame with hosts populating rows and symbionts populating columns.}
 
 \item{iterations}{Integer. Indicate the number of randomized communities to generate.}
 
@@ -25,27 +26,25 @@ Specify as "r2dtable", "swap.web", "vaznull", "shuffle.web" or "mgen".}
 
 \item{trim}{Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts.}
 
-\item{notify}{Logical. TRUE prints the current iteration of the for loop.}
+\item{notify}{Logical. TRUE prints the current iteration of the for loop. NOTE: This function can take some time.}
 }
 \value{
-A data frame with columns that refer to symbiont identifiers, absolute read abundance, network specificities and randomization
-identifiers.
+A data frame with columns that refer to symbiont identifiers, absolute read abundance, network specificities and randomization identifiers.
 }
 \description{
-Generate null models and calculate network specificity per symbiont within each community randomization.
+Generate null models of network specificity by calculating absolute network specificity per symbiont within each community randomization.
 }
 \details{
-Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., hostA.1). This naming scheme is required and helps differentiate host samples that are of the same species. If this naming scheme does not apply to your experimental design, you can add in 'dummy variables' (e.g., .1, .2, .3, etc. after each host species or sample identifer).
+Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
 
-Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
+Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity.
 
-Deviance calculations are measured per symbiont and averaged per host sample. The host specificities of each symbiont are averaged to calculate the mean host specificity for symbionts within a given host. 
-
-More positive values indicate a narrower symbiont niche and thus higher host specificity. 
-
-#' If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
+If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list of matrices (match output from bipartite::nullmodel) and you can supply this to the `randomized.object` argument. The `iterations` argument should match the number of iterations in the provided `randomized.object`.
 }
 \examples{
 # Generate randomized communities and calculate network specificity per symbiont 
 \donttest{null.net <- null.network(quad.rarefied, randomization.method = "shuffle.web")}
+}
+\references{
+Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review.
 }

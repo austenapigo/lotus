@@ -14,32 +14,32 @@ relative.structural(
 )
 }
 \arguments{
-\item{x}{Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns.}
+\item{x}{Data frame. Host by symbiont data frame with hosts populating rows and symbionts populating columns.}
 
 \item{randomized}{Data frame. Output from null.structural function.}
 
 \item{abundance.weighted}{Logical. TRUE calculates Shannon's H per symbiont. FALSE calculates host richness per symbiont.}
 
-\item{model}{Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function.}
+\item{model}{Character. Specify whether the null expectation should be approximated as a first- (linear) or second- (quadratic) order function.}
 
-\item{trim}{Logical. TRUE removes symbionts that occupy one host species FALSE keeps all symbionts.}
+\item{trim}{Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts.}
 
 \item{notify}{Logical. TRUE prints the current iteration of the for loop.}
 }
 \value{
-A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean deviance in structural specificity, standard error of structural specificities, number of symbionts per host sample and average symbiont read abundance. All subsequent elements of the list are plots of absolute host specificity as a function of natural log symbiont read abundance with the null mode in blue relative to the symbionts host specificities in red. Within graphs, there is an inset equation that refers to the null model expectation.
+A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean relative structural specificity, standard error of structural specificities, number of symbionts per host sample and average symbiont read abundance. All subsequent elements of the list are plots of absolute host specificity as a function of natural log symbiont read abundance with the null model in black (derived from host specificity of symbionts from randomized communities in grey) and absolute host specificities of the observed symbionts in red. Within graphs, there is an inset equation that refers to the null model expectation.
 }
 \description{
 Calculate the deviance in absolute structural specificity to a null model of structural specificity per symbiont.
 }
 \details{
-Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., hostA.1). This naming scheme is required and helps differentiate host samples that are of the same species. If this naming scheme does not apply to your experimental design, you can add in 'dummy variables' (e.g., .1, .2, .3, etc. after each host species or sample identifer).
+Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
 
-Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
+Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity.
 
 Deviance calculations are measured per symbiont and averaged per host sample. The host specificities of each symbiont are averaged to calculate the mean host specificity for symbionts within a given host.
 
-A relative host specificity value greater than zero indicates that an endophyte was more host-specific relative to endophytes with the same read abundances within randomized communities. 
+A relative host specificity value greater than zero indicates that an symbiont was more host-specific relative to symbionts with the same read abundances within randomized communities. 
 
 If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list and you can supply this to the `randomized` argument in any deviance-related function.
 }

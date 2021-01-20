@@ -17,7 +17,7 @@ relative.phylogenetic(
 )
 }
 \arguments{
-\item{x}{Data frame. Host x symbiont data frame with hosts populating rows and symbionts populating columns.}
+\item{x}{Data frame. Host by symbiont data frame with hosts populating rows and symbionts populating columns.}
 
 \item{utree}{Newick formatted host phylogenetic tree. Cophenetic distances will be calculated the function.}
 
@@ -36,8 +36,7 @@ FALSE calculates presence-absence mean pairwise phylogenetic distance.}
 \item{notify}{Logical. TRUE prints the current iteration of the for loop.}
 }
 \value{
-A data frame with columns that refer to the host sample identifiers, mean deviance in phylogenetic specificity, 
-standard error of structural specificities, number of symbionts per host sample and average symbiont read abundance.
+A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean relative phylogenetic specificity, standard error of phylogenetic specificities, number of symbionts per host sample and average symbiont read abundance. All subsequent elements of the list are plots of absolute phylogenetic specificity as a function of natural log symbiont read abundance with the null model in black (derived from host specificity of symbionts from randomized communities in grey) and the symbiont absolute phylogenetic specificities in red. Within graphs, there is an inset equation that refers to the null model expectation.
 }
 \description{
 Calculate the deviance in observed phylogenetic specificity to a null model of structural specificity per symbiont.
@@ -45,13 +44,13 @@ Calculate the deviance in observed phylogenetic specificity to a null model of s
 \details{
 Please make sure your host or sample identifiers match the labels on the host phylogenetic tree. 
 
-Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset. 
+Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity. 
 
 Deviance calculations are measured per symbiont and averaged per host sample. The host specificities of each symbiont are averaged to calculate the mean host specificity for symbionts within a given host. Unlike relative structural, network and beta-specificity, relative phylogenetic specificity is not calculated as the vertical distance between absolute host specificity and the null model with respect to read abundance. Instead, relative phylogenetic specificity is calculated as the difference between absolute phylogenetic specificity and the mean value of phylogenetic specificity from randomized communities divided by the standard deviation of the null distribution of absolute phylogenetic specificity. 
 
 For phylogenetic specificity, as the number of host species an symbiont occupies approaches the total number of host species in the community, the range of possible phylogenetic specificity values converges to a single value, or the MPD of the entire plant community. This produces a ‘funnel-shaped’ relationship between MPD and host species richness per symbiont and is often correlated with symbiont abundance. To account for this, relative phylogenetic specificity is calculated as the standardized effect size of MPD to quantify the difference between absolute phylogenetic specificity and the mean value of phylogenetic specificity from randomized communities.
 
-A relative host specificity value greater than zero indicates that an endophyte was more host-specific relative to endophytes with the same read abundances within randomized communities. 
+A relative host specificity value greater than zero indicates that an symbiont was more host-specific relative to symbionts with the same read abundances within randomized communities. 
 
 see documentation for `picante` for more documentation regarding the ses.mpd function
 }

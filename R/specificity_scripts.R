@@ -262,7 +262,7 @@ relative.structural <- function(x, randomized = null.str, abundance.weighted = T
       col$Sample <- row.names(col)
       # Separate the sample names
       col.sep <- col %>% tidyr::separate(Sample, c("Host.Species", "Quadrat"))
-      # Aggregate by quadrat
+      # Aggregate by host species
       col.agg <- stats::aggregate(col.sep[, 1] ~ Host.Species, col.sep, sum)
       colnames(col.agg)[2] <- "Abundance"
       rownames(col.agg) <- col.agg$Host.Species
@@ -563,17 +563,10 @@ null.network <- function(x, iterations = 100, abundance.weighted = TRUE, randomi
 #' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"
-#' @importFrom vegan "diversity"
-#' @importFrom vegan "specnumber"
-#' @importFrom bipartite "nullmodel"
 #' @importFrom bipartite "PDI"
-#' @importFrom picante "mpd"
-#' @importFrom picante "ses.mpd"
 #' @importFrom stats "aggregate"
-#' @importFrom stats "cophenetic"
 #' @importFrom stats "lm"
 #' @importFrom stats "sd"
-#' 
 #' 
 #' @examples
 #' # Calculate mean network specificity per symbiont per host sample
@@ -611,9 +604,9 @@ relative.network <- function(x, randomized = null.net, abundance.weighted = TRUE
       # Make a new row of metadata from the sample names
       col$Sample <- row.names(col)
       # Separate the sample names
-      col.sep <- col %>% separate(Sample, c("Host.Species", "Quadrat"))
-      # Aggregate by quadrat
-      col.agg <- aggregate(col.sep[, 1] ~ Host.Species, col.sep, sum)
+      col.sep <- col %>% tidyr::separate(Sample, c("Host.Species", "Quadrat"))
+      # Aggregate by host species
+      col.agg <- stats::aggregate(col.sep[, 1] ~ Host.Species, col.sep, sum)
       colnames(col.agg)[2] <- "Abundance"
       rownames(col.agg) <- col.agg$Host.Species
       col.agg$Host.Species <- NULL
@@ -646,7 +639,7 @@ relative.network <- function(x, randomized = null.net, abundance.weighted = TRUE
       geom_point(data = randomized, aes(y = Network.Specificity, x = log(Abundance)), color = "grey", alpha = 0.5, show.legend = TRUE, size = 3) +
       geom_smooth(data = randomized, aes(y = Network.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = formula) + 
       geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
-      stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = formula, label.x = "left", label.y = "bottom", color = "black", size = 5) + 
+      ggpmisc::stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = formula, label.x = "left", label.y = "bottom", color = "black", size = 5) + 
       theme_bw() +
       ggtitle(rownames(x)[i]) + 
       theme_bw() +
@@ -724,20 +717,8 @@ relative.network <- function(x, randomized = null.net, abundance.weighted = TRUE
 #'
 #' @export
 #' 
-#' @import ggplot2
-#' @importFrom ggpmisc "stat_poly_eq"
-#' @importFrom dplyr "%>%"
-#' @importFrom tidyr "separate"
-#' @importFrom vegan "diversity"
-#' @importFrom vegan "specnumber"
-#' @importFrom bipartite "nullmodel"
-#' @importFrom bipartite "PDI"
 #' @importFrom picante "mpd"
-#' @importFrom picante "ses.mpd"
-#' @importFrom stats "aggregate"
 #' @importFrom stats "cophenetic"
-#' @importFrom stats "lm"
-#' @importFrom stats "sd"
 #' 
 #' @examples
 #' # Calculate mean pairwise phylogenetic distance per symbiont
@@ -745,8 +726,8 @@ relative.network <- function(x, randomized = null.net, abundance.weighted = TRUE
 phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim = TRUE) {
   # Calculate abundance-weighted or presence-absence mean pairwise phylogenetic distance
   ifelse(abundance.weighted == TRUE, 
-         phylogenetic <- -1 * mpd(t(x), dis = cophenetic(utree), abundance.weighted = TRUE), 
-         phylogenetic <- -1 * mpd(t(x), dis = cophenetic(utree), abundance.weighted = FALSE))
+         phylogenetic <- -1 * picante::mpd(t(x), dis = stats::cophenetic(utree), abundance.weighted = TRUE), 
+         phylogenetic <- -1 * picante::mpd(t(x), dis = stats::cophenetic(utree), abundance.weighted = FALSE))
   # Make data frame
   phylogenetic.dat <- data.frame(Phylogenetic.Specificity = phylogenetic)
   rownames(phylogenetic.dat) <- colnames(x)
@@ -803,14 +784,7 @@ phylogenetic.specificity <- function(x, utree, abundance.weighted = TRUE, trim =
 #' @import ggplot2
 #' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
-#' @importFrom tidyr "separate"
-#' @importFrom vegan "diversity"
-#' @importFrom vegan "specnumber"
-#' @importFrom bipartite "nullmodel"
-#' @importFrom bipartite "PDI"
-#' @importFrom picante "mpd"
 #' @importFrom picante "ses.mpd"
-#' @importFrom stats "aggregate"
 #' @importFrom stats "cophenetic"
 #' @importFrom stats "lm"
 #' @importFrom stats "sd"
@@ -849,8 +823,8 @@ relative.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
     set.seed(123)
     # Calculate phylogenetic specificity
     ifelse(abundance.weighted == TRUE, 
-           Phylogenetic.Specificity <- ses.mpd(t(x.input), dis = cophenetic(utree), null.model = null.model, abundance.weighted = TRUE, runs = iterations), 
-           Phylogenetic.Specificity <- ses.mpd(t(x.input), dis = cophenetic(utree), null.model = null.model, abundance.weighted = FALSE, runs = iterations))
+           Phylogenetic.Specificity <- picante::ses.mpd(t(x.input), dis = stats::cophenetic(utree), null.model = null.model, abundance.weighted = TRUE, runs = iterations), 
+           Phylogenetic.Specificity <- picante::ses.mpd(t(x.input), dis = cstats::ophenetic(utree), null.model = null.model, abundance.weighted = FALSE, runs = iterations))
     # Make holding vectors
     Symbiont <- rep()
     Abundance <- rep()
@@ -883,7 +857,7 @@ relative.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
       geom_point(aes(y = Randomized.Phylo.Specificity, x = log(Abundance)), color = "grey", alpha = 0.5, show.legend = TRUE, size = 3) +
       geom_smooth(aes(y = Randomized.Phylo.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = formula) + 
       geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
-      stat_poly_eq(parse = TRUE, aes(y = Randomized.Phylo.Specificity, x = log(Abundance), label = ..eq.label..), formula = formula, label.x = "left", label.y = "bottom", color = "black", size = 5) + 
+      ggpmisc::stat_poly_eq(parse = TRUE, aes(y = Randomized.Phylo.Specificity, x = log(Abundance), label = ..eq.label..), formula = formula, label.x = "left", label.y = "bottom", color = "black", size = 5) + 
       theme_bw() +
       ggtitle(rownames(x)[i]) + 
       theme_bw() +
@@ -954,20 +928,9 @@ relative.phylogenetic <- function(x, utree, null.model = c("taxa.labels", "richn
 #'
 #' @export
 #' 
-#' @import ggplot2
-#' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
 #' @importFrom tidyr "separate"
-#' @importFrom vegan "diversity"
-#' @importFrom vegan "specnumber"
-#' @importFrom bipartite "nullmodel"
-#' @importFrom bipartite "PDI"
-#' @importFrom picante "mpd"
-#' @importFrom picante "ses.mpd"
 #' @importFrom stats "aggregate"
-#' @importFrom stats "cophenetic"
-#' @importFrom stats "lm"
-#' @importFrom stats "sd"
 #' 
 #' @examples
 #' # Calculate beta-specificity
@@ -986,12 +949,12 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
     # Make a new row of metadata from the sample names
     col$Sample <- row.names(col)
     # Separate the sample names
-    col.sep <- col %>% separate(Sample, c("Host.Group", "Identifier"))
+    col.sep <- col %>% tidyr::separate(Sample, c("Host.Group", "Identifier"))
     # Aggregate by Identifier
-    col.agg <- aggregate(col.sep[, 1] ~ Identifier, col.sep, sum)
+    col.agg <- stats::aggregate(col.sep[, 1] ~ Identifier, col.sep, sum)
     colnames(col.agg)[2] <- "Identifier.Abundance"
-    # Aggregate by identifier
-    col.agg.sep <- aggregate(col.sep[, 1] ~ Host.Group, col.sep, sum)
+    # Aggregate by Host.Group
+    col.agg.sep <- stats::aggregate(col.sep[, 1] ~ Host.Group, col.sep, sum)
     # Remove Host.Group with zero
     col.agg.sep <- subset(col.agg.sep, col.agg.sep[2] > 0)
     # Filter by hosts that are present
@@ -1062,20 +1025,8 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
 #' 
 #' @export
 #' 
-#' @import ggplot2
-#' @importFrom ggpmisc "stat_poly_eq"
 #' @importFrom dplyr "%>%"
-#' @importFrom tidyr "separate"
-#' @importFrom vegan "diversity"
-#' @importFrom vegan "specnumber"
 #' @importFrom bipartite "nullmodel"
-#' @importFrom bipartite "PDI"
-#' @importFrom picante "mpd"
-#' @importFrom picante "ses.mpd"
-#' @importFrom stats "aggregate"
-#' @importFrom stats "cophenetic"
-#' @importFrom stats "lm"
-#' @importFrom stats "sd"
 #' 
 #' @examples
 #' # Generate randomized communities and calculate beta-specificity per symbiont 
@@ -1172,16 +1123,6 @@ null.beta <- function(x, iterations = 100, index = c("morisita.horn", "horn", "s
 #' 
 #' @import ggplot2
 #' @importFrom ggpmisc "stat_poly_eq"
-#' @importFrom dplyr "%>%"
-#' @importFrom tidyr "separate"
-#' @importFrom vegan "diversity"
-#' @importFrom vegan "specnumber"
-#' @importFrom bipartite "nullmodel"
-#' @importFrom bipartite "PDI"
-#' @importFrom picante "mpd"
-#' @importFrom picante "ses.mpd"
-#' @importFrom stats "aggregate"
-#' @importFrom stats "cophenetic"
 #' @importFrom stats "lm"
 #' @importFrom stats "sd"
 #' 
@@ -1239,7 +1180,7 @@ relative.beta <- function(x, randomized = null.beta, index = c("morisita.horn", 
       geom_point(data = randomized, aes(y = Beta.Specificity, x = log(Abundance)), color = "grey", alpha = 0.5, show.legend = TRUE, size = 3) +
       geom_smooth(data = randomized, aes(y = Beta.Specificity, x = log(Abundance)), color = "black", method = "lm", se = FALSE, lwd = 1, lty = "dashed", show.legend = FALSE, formula = formula) + 
       geom_point(color = "red", alpha = 1, show.legend = TRUE, size = 3) +
-      stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = formula, label.x = "left", label.y = "bottom", color = "black", size = 5) + 
+      ggpmisc::stat_poly_eq(data = randomized, parse = TRUE, aes(label = ..eq.label..), formula = formula, label.x = "left", label.y = "bottom", color = "black", size = 5) + 
       theme_bw() +
       ggtitle(rownames(x)[i]) + 
       theme_bw() +

@@ -14,7 +14,7 @@ beta.specificity(
 \arguments{
 \item{x}{Data frame of hosts populating rows and symbionts populating columns.}
 
-\item{index}{Character. Method for calculation with the Morisita-Horn, Horn or Sorensen Indices.}
+\item{index}{Character. Method for calculation with the Morisita-Horn, Horn or Sorensen Indices. Sorensen is presence-absence. Horn and Morisita-Horn are abundance weighted.}
 
 \item{trim}{Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts.}
 
@@ -27,13 +27,16 @@ A data frame with symbiont identifiers and beta-specificity values.
 Calculate structural specificity not corrected by null models.
 }
 \details{
-Hosts are labeled by their sampling origin with a period and number identifier after their species name (e.g., hostA.1). This naming scheme is required and helps differentiate host samples that are of the same species. If this naming scheme does not apply to your experimental design, you can add in 'dummy variables' (e.g., .1, .2, .3, etc. after each host species or sample identifer).
+Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
 
-Host specificity is calculated for a symbiont across the entire host community. For example, a symbiont found in given host would be evaluated for its host specificity relative to all hosts that are present in a given dataset.
+Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity.
 
-More positive values indicate a narrower symbiont niche and thus higher host specificity.
+For further detail on the mathematics of beta-specificity, see Jost L, Chao A, Chazdon, L. R. Compositional similarity and β (beta) diversity. In: Magurran AE, McGill BJ, editors. Biological Diversity: Frontiers in Measurement and Assessment. Oxford University Press; 2011. p. 66–84.
 }
 \examples{
 # Calculate beta-specificity
 \donttest{beta.mh <- beta.specificity(quad.rarefied, index = "morisita.horn", trim = TRUE, notify = TRUE)}
+}
+\references{
+Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review.
 }
