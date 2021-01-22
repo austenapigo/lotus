@@ -27,6 +27,8 @@ Specify as "r2dtable", "swap.web", "vaznull", "shuffle.web" or "mgen".}
 \item{trim}{Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts.}
 
 \item{notify}{Logical. TRUE prints the current iteration of the for loop. NOTE: This function can take some time.}
+
+\item{randomized.object}{List. If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list of matrices (match output from bipartite::nullmodel) and you can supply this to the `randomized.object` argument. The `iterations` argument should match the number of iterations in the provided `randomized.object`.}
 }
 \value{
 A data frame with columns that refer to symbiont identifiers, absolute read abundance, absolute structural specificities and randomization identifiers.
@@ -38,8 +40,6 @@ Generate null models of structural specificity by calculating absolute structura
 Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
 
 Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity. Structural specificity is negated (multipled by -1) to make this consistent across all metrics.
-
-If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list of matrices (match output from bipartite::nullmodel) and you can supply this to the `randomized.object` argument. The `iterations` argument should match the number of iterations in the provided `randomized.object`.
 }
 \examples{
 # Generate randomized communities and calculate structural specificity per symbiont 

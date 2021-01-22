@@ -26,10 +26,10 @@ Host specificity for a symbiont is evaluated across the entire host community. M
 }
 \examples{
 # Calculate host species richness per symbiont
-host.richness <- structural.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)
+\donttest{host.richness <- structural.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)}
 
 # Calculate host species richness per symbiont
-shannons.h <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)
+\donttest{shannons.h <- structural.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)}
 }
 \references{
 Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review.

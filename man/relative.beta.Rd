@@ -9,6 +9,7 @@ relative.beta(
   randomized = null.beta,
   index = c("morisita.horn", "horn", "sorensen"),
   model = c("first", "second"),
+  contribution = c("equal", "differential"),
   trim = TRUE,
   notify = TRUE
 )
@@ -20,19 +21,19 @@ relative.beta(
 
 \item{index}{Character. Method for calculation with the Morisita-Horn, Horn or Sorensen Indices.}
 
-\item{model}{Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function.}
+\item{model}{Character. Specify whether the null expectation should be approximated as a first- (linear) or second- (quadratic) order function.}
+
+\item{contribution}{Character. Specify whether relative host specificities should be scaled by symbiont read abundance percentages. If 'equal', relative host specificities will be averaged per host sample. If 'differential', symbiont relative host specificites are multipled by the percentage of reads they contribute to the host sample and these values are summed within the given host sample.}
 
 \item{trim}{Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts.}
 
-\item{notify}{Logical. TRUE prints the current iteration of the for loop. 
-
-#' @return A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean relative beta-specificity, standard error of beta-specificities, number of symbionts per host sample and average symbiont read abundance. All subsequent elements of the list are plots of absolute beta-specificity as a function of natural log symbiont read abundance with the null model in black (derived from host specificity of symbionts from randomized communities in grey) and the symbiont absolute beta-specificities in red. Within graphs, there is an inset equation that refers to the null model expectation.}
+\item{notify}{Logical. TRUE prints the current iteration of the for loop.}
+}
+\value{
+A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean relative beta-specificity, standard error of beta-specificities, number of symbionts per host sample and average symbiont read abundance. All subsequent elements of the list are plots of absolute beta-specificity as a function of natural log symbiont read abundance with the null model in black (derived from host specificity of symbionts from randomized communities in grey) and the symbiont absolute beta-specificities in red. Within graphs, there is an inset equation that refers to the null model expectation.
 }
 \description{
-Calculate the deviance in observed beta-specificity to a null model of beta-specificity per symbiont. 
-Deviance calculations are measured per symbiont and averaged per host sample. For example, all symbionts within a given host 
-are evaluated for their host specificity across the entire host community. The host specificities of each symbiont are averaged
-to calculate the mean host specificity for symbionts within a given host.
+Calculate the deviance in observed beta-specificity to a null model of beta-specificity per symbiont and average output per host sample.
 }
 \details{
 Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
@@ -50,4 +51,7 @@ A relative host specificity value greater than zero indicates that an symbiont w
 # Visualize null vs. absolute host specifities 
 \donttest{beta.dev[[2]]} # View first graph 
 \donttest{beta.dev[[81]]} # View last graph 
+}
+\references{
+Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review.
 }

@@ -27,6 +27,8 @@ Specify as "r2dtable", "swap.web", "vaznull", "shuffle.web" or "mgen".}
 \item{trim}{Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts.}
 
 \item{notify}{Logical. TRUE prints the current iteration of the for loop. NOTE: This function can take some time.}
+
+\item{randomized.object}{List. If your preferred null model is not represented in bipartite::nullmodel you can use any other function to generate randomized communities (e.g., vegan::permatswap) outside of `lotus`. Make sure your output is formatted as a list of matrices (match output from bipartite::nullmodel) and you can supply this to the `randomized.object` argument. The `iterations` argument should match the number of iterations in the provided `randomized.object`.}
 }
 \value{
 A data frame with columns that refer to symbiont identifiers, absolute read abundance, beta-specificities and randomization identifiers.

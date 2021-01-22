@@ -24,7 +24,7 @@ relative.phylogenetic(
 \item{null.model}{Randomization method. Usage borrowed directly from picante::mpd 
 Specify as "taxa.labels", "richness", "frequency", "sample.pool", "phylogeny.pool", "independentswap" or "trialswap".}
 
-\item{iterations}{Integer. Indicate the number of randomized communities to generate.}
+\item{iterations}{Integer. Indicate the number of randomized communities to generate. NOTE: This function can take some time.}
 
 \item{abundance.weighted}{Logical. TRUE calculates abundance-weighted mean pairwise phylogenetic distance. 
 FALSE calculates presence-absence mean pairwise phylogenetic distance.}
@@ -39,7 +39,7 @@ FALSE calculates presence-absence mean pairwise phylogenetic distance.}
 A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean relative phylogenetic specificity, standard error of phylogenetic specificities, number of symbionts per host sample and average symbiont read abundance. All subsequent elements of the list are plots of absolute phylogenetic specificity as a function of natural log symbiont read abundance with the null model in black (derived from host specificity of symbionts from randomized communities in grey) and the symbiont absolute phylogenetic specificities in red. Within graphs, there is an inset equation that refers to the null model expectation.
 }
 \description{
-Calculate the deviance in observed phylogenetic specificity to a null model of structural specificity per symbiont.
+Calculate the deviance in observed phylogenetic specificity to a null model of structural specificity per symbiont and average output per sample.
 }
 \details{
 Please make sure your host or sample identifiers match the labels on the host phylogenetic tree. 

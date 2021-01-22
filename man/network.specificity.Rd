@@ -27,6 +27,9 @@ Host specificity for a symbiont is evaluated across the entire host community. M
 \examples{
 # Calculate Resource Range Index per symbiont
 \donttest{rri <- network.specificity(quad.rarefied, abundance.weighted = FALSE, trim = TRUE)}
+
+# Calculate Paired Difference Index per symbiont
+\donttest{pdi <- network.specificity(quad.rarefied, abundance.weighted = TRUE, trim = TRUE)}
 }
 \references{
 Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review.

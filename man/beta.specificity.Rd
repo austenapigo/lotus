@@ -30,13 +30,15 @@ Calculate structural specificity not corrected by null models.
 Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
 
 Host specificity for a symbiont is evaluated across the entire host community. More positive values indicate a narrower symbiont niche and higher host specificity.
-
-For further detail on the mathematics of beta-specificity, see Jost L, Chao A, Chazdon, L. R. Compositional similarity and β (beta) diversity. In: Magurran AE, McGill BJ, editors. Biological Diversity: Frontiers in Measurement and Assessment. Oxford University Press; 2011. p. 66–84.
 }
 \examples{
-# Calculate beta-specificity
-\donttest{beta.mh <- beta.specificity(quad.rarefied, index = "morisita.horn", trim = TRUE, notify = TRUE)}
+# Calculate Morisita-Horn beta-specificity
+\donttest{beta.mor <- beta.specificity(quad.rarefied, index = "morisita.horn", trim = TRUE, notify = TRUE)}
+# Calculate Sorensen beta-specificity
+\donttest{beta.sor <- beta.specificity(quad.rarefied, index = "sorensen", trim = TRUE, notify = TRUE)}
 }
 \references{
-Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review.
+Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review. 
+
+For further detail on the mathematics of beta-specificity, see Jost L, Chao A, Chazdon, L. R. Compositional similarity and β (beta) diversity. In: Magurran AE, McGill BJ, editors. Biological Diversity: Frontiers in Measurement and Assessment. Oxford University Press; 2011. p. 66–84.
 }

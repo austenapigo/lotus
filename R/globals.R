@@ -1,1 +1,1 @@
-utils::globalVariables(c("Sample", "Host.Group", "..eq.label..", "null.str", "null.net", "null.beta", "Observed.Phylo.Specificity", "Randomized.Phylo.Specificity", "formula", "Network.Specificity", "Phylogenetic.Specificity", "Structural.Specificity", "Beta.Specificity"))
+utils::globalVariables(c("Sample", "Host.Group", "..eq.label..", "null.str", "null.net", "null.beta", "formula", "Network.Specificity", "Phylogenetic.Specificity", "Structural.Specificity", "Beta.Specificity", "Absolute.Phylo.Specificity", "Randomized.Phylo.Specificity"))

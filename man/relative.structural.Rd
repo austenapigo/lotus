@@ -9,6 +9,7 @@ relative.structural(
   randomized = null.str,
   abundance.weighted = TRUE,
   model = c("first", "second"),
+  contribution = c("equal", "differential"),
   trim = TRUE,
   notify = TRUE
 )
@@ -22,6 +23,8 @@ relative.structural(
 
 \item{model}{Character. Specify whether the null expectation should be approximated as a first- (linear) or second- (quadratic) order function.}
 
+\item{contribution}{Character. Specify whether relative host specificities should be scaled by symbiont read abundance percentages. If 'equal', relative host specificities will be averaged per host sample. If 'differential', symbiont relative host specificites are multipled by the percentage of reads they contribute to the host sample and these values are summed within the given host sample.}
+
 \item{trim}{Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts.}
 
 \item{notify}{Logical. TRUE prints the current iteration of the for loop.}
@@ -30,7 +33,7 @@ relative.structural(
 A list. First element in the list is a data frame with columns that refer to the host sample identifiers, mean relative structural specificity, standard error of structural specificities, number of symbionts per host sample and average symbiont read abundance. All subsequent elements of the list are plots of absolute host specificity as a function of natural log symbiont read abundance with the null model in black (derived from host specificity of symbionts from randomized communities in grey) and absolute host specificities of the observed symbionts in red. Within graphs, there is an inset equation that refers to the null model expectation.
 }
 \description{
-Calculate the deviance in absolute structural specificity to a null model of structural specificity per symbiont.
+Calculate the deviance in absolute structural specificity to a null model of structural specificity per symbiont and average output per host sample.
 }
 \details{
 Hosts are labeled by their species name with a period and number identifier (e.g., hostA.1) to differentiate host samples that are of the same species. This naming scheme is required because host specificity is quantified at the level of host species and not host samples. If this naming scheme does not apply to your experimental design, you should still add in identifiers (e.g., .1, .2, .3, etc.) after each host species or sample identifer.
