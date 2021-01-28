@@ -43,7 +43,7 @@ Host specificity for a symbiont is evaluated across the entire host community. M
 }
 \examples{
 # Generate randomized communities and calculate structural specificity per symbiont 
-\donttest{null.str <- null.structural(quad.rarefied, randomization.method = "shuffle.web")}
+\donttest{null.str <- null.structural(comm.matrix, randomization.method = "shuffle.web")}
 }
 \references{
 Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review.

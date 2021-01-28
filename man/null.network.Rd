@@ -45,7 +45,7 @@ If your preferred null model is not represented in bipartite::nullmodel you can 
 }
 \examples{
 # Generate randomized communities and calculate network specificity per symbiont 
-\donttest{null.net <- null.network(quad.rarefied, randomization.method = "shuffle.web")}
+\donttest{null.net <- null.network(comm.matrix, randomization.method = "shuffle.web")}
 }
 \references{
 Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review.

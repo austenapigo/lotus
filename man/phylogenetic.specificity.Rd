@@ -4,12 +4,12 @@
 \alias{phylogenetic.specificity}
 \title{Absolute Phylogenetic Specificity}
 \usage{
-phylogenetic.specificity(x, utree, abundance.weighted = TRUE, trim = TRUE)
+phylogenetic.specificity(x, tree, abundance.weighted = TRUE, trim = TRUE)
 }
 \arguments{
 \item{x}{Data frame. Host by symbiont data frame with hosts populating rows and symbionts populating columns.}
 
-\item{utree}{Newick formatted host phylogenetic tree. Cophenetic distances will be calculated the function.}
+\item{tree}{Newick formatted host phylogenetic tree. Cophenetic distances will be calculated the function.}
 
 \item{abundance.weighted}{Logical. TRUE calculates abundance-weighted mean pairwise phylogenetic distance. 
 FALSE calculates presence-absence mean pairwise phylogenetic distance.}
@@ -29,7 +29,7 @@ Host specificity for a symbiont is evaluated across the entire host community. M
 }
 \examples{
 # Calculate mean pairwise phylogenetic distance per symbiont
-\donttest{mpd <- phylogenetic.specificity(quad.rarefied, utree, abundance.weighted = TRUE, trim = TRUE)}
+mpd <- phylogenetic.specificity(comm.matrix, tree = phylo.tree, abundance.weighted = TRUE, trim = TRUE)
 }
 \references{
 Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review.

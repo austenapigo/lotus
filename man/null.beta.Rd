@@ -45,7 +45,7 @@ If your preferred null model is not represented in bipartite::nullmodel you can 
 }
 \examples{
 # Generate randomized communities and calculate beta-specificity per symbiont 
-\donttest{null.beta <- null.beta(quad.rarefied, index = "morisita.horn", randomization.method = "shuffle.web")}
+\donttest{null.beta <- null.beta(comm.matrix, index = "morisita.horn", randomization.method = "shuffle.web")}
 }
 \references{
 Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review.

@@ -6,7 +6,7 @@
 \usage{
 relative.phylogenetic(
   x,
-  utree,
+  tree,
   null.model = c("taxa.labels", "richness", "frequency", "sample.pool",
     "phylogeny.pool", "independentswap", "trialswap"),
   iterations = 100,
@@ -19,7 +19,7 @@ relative.phylogenetic(
 \arguments{
 \item{x}{Data frame. Host by symbiont data frame with hosts populating rows and symbionts populating columns.}
 
-\item{utree}{Newick formatted host phylogenetic tree. Cophenetic distances will be calculated the function.}
+\item{tree}{Newick formatted host phylogenetic tree. Cophenetic distances will be calculated the function.}
 
 \item{null.model}{Randomization method. Usage borrowed directly from picante::mpd 
 Specify as "taxa.labels", "richness", "frequency", "sample.pool", "phylogeny.pool", "independentswap" or "trialswap".}
@@ -56,7 +56,7 @@ see documentation for `picante` for more documentation regarding the ses.mpd fun
 }
 \examples{
 # Calculate mean deviance per symbiont per host sample
-\donttest{phy.dev <- relative.phylogenetic(quad.rarefied, utree, null.model = "taxa.labels", iterations = 100)}
+\donttest{phy.dev <- relative.phylogenetic(comm.matrix, tree = phylo.tree, null.model = "taxa.labels", iterations = 100)}
 \donttest{phy.dev[[1]]} # View data frame of output 
 # Visualize null vs. absolute host specifities 
 \donttest{phy.dev[[2]]} # View first graph 

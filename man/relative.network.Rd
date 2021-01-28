@@ -25,7 +25,7 @@ relative.network(
 
 \item{contribution}{Character. Specify whether relative host specificities should be scaled by symbiont read abundance percentages. If 'equal', relative host specificities will be averaged per host sample. If 'differential', symbiont relative host specificites are multipled by the percentage of reads they contribute to the host sample and these values are summed within the given host sample.}
 
-\item{trim}{Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts.}
+\item{trim}{Logical. TRUE removes symbionts that occupy one host species from contributing to host specificity average per host sample. FALSE keeps all symbionts per host sample.}
 
 \item{notify}{Logical. TRUE prints the current iteration of the for loop. NOTE: This function can take some time.}
 }
@@ -48,9 +48,9 @@ If your preferred null model is not represented in bipartite::nullmodel you can 
 }
 \examples{
 # Calculate mean network specificity per symbiont per host sample
-\donttest{net.dev <- relative.network(quad.rarefied, randomized = null.net, abundance.weighted = TRUE)}
+\donttest{net.dev <- relative.network(comm.matrix, randomized = null.net, abundance.weighted = TRUE)}
 \donttest{net.dev[[1]]} # View data frame of output 
 # Visualize null vs. absolute host specifities 
 \donttest{net.dev[[2]]} # View first graph 
-\donttest{net.dev[[81]]} # View last graph 
+\donttest{net.dev[[27]]} # View last graph 
 }
