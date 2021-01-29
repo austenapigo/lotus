@@ -1,6 +1,6 @@
 #' Ultrametric tree for phylogenetic specificity analyses
 #'
-#' Phylogenetic tree used to calculate phylogenetic specificity was pruned from a backbone phylogeny representing all extant vascular plant families in North America with the ‘phylo.maker’ function in the V.PhyloMaker package (Jin and Qian 2019). This ultrametric tree includes 26 plant samples from 13 plant species. 
+#' Phylogenetic tree used to calculate phylogenetic specificity was pruned from a backbone phylogeny representing all extant vascular plant families in North America with the ‘phylo.maker’ function in the V.PhyloMaker package (Jin and Qian 2019). This ultrametric tree includes 26 plant samples from 13 plant species. Plant conspecific phylogenetic distances were manually changed to zero. 
 #'
 #' @docType data
 #'

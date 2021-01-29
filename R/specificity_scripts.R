@@ -1009,7 +1009,7 @@ beta.specificity <- function(x, index = c("morisita.horn", "horn", "sorensen"), 
   beta.dat <- data.frame(Symbiont = colnames(x), Beta.Specificity = output.vec)
   # Trim noise
   ifelse(trim == TRUE, 
-         beta.dat <- subset(beta.dat, Beta.Specificity > 0), 
+         beta.dat <- subset(beta.dat, Beta.Specificity < 1), 
          beta.dat <- beta.dat)
   return(beta.dat)
 }
@@ -1103,8 +1103,8 @@ null.beta <- function(x, iterations = 100, index = c("morisita.horn", "horn", "s
   rownames(null.dats.beta) <- NULL
   # Trim noise
   ifelse(trim == TRUE,
-         # only consider symbionts with a multiple-site overlap greater than 0
-         null.dats.beta <- subset(null.dats.beta, null.dats.beta$Beta.Specificity > 0),
+         # only consider symbionts with a multiple-site overlap less than 1
+         null.dats.beta <- subset(null.dats.beta, null.dats.beta$Beta.Specificity < 1),
          null.dats.beta <- null.dats.beta)
   # Read out data frame 
   return(data.frame(null.dats.beta))
@@ -1224,7 +1224,7 @@ relative.beta <- function(x, randomized = null.beta, index = c("morisita.horn", 
         plot.title = element_text(hjust = 0.5, size = 13, face = "bold.italic"),
         aspect.ratio = 0.85
       ) +
-      labs(y = "Absolute Structural Specificity", x = "Log Absolute Symbiont Read Abundance")
+      labs(y = "Absolute Beta-Specificity", x = "Log Absolute Symbiont Read Abundance")
     # Get model coefficients for null model
     ifelse(model == "first",
            null.eqn <- summary(lm(Beta.Specificity ~ log(Abundance), data = randomized)), 
