@@ -21,7 +21,7 @@ The authors recorded their data by counting the number of individual flower visi
 
 Description taken from (https://iwdb.nceas.ucsb.edu/html/small_1976.html). 
 
-Note: This interaction matrix has been modified such that each host species is composed of two host samples. This change was made to maake this dataset compatible for the measurement of beta-specificity.
+Note: This interaction matrix has been modified such that each host species is composed of two host samples. This change was made to make this dataset compatible for the measurement of beta-specificity.
 }
 \examples{
 data(comm.matrix)
