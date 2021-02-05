@@ -237,7 +237,7 @@ null.structural <- function(x, iterations = 100, abundance.weighted = TRUE, rand
 relative.structural <- function(x, randomized = null.str, abundance.weighted = TRUE, model = c("first", "second"), contribution = c("equal", "differential"), trim = TRUE, notify = TRUE) {
 ######################### Calculate Absolute Structural Specificity #########################
   # Remove hosts or symbionts that sum to zero
-  ifelse(trim == TRUE, x <- x[rowSums(x) > 0, specumber(x) > 1])
+  ifelse(trim == TRUE, x <- x[rowSums(x) > 0, specnumber(x) > 1], x <- x)
   # Make holding vectors 
   structural.plots <- list()
   mean.structural <- rep()

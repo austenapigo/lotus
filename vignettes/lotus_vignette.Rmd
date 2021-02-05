@@ -82,7 +82,7 @@ These examples use the dataset from Small 1976. The study took place in the Mer 
 
 Note: This interaction matrix has been modified such that each host species is composed of two host samples. This change was made to maake this dataset compatible for the measurement of beta-specificity.
 ```{r}
-data("comm.matrix") # load data
+lotus::comm.matrix # call data
 
 dim(comm.matrix) # check dimensions
 
