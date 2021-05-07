@@ -1,5 +1,5 @@
 # lotus 0.9.0 (beta version)
-2021-01-11: Currently working on publishing lotus to CRAN.
+2021-05-01: Currently re-working relative host specificity functions to calculate standardized effect sizes instead of using occupancy-abundance models. 
 
 > This package is named `lotus` in recognition of Kamala (meaning 'lotus') Devi Harris, a longtime champion for gender equality and the first Black and Asian female Vice President of the United States.
 
