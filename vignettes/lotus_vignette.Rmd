@@ -40,7 +40,7 @@ Beta-Specificity
 - `beta.specificity`: calculates the Sørensen (Diserud and Odegaard 2007) or Morisita-Horn (Chao et al. 2008) Multiple-Assemblage Overlap Measure to quantify symbiont interaction consistency to a given host group (species, genus, family, etc.) across space or time.
 - `null.beta`: generates a null occupancy-abundance model by randomizing the community matrix and calculating beta-specificity per symbiont within each randomized community.
 deviance.beta: calculates and plots the deviance in observed beta-specificity from the null expectation per symbiont per host.
-- `relative.beta`: calculates and plots the deviance in absolute network specificity from the null expectation per symbiont per host.
+- `relative.beta`: calculates the deviance in absolute network specificity from the null expectation per symbiont per host.
 
 Important Notes:
 
