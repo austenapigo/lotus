@@ -8,8 +8,6 @@ relative.beta(
   x,
   randomized = null.beta,
   index = c("morisita.horn", "horn", "sorensen"),
-  model = c("first", "second"),
-  contribution = c("equal", "differential"),
   trim = TRUE,
   notify = TRUE
 )
@@ -20,10 +18,6 @@ relative.beta(
 \item{randomized}{Data frame. Output from null.beta function.}
 
 \item{index}{Character. Method for calculation with the Morisita-Horn, Horn or Sorensen Indices.}
-
-\item{model}{Character. Specify whether the null expectation should be approximated as a first- (linear) or second- (quadratic) order function.}
-
-\item{contribution}{Character. Specify whether relative host specificities should be scaled by symbiont read abundance percentages. If 'equal', relative host specificities will be averaged per host sample. If 'differential', symbiont relative host specificites are multipled by the percentage of reads they contribute to the host sample and these values are summed within the given host sample.}
 
 \item{trim}{Logical. TRUE removes symbionts that occupy one host species from contributing to host specificity average per host sample. FALSE keeps all symbionts per host sample.}
 
@@ -47,10 +41,7 @@ A relative host specificity value greater than zero indicates that an symbiont w
 \examples{
 # Calculate relative beta specificity per symbiont per host sample 
 \donttest{beta.dev <- relative.beta(comm.matrix, randomized = null.beta, index = "morisita.horn")}
-\donttest{beta.dev[[1]]} # View data frame of output 
-# Visualize null vs. absolute host specifities 
-\donttest{beta.dev[[2]]} # View first graph 
-\donttest{beta.dev[[81]]} # View last graph 
+\donttest{beta.dev} # View data frame of output 
 }
 \references{
 Austen Apigo and Ryoko Oono. 2021. Novel metrics reveal plant abundance, but not plant evolutionary history, shape host specificity in foliar fungal symbionts. In review.

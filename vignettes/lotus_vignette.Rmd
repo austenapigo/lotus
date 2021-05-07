@@ -22,19 +22,18 @@ Structural Specificity
 
 - `structural.specificity`: calculates presence-absence host species richness (the number of hosts a symbionts occupies) or abundance-weighted Shannon’s H diversity index (Shannon and Weaver 1948) to quantify symbiont presence and evenness among hosts.
 - `null.structural`: generates a null occupancy-abundance model by randomizing the community matrix and calculating absolute structural specificity per symbiont within each randomized community.
-- `relative.structural` : calculates and plots the deviance in absolute structural specificity from the null expectation per symbiont per host.
+- `relative.structural` : calculates the deviance in absolute structural specificity from the null expectation per symbiont per host.
 
 Network Specificity
 
 - `network.specificity`: calculates the presence-absence Resource Range Index or abundance-weighted Paired Difference Index (Poisot et al. 2012) to quantify the 'strength' of host-symbiont interactions by accounting for all potential hosts a symbiont could occupy in a host community.
 - `null.network`: generates a null occupancy-abundance model by randomizing the community matrix and calculating absolute network specificity per symbiont within each randomized community.
-- `relative.network`: calculates and plots the deviance in absolute network specificity from the null expectation per symbiont per host.
+- `relative.network`: calculates the deviance in absolute network specificity from the null expectation per symbiont per host.
 
 Phylogenetic Specificity
 
 - `phylogenetic.specificity`: calculates as the presence-absence and abundance-weighted Mean Pairwise Phylogenetic Distance (Webb 2000) to quantify symbiont presence and evenness as a function of host phylogenetic breadth. You must supply a phylogenetic tree and the function will calculate a phylogenetic distance matrix for you.
-- `relative.phylogenetic`: calculates and plots the deviance in observed phylogenetic specificity from the null expectation per symbiont per host. Note: null.phylogenetic is combined within deviance.phylogenetic. The picante package conveniently produces null phylogenetic models and calculates deviance (i.e., standardized effect sizes).
-+ For phylogenetic specificity, as the number of host species an symbiont occupies approaches the total number of host species in the community, the range of possible phylogenetic specificity values converges to a single value, or the MPD of the entire plant community. This produces a ‘funnel-shaped’ relationship between MPD and host species richness per symbiont and is often correlated with symbiont abundance. To account for this, relative phylogenetic specificity is calculated as the standardized effect size of MPD to quantify the difference between absolute phylogenetic specificity and the mean value of phylogenetic specificity from randomized communities.
+- `relative.phylogenetic`: calculates  the deviance in observed phylogenetic specificity from the null expectation per symbiont per host. Note: null.phylogenetic is combined within deviance.phylogenetic. The picante package conveniently produces null phylogenetic models and calculates standardized effect sizes.
 
 Beta-Specificity
 
@@ -156,10 +155,30 @@ null.structural.object <- null.structural(comm.matrix, iterations = 100, abundan
 head(null.structural.object)
 
 # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
-structural.dev <- relative.structural(comm.matrix, randomized = null.structural.object, model = "first", abundance.weighted = FALSE, trim = TRUE, notify = TRUE)
-head(structural.dev[[1]]) # View data frame of output
-structural.dev[[2]] # View occupancy-abundance model for the first sample
-structural.dev[[14]] # View occupancy-abundance model for the last sample
+structural.dev <- relative.structural(comm.matrix, randomized = null.structural.object, abundance.weighted = FALSE, trim = TRUE, notify = TRUE)
+head(structural.dev) # View data frame of output
+
+ggplot(data = structural.dev, aes(y = Mean.Standardized.Effect.Size, x = Host.Sample)) +
+  geom_pointrange(aes(ymin = Mean.Standardized.Effect.Size - Standard.Error.of.Mean.SES, ymax = Mean.Standardized.Effect.Size + Standard.Error.of.Mean.SES)) +
+  theme_bw() +
+  theme(
+    axis.text.x = element_text(size = 12, color = "black", angle = 90),
+    axis.text.y = element_text(size = 12, color = "black"),
+    axis.title.x = element_text(size = 12, margin = margin(t = 5, r = 0, b = 0, l = 0)),
+    axis.title.y = element_text(size = 12, margin = margin(t = 0, r = 5, b = 0, l = 0)),
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 12),
+    legend.position = "bottom",
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_blank(),
+    axis.line.x = element_blank(),
+    axis.line.y = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = 12, face = "bold.italic"),
+    text = element_text(),
+    aspect.ratio = 0.85
+  ) +
+  labs(y = "Relative Structural Specificity\n(-1 * Host Species Richness)", x = "Host Sample")
 ```
 
 You can read more about each lotus function with the help function
