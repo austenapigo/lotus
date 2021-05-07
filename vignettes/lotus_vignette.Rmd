@@ -92,7 +92,7 @@ comm.matrix # view data frame
 ## Structural Specificity Example
 ```{r}
 # Calculate uncorrected host specificity (not relavitized to a null model)
-hs.object <- structural.specificity(comm.matrix, abundance.weighted = TRUE, trim = TRUE)
+hs.object <- structural.specificity(comm.matrix, abundance.weighted = FALSE, trim = TRUE)
 head(hs.object)
 
 # Explore data and evaluate relationships between host specificity and symbiont read abundance
@@ -152,11 +152,11 @@ ggplot(data = structural.object, aes(y = Structural.Specificity, x = log(Read.Ab
 
 # Randomize community matrix to generate a null model for deviance calculations
 # This is not the fastest function ever... Setting notify = TRUE will let you know how far along you are. 
-null.structural.object <- null.structural(comm.matrix, iterations = 100, abundance.weighted = TRUE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
+null.structural.object <- null.structural(comm.matrix, iterations = 100, abundance.weighted = FALSE, randomization.method = "shuffle.web", trim = TRUE, notify = TRUE)
 head(null.structural.object)
 
 # Calculate and plot the deviance of observed host specificity from the null boundary and get averages per host sample
-structural.dev <- relative.structural(comm.matrix, randomized = null.structural.object, model = "first", abundance.weighted = TRUE, trim = TRUE, notify = TRUE)
+structural.dev <- relative.structural(comm.matrix, randomized = null.structural.object, model = "first", abundance.weighted = FALSE, trim = TRUE, notify = TRUE)
 head(structural.dev[[1]]) # View data frame of output
 structural.dev[[2]] # View occupancy-abundance model for the first sample
 structural.dev[[14]] # View occupancy-abundance model for the last sample

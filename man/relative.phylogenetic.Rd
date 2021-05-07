@@ -11,7 +11,6 @@ relative.phylogenetic(
     "phylogeny.pool", "independentswap", "trialswap"),
   iterations = 100,
   abundance.weighted = TRUE,
-  model = c("first", "second"),
   trim = TRUE,
   notify = TRUE
 )
@@ -28,8 +27,6 @@ Specify as "taxa.labels", "richness", "frequency", "sample.pool", "phylogeny.poo
 
 \item{abundance.weighted}{Logical. TRUE calculates abundance-weighted mean pairwise phylogenetic distance. 
 FALSE calculates presence-absence mean pairwise phylogenetic distance.}
-
-\item{model}{Character. Specify whether the null expectation should be approximated as a first-(linear) or second-(quadratic) order function.}
 
 \item{trim}{Logical. TRUE removes symbionts that occupy one host species. FALSE keeps all symbionts.}
 
@@ -57,8 +54,5 @@ see documentation for `picante` for more documentation regarding the ses.mpd fun
 \examples{
 # Calculate mean deviance per symbiont per host sample
 \donttest{phy.dev <- relative.phylogenetic(comm.matrix, tree = phylo.tree, null.model = "taxa.labels", iterations = 100)}
-\donttest{phy.dev[[1]]} # View data frame of output 
-# Visualize null vs. absolute host specifities 
-\donttest{phy.dev[[2]]} # View first graph 
-\donttest{phy.dev[[81]]} # View last graph 
+\donttest{phy.dev} # View data frame of output 
 }

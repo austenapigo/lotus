@@ -8,8 +8,6 @@ relative.structural(
   x,
   randomized = null.str,
   abundance.weighted = TRUE,
-  model = c("first", "second"),
-  contribution = c("equal", "differential"),
   trim = TRUE,
   notify = TRUE
 )
@@ -20,10 +18,6 @@ relative.structural(
 \item{randomized}{Data frame. Output from null.structural function.}
 
 \item{abundance.weighted}{Logical. TRUE calculates Shannon's H per symbiont. FALSE calculates host richness per symbiont.}
-
-\item{model}{Character. Specify whether the null expectation should be approximated as a first- (linear) or second- (quadratic) order function.}
-
-\item{contribution}{Character. Specify whether relative host specificities should be scaled by symbiont read abundance percentages. If 'equal', relative host specificities will be averaged per host sample. If 'differential', symbiont relative host specificites are multipled by the percentage of reads they contribute to the host sample and these values are summed within the given host sample.}
 
 \item{trim}{Logical. TRUE removes symbionts that occupy one host species from contributing to host specificity average per host sample. FALSE keeps all symbionts per host sample.}
 
@@ -49,8 +43,5 @@ If your preferred null model is not represented in bipartite::nullmodel you can 
 \examples{
 # Calculate mean relative structural specificity per symbiont per host sample 
 \donttest{str.dev <- relative.structural(comm.matrix, randomized = null.str, abundance.weighted = TRUE)}
-\donttest{str.dev[[1]]} # View data frame of output 
-# Visualize null vs. absolute host specifities 
-\donttest{str.dev[[2]]} # View first graph 
-\donttest{str.dev[[27]]} # View last graph 
+\donttest{str.dev} # View data frame of output 
 }
