@@ -1,5 +1,5 @@
 # lotus 0.9.0 (beta version)
-> I'm be appreciative of constructive feedback before we push this R package to CRAN. Please create an issue on GitHub or email me (aapigo@ucsb.edu) if you have questions or suggestions.
+> I'm appreciative of constructive feedback before we push this R package to CRAN. Please create an issue on GitHub or email me (aapigo@ucsb.edu) if you have questions or suggestions.
 
 > This package is named `lotus` in recognition of Kamala (meaning 'lotus') Devi Harris, a longtime champion for gender equality and the first Black and Asian female Vice President of the United States.
 
