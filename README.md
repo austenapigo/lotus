@@ -1,5 +1,5 @@
 # lotus 0.9.0 (beta version)
-2021-05-07: Just pushed an update for functions to calculate standardized effect sizes of host specificity rather than using occupancy-abundance models. Documentation below updated. 
+> I'm be appreciative of constructive feedback before we push this R package to CRAN. Please create an issue on GitHub or email me (aapigo@ucsb.edu) if you have questions or suggestions.
 
 > This package is named `lotus` in recognition of Kamala (meaning 'lotus') Devi Harris, a longtime champion for gender equality and the first Black and Asian female Vice President of the United States.
 
@@ -7,9 +7,7 @@
 
 ### Why use `lotus` and what does it do?
 
-Host-symbiont relationships are ubiquitous throughout the natural world. Yet often times we have little to no information about the ecological or evolutionary context for many of the pairwise interactions between hosts and symbionts. How should we try to make sense of datasets rich with information about composition (taxonomy) and interaction frequency (read counts) but usually not much else? 
-
-We propose that host specificity, or the degree to which symbionts are restricted within a host community, provides a reasonable first step to generate ecological and evolutionary information about the symbiont niche.  We developed this package because we think these metrics are useful, but underutilized, and can be leveraged in many different systems to help answer questions about host specificity. 
+Host-symbiont relationships are ubiquitous throughout natural systems. Yet often times we have little to no information about the ecological or evolutionary context for many of the pairwise interactions between hosts and symbionts. We propose that host specificity, or the degree to which symbionts are restricted within a host community, provides a reasonable first step to understand the ecological and evolutionary limits to  the symbiont niche.  We developed this R package because we think these metrics are useful, but underutilized, and can be leveraged in many different systems to help answer questions about host specificity. See Poulin et al. 2011 (reference below) to read about the original coneceptualization of these metrics. 
 
 **The purpose of `lotus` is to provide functions that:**
 1. **Quantify host specificity metrics per symbiont**
@@ -51,10 +49,6 @@ see an example workflow here: [lotus vignette](https://github.com/austenapigo/lo
 ### Why not use multivariate techniques to evaluate host specificity? 
 
 Contemporary microbial ecology studies almost exclusively infer host specificity by the degree of compositional similarity of symbiont communities per host in multivariate ordination space. Similarity among symbiont communities within each host is ultimately influenced by the degree of niche overlap across all hosts per symbiont. For example, specialist symbionts that are consistently found within the same host species, but not others, should increase compositional similarity within the same host species and increase dissimilarity among different host species. Few studies utilize multivariate approaches in tandem with univariate approaches measured per symbiont (e.g., the number of host species a symbiont occupies), perhaps because they are assumed to be correlated, but whether it's the **best and only tool** for every question related to host specificity is still an open question. Metrics calculated per symbiont can tell you more about *why* clustering in ordination space occurs (or does not occur) and can give a more transparent view of how symbionts vary in their host specificity. 
-
-### Contact 
-
-We'd be appreciative of constructive feedback before we push this R package to CRAN. Please create an issue on GitHub or email me (aapigo@ucsb.edu) if you have questions or suggestions.
 
 ### References 
 + Pedro J. Aphalo (2020). ggpmisc: Miscellaneous Extensions to 'ggplot2'. R package version 0.3.6. https://CRAN.R-project.org/package=ggpmisc
