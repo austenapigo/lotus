@@ -36,7 +36,7 @@ We term observed host specificity as “absolute host specificity” because the
 
 In the plot to the left you can see that more abundant symbionts (each grey circle) tended to occupy more plant species than rarer endophytes and thus more abundant endophytes had a higher propensity to be categorized as more generalist relative to rarer endophytes simply because of their read abundance. By standardizing the effect sizes of host specificity values, the negatively sloped red regression line is “flattened” in the plot the right suggesting that this method can reduce bias due to differences in symbiont abundance. </sup>
 
-<img align="right" width="350" height="350" src="https://github.com/austenapigo/lotus/blob/master/figures/absolute_vs_relative_structural_specificity.png">
+![Absolute vs. Relative Structural Specificity](https://github.com/austenapigo/lotus/blob/master/figures/absolute_vs_relative_structural_specificity.png)
 
 ### How to install `lotus`
 ```
